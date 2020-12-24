@@ -21,7 +21,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(agent.builddirectory)'
-    Contents: '*.ps1'
+    Contents: '**'
     TargetFolder: 'c:\blaiseScripts'
 
 - task: PowerShell@2
