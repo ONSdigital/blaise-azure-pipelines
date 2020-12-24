@@ -18,7 +18,12 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)'
+    Contents: '*.ps1'
+    TargetFolder: 'c:\blaiseScripts'
 
 - task: PowerShell@2
   inputs:
-    filePath: $(build.artifactstagingdirectory)'\blaise\hello-world.ps1'
+    filePath: 'c:\blaiseScripts\hello-world.ps1'
