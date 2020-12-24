@@ -18,6 +18,7 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+
 - task: PowerShell@2
   inputs:
-    filePath: './hello-world.ps1'
+    filePath: $(build.artifactstagingdirectory)'\blaise\hello-world.ps1'
