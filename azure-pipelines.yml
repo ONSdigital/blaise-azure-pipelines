@@ -7,7 +7,10 @@ stages:
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: Nik
+         environment:
+          name: Nik
+          resourceType: VirtualMachine
+          tags: blaise
          strategy:
           runOnce:
              deploy:
