@@ -1,9 +1,6 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'windows-latest'
-
 stages:
   - stage: Dev
     displayName: Dev Environment
