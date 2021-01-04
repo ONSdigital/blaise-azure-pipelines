@@ -7,7 +7,7 @@ stages:
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: 'Nik1'
+         environment: Nik
          strategy:
           runOnce:
              deploy:
