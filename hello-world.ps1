@@ -22,7 +22,7 @@ function CreateVariables1($variableList)
 
          Write-Host $varName '=' ($varValue -replace $pattern, '$3')
          
-         Write-Host "##vso[task.setvariable variable=$varName;isoutput=true]($varValue -replace $pattern, '$3')"
+         Write-Host "##vso[task.setvariable variable=$varName;]($varValue -replace $pattern, '$3')"
         }
   }
 }
