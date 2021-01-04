@@ -48,7 +48,7 @@ stages:
                     targetType: 'inline'
                     script: |
                       Write-Host "Login to GCP"
-                         gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(sakey.secureFilePath)
+                         gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                          
                          Write-Host "Downloading instrument"
                          gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
