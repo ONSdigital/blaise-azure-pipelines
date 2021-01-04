@@ -8,15 +8,20 @@ stages:
   - stage: Dev
     displayName: Dev Environment
     jobs:
-     - job: InstallBlaise
-       steps:
-         - task: PowerShell@2
-           inputs:
-              filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
-          
-         - task: CopyFiles@2
-           inputs:
-              SourceFolder: '$(Agent.BuildDirectory)'
-              Contents: '**'
-              TargetFolder: 'c:\nik'
+       - deployment: installBlaise
+         displayName: Install Blaise
+         environment: 'Nik'
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
+                
+                - task: CopyFiles@2
+                  inputs:
+                    SourceFolder: '$(Agent.BuildDirectory)'
+                    Contents: '**'
+                    TargetFolder: 'c:\nik'
      
