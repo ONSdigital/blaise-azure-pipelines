@@ -34,7 +34,7 @@ stages:
                     buildVersionToDownload: 'latestFromBranch'
                     branchName: 'refs/heads/master'
                     downloadType: 'single'
-                    artifactName: 'BlaiseSmokeTest'
+                    artifactName: 'BlaiseSmokeTests'
                     downloadPath: '$(System.ArtifactsDirectory)'
                 
                 - task: DownloadSecureFile@1
