@@ -1,5 +1,5 @@
 trigger:
-- main
+- pipeline
 
 stages:
   - stage: Dev
@@ -7,7 +7,7 @@ stages:
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: 'Nik'
+         environment: 'Nik1'
          strategy:
           runOnce:
              deploy:
