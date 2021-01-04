@@ -1,29 +1,27 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
   vmImage: 'windows-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(agent.builddirectory)'
-    Contents: '**'
-    TargetFolder: 'c:\blaiseScripts'
-
-- task: PowerShell@2
-  inputs:
-    filePath: 'c:\blaiseScripts\hello-world.ps1'
+stages:
+  - stage: Dev
+    displayName: Dev Environment
+    jobs:
+       - deployment: installBlaise
+         displayName: Install Blaise
+         environment: 'Nik'
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
+                
+                - task: CopyFiles@2
+                  inputs:
+                    SourceFolder: '$(Agent.BuildDirectory)'
+                    Contents: '**'
+                    TargetFolder: 'c:\nik'
+     
