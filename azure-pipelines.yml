@@ -20,6 +20,12 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
                 
+                - bash: |
+                    echo "##vso[task.setvariable variable=sauce]crushed tomatoes"
+
+                - bash: |
+                    echo my pipeline variable is $(sauce)
+
                 - task: PowerShell@2
                   inputs:
                     targetType: 'inline'
