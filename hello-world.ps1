@@ -20,10 +20,9 @@ function CreateVariables1($variableList)
 
          New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3')
 
-         Write-Host $varName '=' ($varValue -replace $pattern, '$3')
-         
-         $varValue = ($varValue -replace $pattern, '$3')
-         
+         $varValue = $varValue -replace $pattern, '$3'
+         Write-Host $varName '=' $varValue
+                 
          Write-Host "##vso[task.setvariable variable=$varName;]$varValue"
         }
   }
@@ -32,6 +31,6 @@ function CreateVariables1($variableList)
 Write-Host "Setting up script and system variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
-Write-Host "##vso[task.setvariable variable=fruit]Apple"
+Write-Host "##vso[task.setvariable variable=sauce;]crushed tomatoes"
 Write-Host "Fruit is $env:DRIVERDATA"
-Write-Host "Fruit is $env:FRUIT"
+Write-Host "Non-secrets automatically mapped in, sauce is $env:SAUCE"
