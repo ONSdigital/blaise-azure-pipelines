@@ -22,7 +22,9 @@ function CreateVariables1($variableList)
 
          Write-Host $varName '=' ($varValue -replace $pattern, '$3')
          
-         Write-Host "##vso[task.setvariable variable=$varName;]($varValue -replace $pattern, '$3')"
+         $varValue = ($varValue -replace $pattern, '$3')
+         
+         Write-Host "##vso[task.setvariable variable=$varName;]$varValue"
         }
   }
 }
@@ -30,3 +32,5 @@ function CreateVariables1($variableList)
 Write-Host "Setting up script and system variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
+Write-Host "##vso[task.setvariable variable=fruit]Apple"
+Write-Host "Fruit is $(env:FRUIT)"
