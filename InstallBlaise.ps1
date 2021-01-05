@@ -45,7 +45,7 @@ Write-Host "SERVERPARK: $BLAISE_SERVERPARK"
 Write-Host "GCP_BUCKET: $BLAISE_GCP_BUCKET"
 
 Write-Host "Download Blaise redistributables from '$BLAISE_GCP_BUCKET'"
-gsutil cp gs://$BLAISE_GCP_BUCKET/Blaise5_8_7_2522.zip "C:\dev\data"
+gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/Blaise5_8_7_2522.zip "C:\dev\data"
 
 # unzip blaise installer
 Write-Host "Expanding archive to 'Blaise' dir"
