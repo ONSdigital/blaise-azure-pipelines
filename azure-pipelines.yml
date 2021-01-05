@@ -16,30 +16,20 @@ stages:
              deploy:
                steps:
                 - checkout: self
-
-                - task: CopyFiles@2
-                  inputs:
-                    SourceFolder: '$(Agent.BuildDirectory)'
-                    Contents: '**'
-                    TargetFolder: 'c:\nik'
                     
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
-
-                - pwsh: |
-                    Write-Host "Hello: $env:FRUIT"
-                    Write-Host "Hello: $env:BLAISE_WINDOWS_PASSWORD"
+                    filePath: '$(Agent.BuildDirectory)/s/InstallBlaise.ps1'
 
                 - task: DownloadBuildArtifacts@0
                   inputs:
                     buildType: 'specific'
                     project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
-                    pipeline: '36'
+                    pipeline: '43'
                     buildVersionToDownload: 'latestFromBranch'
                     branchName: 'refs/heads/master'
                     downloadType: 'single'
-                    artifactName: 'drop'
+                    artifactName: '_AutomatedTests'
                     downloadPath: '$(System.ArtifactsDirectory)'
                 
                 - task: DownloadSecureFile@1
@@ -62,7 +52,3 @@ stages:
                   inputs:
                     packageFeedSelector: 'nugetOrg'
                     versionSelector: 'latestPreRelease'
-                    
-                
-
-     
