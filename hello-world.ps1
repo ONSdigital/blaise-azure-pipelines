@@ -33,4 +33,4 @@ Write-Host "Setting up script and system variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
 Write-Host "##vso[task.setvariable variable=fruit]Apple"
-Write-Host "Fruit is $(env:FRUIT)"
+Write-Host "Fruit is $(env:DRIVERDATA)"
