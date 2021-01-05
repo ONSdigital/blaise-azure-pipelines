@@ -1,5 +1,5 @@
 trigger:
-- main
+- pipeline
 
 stages:
   - stage: Dev
@@ -19,7 +19,7 @@ stages:
                     
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/InstallBlaise.ps1'
 
                 - task: DownloadBuildArtifacts@0
                   inputs:
@@ -27,7 +27,7 @@ stages:
                     project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
                     pipeline: '43'
                     buildVersionToDownload: 'latestFromBranch'
-                    branchName: 'refs/heads/master'
+                    branchName: 'refs/heads/pipeline'
                     downloadType: 'single'
                     artifactName: '_AutomatedTests'
                     downloadPath: '$(System.ArtifactsDirectory)'
