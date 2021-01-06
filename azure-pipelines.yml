@@ -68,6 +68,7 @@ stages:
 
                 - task: replacetokens@3
                   inputs:
+                    rootDirectory: '$(System.ArtifactsDirectory)' 
                     targetFiles: '**/*.config'
                     encoding: 'auto'
                     writeBOM: true
