@@ -58,10 +58,22 @@ stages:
 
                 - task: replacetokens@3
                   inputs:
-                    targetFiles: '**/*Behaviour*.config'
+                    targetFiles: '**/*.config'
                     encoding: 'auto'
                     writeBOM: true
                     actionOnMissing: 'warn'
                     keepToken: false
                     tokenPrefix: '#{'
                     tokenSuffix: '}#'
+
+                - task: replacetokens@3
+                  inputs:
+                    targetFiles: '**/*.config'
+                    encoding: 'auto'
+                    writeBOM: true
+                    actionOnMissing: 'warn'
+                    keepToken: false
+                    tokenPrefix: '#{'
+                    tokenSuffix: '}#'
+                    useLegacyPattern: false
+                    enableTelemetry: true
