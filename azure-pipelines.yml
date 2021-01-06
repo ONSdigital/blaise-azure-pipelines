@@ -44,16 +44,17 @@ stages:
                   inputs:
                     packageFeedSelector: 'nugetOrg'
                     versionSelector: 'latestPreRelease'
-
-                - task: DownloadPipelineArtifact@2
+                    
+                - task: DownloadBuildArtifacts@0
                   inputs:
                     buildType: 'specific'
                     project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
-                    definition: '43'
+                    pipeline: '43'
                     buildVersionToDownload: 'latestFromBranch'
                     branchName: 'refs/heads/master'
+                    downloadType: 'single'
                     artifactName: '_AutomatedTests'
-                    targetPath: '$(Pipeline.Workspace)'
+                    downloadPath: '$(System.ArtifactsDirectory)'
 
                 - task: replacetokens@3
                   inputs:
