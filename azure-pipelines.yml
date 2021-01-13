@@ -1,5 +1,5 @@
 trigger:
-- pipeline
+- pipeline1
 
 stages:
   - stage: Dev
@@ -67,16 +67,6 @@ stages:
                 downloadType: 'single'
                 artifactName: '_AutomatedTests'
                 downloadPath: '$(System.ArtifactsDirectory)'
-
-            - task: replacetokens@3
-              inputs:
-                targetFiles: '**/*.config'
-                encoding: 'auto'
-                writeBOM: true
-                actionOnMissing: 'warn'
-                keepToken: false
-                tokenPrefix: '#{'
-                tokenSuffix: '}#'
 
             - task: replacetokens@3
               inputs:
