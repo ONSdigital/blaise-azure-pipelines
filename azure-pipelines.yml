@@ -22,8 +22,8 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
               
        - job: "hello"
-          pool: 
-           vm-image: windows-latest
+         pool: 
+          vm-image: windows-latest
           steps: 
             - task: PowerShell@2
               inputs:
@@ -38,9 +38,6 @@ stages:
               inputs:
                 secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
 
-            - pwsh: |
-               Write-Host "Blaise Activation Key: $env:BLAISE_ACTIVATIONCODE"
-              
             - task: PowerShell@2
               displayName: Download instrument
               inputs:
