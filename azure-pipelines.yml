@@ -1,5 +1,5 @@
 trigger:
-- pipeline1
+- pipeline
 
 stages:
   - stage: Dev
@@ -71,7 +71,7 @@ stages:
             - task: replacetokens@3
               inputs:
                 rootDirectory: '$(System.ArtifactsDirectory)' 
-                targetFiles: '**/*.config'
+                targetFiles: '**/*Behaviour*.config'
                 encoding: 'auto'
                 writeBOM: true
                 actionOnMissing: 'warn'
