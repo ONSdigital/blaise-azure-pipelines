@@ -23,7 +23,7 @@ stages:
               
        - job: "hello"
          pool: 
-            vm-image: windows-latest
+          vm-image: 'windows-latest'
          steps: 
          - task: PowerShell@2
            inputs:
