@@ -25,22 +25,22 @@ stages:
          pool: 
           vm-image: windows-latest
           steps: 
-            - task: PowerShell@2
-              inputs:
+           - task: PowerShell@2
+             inputs:
                 targetType: 'inline'
                 script: |
                   # Write your PowerShell commands here.
                   
                   Write-Host "Hello World"
 
-            - task: DownloadSecureFile@1
-              name: gcpkey
-              inputs:
+           - task: DownloadSecureFile@1
+             name: gcpkey
+             inputs:
                 secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
 
-            - task: PowerShell@2
-              displayName: Download instrument
-              inputs:
+           - task: PowerShell@2
+             displayName: Download instrument
+             inputs:
                 targetType: 'inline'
                 script: |
                   Write-Host "Login to GCP"
@@ -49,13 +49,13 @@ stages:
                       Write-Host "Downloading instrument"
                       gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
 
-            - task: VisualStudioTestPlatformInstaller@1
-              inputs:
+           - task: VisualStudioTestPlatformInstaller@1
+             inputs:
                 packageFeedSelector: 'nugetOrg'
                 versionSelector: 'latestPreRelease'
                 
-            - task: DownloadBuildArtifacts@0
-              inputs:
+           - task: DownloadBuildArtifacts@0
+             inputs:
                 buildType: 'specific'
                 project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
                 pipeline: '43'
@@ -65,8 +65,8 @@ stages:
                 artifactName: '_AutomatedTests'
                 downloadPath: '$(System.ArtifactsDirectory)'
 
-            - task: replacetokens@3
-              inputs:
+           - task: replacetokens@3
+             inputs:
                 rootDirectory: '$(System.ArtifactsDirectory)' 
                 targetFiles: '**/*Behaviour*.config'
                 encoding: 'auto'
