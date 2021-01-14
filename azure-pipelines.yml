@@ -6,6 +6,7 @@ variables:
     value: Nik
   - name: SecondValue
     value: $(GroupName)
+  - group: $(GroupName)
 
 stages:
   - stage: Dev
@@ -28,7 +29,7 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
                 - powershell: 
                           Write-Host 'Value of GroupName is $(GroupName)'
-                          Write-Host 'Value of Second is $(SecondValue)'
+                          'Value of Second is $(SecondValue)'
        - job: "hello"
          pool: 
           vmImage: 'windows-latest'
