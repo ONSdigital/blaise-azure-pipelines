@@ -2,7 +2,9 @@ trigger:
 - pipeline
 
 variables:
-  variableGroupName: Nik
+  - name: GroupName
+    value: Nik
+  - group: ${{GroupName}}
 
 stages:
   - stage: Dev
@@ -25,8 +27,6 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
               
        - job: "hello"
-         variables:
-          - group: Nik
          pool: 
           vmImage: 'windows-latest'
          steps: 
