@@ -4,8 +4,7 @@ trigger:
 variables:
   - name: GroupName
     value: Nik
-  - ${{ if eq(variables['GroupName'], 'Nik') }}:
-  - group: Nik
+  - group: $($(GroupName))
 
 stages:
   - stage: Dev
