@@ -4,7 +4,8 @@ trigger:
 variables:
   - name: GroupName
     value: Nik
-  - group: $($(GroupName))
+  - name: SecondValue
+    value: $(GroupName)
 
 stages:
   - stage: Dev
@@ -25,7 +26,11 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
-              
+                - task: PowerShell@2
+                  inputs:
+                   script: |
+                          Write-Host 'Value of GroupName is $(GroupName)'
+                          Write-Host 'Value of Second is $(SecondValue)'
        - job: "hello"
          pool: 
           vmImage: 'windows-latest'
