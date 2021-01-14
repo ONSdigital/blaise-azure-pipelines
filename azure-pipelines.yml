@@ -26,7 +26,7 @@ stages:
               
        - job: "hello"
          variables:
-          - group: $(variableGroupName)
+          - group: Nik
          pool: 
           vmImage: 'windows-latest'
          steps: 
