@@ -2,10 +2,6 @@ trigger:
 - pipeline
 
 variables:
-  - name: GroupName
-    value: Nik
-  - name: SecondValue
-    value: $(GroupName)
   - group: $(GroupName)
 
 stages:
