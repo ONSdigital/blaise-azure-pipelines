@@ -63,7 +63,7 @@ stages:
               project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
               pipeline: '43'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'LU-7990'
+              branchName: 'refs/heads/LU-7990'
               downloadType: 'single'
               artifactName: '_AutomatedTests'
               downloadPath: '$(System.ArtifactsDirectory)'
