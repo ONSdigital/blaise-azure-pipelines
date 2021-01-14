@@ -2,7 +2,9 @@ trigger:
 - pipeline
 
 variables:
-- group: Nik
+- name: variableGroupName
+  value: Nik
+- group: $(variableGroupName)
 
 stages:
   - stage: Dev
