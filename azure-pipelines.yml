@@ -2,8 +2,14 @@ trigger:
 - pipeline
 
 variables:
-  - group: $(GroupName)
-
+  - group: Nik
+  - name: InstrumentPath
+    value: c:\survey
+  - name: ServerParkName
+    value: gusty
+  - name: InstrumentName
+    value: OPN2101A
+    
 stages:
   - stage: Dev
     displayName: Dev Environment
@@ -26,18 +32,10 @@ stages:
                 - powershell: 
                           Write-Host 'Value of GroupName is $(GroupName)'
                           'Value of Second is $(SecondValue)'
-       - job: "hello"
+       - job: "SmokeTests"
          pool: 
           vmImage: 'windows-latest'
          steps: 
-         - task: PowerShell@2
-           inputs:
-              targetType: 'inline'
-              script: |
-                # Write your PowerShell commands here.
-                
-                Write-Host "Hello World"
-
          - task: DownloadSecureFile@1
            name: gcpkey
            inputs:
@@ -82,3 +80,20 @@ stages:
               tokenSuffix: '}#'
               useLegacyPattern: false
               enableTelemetry: true
+
+         - task: VSTest@2
+           displayName: 'Run Blaise Smoke Tests'
+           inputs:
+             testAssemblyVer2: |
+              **\Blaise.Tests.Behaviour\**\Blaise.Tests.Behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             testFiltercriteria: 'TestCategory=smoke'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'Instrument Test'
+           continueOnError: true
