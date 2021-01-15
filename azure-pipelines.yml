@@ -9,7 +9,7 @@ variables:
     value: gusty
   - name: InstrumentName
     value: OPN2101A
-    
+
 stages:
   - stage: Dev
     displayName: Dev Environment
@@ -84,11 +84,11 @@ stages:
          - task: VSTest@2
            displayName: 'Run Blaise Smoke Tests'
            inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
              testAssemblyVer2: |
               **\Blaise.Tests.Behaviour\**\Blaise.Tests.Behaviour.dll
               !**\obj\**
               resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
-             testFiltercriteria: 'TestCategory=smoke'
              runOnlyImpactedTests: false
              uiTests: true
              vsTestVersion: toolsInstaller
