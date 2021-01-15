@@ -9,6 +9,8 @@ variables:
     value: gusty
   - name: InstrumentName
     value: OPN2101A
+  - name: BlaiseServerHostName
+    value: blaise-gusty-node
 
 stages:
   - stage: Dev
