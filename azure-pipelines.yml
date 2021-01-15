@@ -37,9 +37,20 @@ stages:
           vmImage: 'windows-latest'
          steps: 
          - task: DownloadSecureFile@1
+           displayName: 'Download GCP Key'
            name: gcpkey
            inputs:
               secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
+
+         - task: DownloadSecureFile@1
+           displayName: 'Download secure file'
+           name: BlaiseRegistrySettings
+           inputs:
+              secureFile: blaise.reg
+
+         - powershell: |
+            regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
+           displayName: 'Register Blaise License'
 
          - task: PowerShell@2
            displayName: Download instrument
