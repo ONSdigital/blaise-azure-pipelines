@@ -16,7 +16,7 @@ stages:
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: Nik.BLAISE-GUSTY-NODE
+         environment: Nik.BLAISE-GUSTY-NODE, Nik.restapi
          strategy:
           runOnce:
              deploy:
@@ -29,6 +29,7 @@ stages:
                 - powershell: 
                           Write-Host 'Value of GroupName is $(GroupName)'
                           'Value of Second is $(SecondValue)'
+
        - job: "SmokeTests"
          pool: 
           vmImage: 'windows-latest'
