@@ -9,8 +9,6 @@ variables:
     value: gusty
   - name: InstrumentName
     value: OPN2101A
-  - name: BlaiseServerHostName
-    value: dev-nik14-client-tel.social-surveys.gcp.onsdigital.uk
 
 stages:
   - stage: Dev
@@ -98,4 +96,4 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'Instrument Test'
-           continueOnError: true
+           continueOnError: false
