@@ -10,7 +10,7 @@ variables:
   - name: InstrumentName
     value: OPN2101A
   - name: BlaiseServerHostName
-    value: blaise-gusty-node
+    value: dev-nik14-client-tel.social-surveys.gcp.onsdigital.uk
 
 stages:
   - stage: Dev
