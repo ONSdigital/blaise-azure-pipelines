@@ -1,8 +1,13 @@
-trigger:
-- pipeline
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
 
 variables:
-  - group: Nik
+  - group: ${{ parameters.VarGroup }}
   - name: InstrumentPath
     value: c:\survey
   - name: ServerParkName
@@ -16,7 +21,7 @@ stages:
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: Nik.BLAISE-GUSTY-NODE, Nik.restapi
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          strategy:
           runOnce:
              deploy:
