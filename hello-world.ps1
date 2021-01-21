@@ -34,3 +34,4 @@ CreateVariables1($metadataVariables)
 Write-Host "##vso[task.setvariable variable=sauce;]crushed tomatoes"
 Write-Host "Fruit is $env:DRIVERDATA"
 Write-Host "Non-secrets automatically mapped in, sauce is $env:SAUCE"
+
