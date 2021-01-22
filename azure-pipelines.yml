@@ -36,5 +36,11 @@ stages:
 
                 - powershell: | 
                     write-host $env:BlaiseInstalled
+
+                - task: PowerShell@2
+                  condition: eq(variables.BlaiseInstalled, 'True')
+                  inputs:
+                    targetType: inline
+                    script: write-host "Damn I got here"
                   
        
