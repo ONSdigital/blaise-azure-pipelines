@@ -35,6 +35,6 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
 
                 - powershell: | 
-                    write-host $(BlaiseInstalled)
+                    write-host $env:BlaiseInstalled
                   
        
