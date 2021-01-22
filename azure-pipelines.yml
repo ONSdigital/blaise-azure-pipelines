@@ -16,8 +16,6 @@ variables:
     value: OPN2101A
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
-  - name: BlaiseInstalled
-    value: Meh
 
 stages:
   - stage: ${{parameters.Environment }}
@@ -34,24 +32,81 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    targetType: inline
-                    script: write-host $(BlaiseInstalled)
+                    filePath: '$(Agent.BuildDirectory)/s/InstallBlaise.ps1'
 
-                - task: PowerShell@2
-                  name: InstalledResult
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
+       - job: "SmokeTests"
+         pool: 
+          vmImage: 'windows-latest'
+         steps: 
+         - task: DownloadSecureFile@1
+           displayName: 'Download GCP Key'
+           name: gcpkey
+           inputs:
+              secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
 
+         - task: DownloadSecureFile@1
+           displayName: 'Download secure file'
+           name: BlaiseRegistrySettings
+           inputs:
+              secureFile: blaise.reg
 
-                - task: PowerShell@2
-                  inputs:
-                    targetType: inline
-                    script: write-host $(BlaiseInstalled)
-                
-                - task: PowerShell@2
-                  condition: eq(variables.BlaiseInstalled, 'False')
-                  inputs:
-                    targetType: inline
-                    script: write-host $(BlaiseInstalled)
-                  
-       
+         - powershell: |
+            regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
+           displayName: 'Register Blaise License'
+
+         - task: PowerShell@2
+           displayName: Download instrument
+           inputs:
+              targetType: 'inline'
+              script: |
+                Write-Host "Login to GCP"
+                    gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
+                    
+                    Write-Host "Downloading instrument"
+                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+
+         - task: VisualStudioTestPlatformInstaller@1
+           inputs:
+              packageFeedSelector: 'nugetOrg'
+              versionSelector: 'latestPreRelease'
+              
+         - task: DownloadBuildArtifacts@0
+           inputs:
+              buildType: 'specific'
+              project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+              pipeline: '43'
+              buildVersionToDownload: 'latestFromBranch'
+              branchName: 'refs/heads/master'
+              downloadType: 'single'
+              artifactName: '_AutomatedTests'
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+         - task: replacetokens@3
+           inputs:
+              rootDirectory: '$(System.ArtifactsDirectory)' 
+              targetFiles: '**/*Behaviour*.config'
+              encoding: 'auto'
+              writeBOM: true
+              actionOnMissing: 'warn'
+              keepToken: false
+              tokenPrefix: '#{'
+              tokenSuffix: '}#'
+              useLegacyPattern: false
+              enableTelemetry: true
+
+         - task: VSTest@2
+           displayName: 'Run Blaise Smoke Tests'
+           inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
+             testAssemblyVer2: |
+              **\Blaise.Tests.Behaviour\**\Blaise.Tests.Behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'Instrument Test'
+           continueOnError: false
