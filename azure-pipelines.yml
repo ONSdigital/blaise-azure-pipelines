@@ -23,8 +23,8 @@ stages:
   - stage: ${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Environment
     jobs:
-       - deployment: installBlaise
-         displayName: Install Blaise
+       - deployment: CheckIfBlaiseIsInstalled
+         displayName: Check If Blaise is installed
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          strategy:
           runOnce:
@@ -35,11 +35,19 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
-                    
-                - script: echo $(BlaiseInstalled)
+                  name: IsBlaiseInstalled
 
+       - deployment: installBlaise
+         displayName: Install Blaise
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         dependsOn: CheckIfBlaiseIsInstalled
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['IsBlaiseInstalled.BlaiseInstalled'], 'False')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
                 - task: PowerShell@2
-                  condition: eq($(BlaiseInstalled), "False")
                   inputs:
                     targetType: inline
                     script: Write-Host "Got here"
