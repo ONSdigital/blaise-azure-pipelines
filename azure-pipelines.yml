@@ -16,8 +16,8 @@ variables:
     value: OPN2101A
 
 stages:
-  - stage: Dev
-    displayName: Dev Environment
+  - stage: ${{parameters.Environment }}
+    displayName: ${{parameters.Environment }} Environment
     jobs:
        - deployment: installBlaise
          displayName: Install Blaise
@@ -30,10 +30,7 @@ stages:
                     
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/hello-world.ps1'
-                - powershell: 
-                          Write-Host 'Value of GroupName is $(GroupName)'
-                          'Value of Second is $(SecondValue)'
+                    filePath: '$(Agent.BuildDirectory)/s/InstallBlaise.ps1'
 
        - job: "SmokeTests"
          pool: 
