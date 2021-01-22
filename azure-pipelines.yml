@@ -36,9 +36,10 @@ stages:
 
                 - powershell: | 
                     write-host $env:BlaiseInstalled
+                  name: InstalledResult
 
                 - task: PowerShell@2
-                  condition: eq(variables.BlaiseInstalled, true)
+                  condition: eq(dependencies.Foo.outputs['InstalledResult.BlaiseInstalled'], 'False')
                   inputs:
                     targetType: inline
                     script: write-host "Damn I got here"
