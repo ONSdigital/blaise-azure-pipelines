@@ -34,7 +34,6 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
                     targetType: inline
-                    script: write-host $(BlaiseInstalled)
                     
                 - script: hello $(BlaiseInstalled)
 
