@@ -33,9 +33,8 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
-                    targetType: inline
                     
-                - script: hello $(BlaiseInstalled)
+                - script: $(BlaiseInstalled)
 
 
                 
