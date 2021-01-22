@@ -41,7 +41,7 @@ stages:
          displayName: Install Blaise
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfBlaiseIsInstalled
-         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['IsBlaiseInstalled.BlaiseInstalled'], 'False')
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['IsBlaiseInstalled.BlaiseInstalled'], 'True')
          strategy:
           runOnce:
              deploy:
