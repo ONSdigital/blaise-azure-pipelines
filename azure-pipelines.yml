@@ -18,8 +18,8 @@ variables:
     value: Blaise5_8_7_2522
 
 stages:
-  - stage: ${{parameters.Environment }}
-    displayName: ${{parameters.Environment }} Environment
+  - stage: ${{parameters.Environment }}-BlaiseInstall
+    displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
        - deployment: CheckIfBlaiseIsInstalled
          displayName: Check If Blaise is installed
@@ -131,3 +131,15 @@ stages:
              codeCoverageEnabled: false
              testRunTitle: 'Instrument Test'
            continueOnError: false
+
+  - stage: ${{parameters.Environment }}-RestApi
+    displayName: ${{parameters.Environment }} Installation Of RestAPI
+    jobs:
+       - deployment: InstallRestAPI
+         displayName: InstallRestAPI
+         environment: ${{parameters.Environment }}.RESTAPI
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                
