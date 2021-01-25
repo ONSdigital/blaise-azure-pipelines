@@ -36,6 +36,9 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
                   name: IsBlaiseInstalled
+                  
+                - powershell: |
+                    Write-Host "Variable is: $(IsBlaiseInstalled.BlaiseInstalled)"
 
        - deployment: installBlaise
          displayName: Install Blaise
