@@ -34,7 +34,7 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/CheckBlaiseIsInstalled.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckBlaiseIsInstalled.ps1'
                   name: IsBlaiseInstalled
 
        - deployment: installBlaise
@@ -49,9 +49,10 @@ stages:
                 - checkout: self
                 - task: PowerShell@2
                   inputs:
-                    targetType: inline
-                    script: Write-Host "Got here"
-                    
+                    - task: PowerShell@2
+                        inputs:
+                          filePath: '$(Agent.BuildDirectory)/s/scripts/InstallBlaise.ps1'
+
        - job: "SmokeTests"
          pool: 
           vmImage: 'windows-latest'
