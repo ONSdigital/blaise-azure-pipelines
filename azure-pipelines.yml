@@ -54,6 +54,7 @@ stages:
 
        - job: "SmokeTests"
          dependsOn: installBlaise
+         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
          pool: 
           vmImage: 'windows-latest'
          steps: 
