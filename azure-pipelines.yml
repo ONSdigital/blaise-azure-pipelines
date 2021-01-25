@@ -16,13 +16,15 @@ variables:
     value: OPN2101A
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
+  - name: BlaiseInstalled
+    value: False
 
 stages:
   - stage: ${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Environment
     jobs:
-       - deployment: installBlaise
-         displayName: Install Blaise
+       - deployment: CheckIfBlaiseIsInstalled
+         displayName: Check If Blaise is installed
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          strategy:
           runOnce:
@@ -32,9 +34,30 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/InstallBlaise.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckBlaiseIsInstalled.ps1'
+                  name: IsBlaiseInstalled
+
+       - deployment: installBlaise
+         displayName: Install Blaise
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         dependsOn: CheckIfBlaiseIsInstalled
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['IsBlaiseInstalled.BlaiseInstalled'], 'True')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallBlaise.ps1'
 
        - job: "SmokeTests"
+         dependsOn: installBlaise
+         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
+         variables:
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+          ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
          pool: 
           vmImage: 'windows-latest'
          steps: 
