@@ -53,6 +53,7 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/InstallBlaise.ps1'
 
        - job: "SmokeTests"
+         dependsOn: installBlaise
          pool: 
           vmImage: 'windows-latest'
          steps: 
