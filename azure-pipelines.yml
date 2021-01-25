@@ -16,8 +16,6 @@ variables:
     value: OPN2101A
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
-  - name: BlaiseInstalled
-    value: False
 
 stages:
   - stage: ${{parameters.Environment }}
@@ -41,7 +39,7 @@ stages:
          displayName: Install Blaise
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfBlaiseIsInstalled
-         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['IsBlaiseInstalled.BlaiseInstalled'], 'True')
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.IsBlaiseInstalled.BlaiseInstalled'], 'False')
          strategy:
           runOnce:
              deploy:
