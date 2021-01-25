@@ -76,6 +76,7 @@ stages:
          - powershell: |
             regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
            displayName: 'Register Blaise License'
+
          - task: PowerShell@2
            displayName: Download instrument
            inputs:
@@ -86,6 +87,7 @@ stages:
                     
                     Write-Host "Downloading instrument"
                     gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+
          - task: VisualStudioTestPlatformInstaller@1
            inputs:
               packageFeedSelector: 'nugetOrg'
@@ -131,6 +133,3 @@ stages:
              codeCoverageEnabled: false
              testRunTitle: 'Instrument Test'
            continueOnError: false
-
-
-                
