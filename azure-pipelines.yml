@@ -18,7 +18,7 @@ variables:
     value: Blaise5_8_7_2522
 
 stages:
-  - stage: ${{parameters.Environment }}-BlaiseInstall
+  - stage: ${{parameters.Environment }}_BlaiseInstall
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
        - deployment: CheckIfBlaiseIsInstalled
@@ -132,7 +132,7 @@ stages:
              testRunTitle: 'Instrument Test'
            continueOnError: false
 
-  - stage: ${{parameters.Environment }}-RestApi
+  - stage: ${{parameters.Environment }}_RestApi
     displayName: ${{parameters.Environment }} Installation Of RestAPI
     jobs:
        - deployment: InstallRestAPI
