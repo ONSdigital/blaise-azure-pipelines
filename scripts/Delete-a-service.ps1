@@ -24,7 +24,7 @@
                 taskkill /f /pid (get-wmiobject win32_service | where { $_.name -eq $ServiceName}).processID
             }		
 			
-            Write-Host "Service $(Build.DefinitionName) has been stopped"
+            Write-Host "Service $ServiceName has been stopped"
             sc.exe delete $ServiceName
 
             return 
