@@ -188,7 +188,7 @@ stages:
                 
                - task: CopyFiles@2
                  inputs:
-                  SourceFolder: '$(System.ArtifactsDirectory)/Blaise.Api/bin/Release'
+                  SourceFolder: '$(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release'
                   Contents: '**'
                   TargetFolder: 'c:\blaiseServices'
                   CleanTargetFolder: true
