@@ -114,6 +114,16 @@ stages:
               tokenSuffix: '}#'
               useLegacyPattern: false
               enableTelemetry: true
+          
+         - task: PowerShell@2
+           inputs:
+             filePath: 'delete-a-service.ps1'
+             arguments: '-ServiceName BlaiseRestApi'
+         
+         - task: PowerShell@2
+           inputs:
+             filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
+             arguments: '-ServiceName BlaiseRestApi -exeName blaise.api'
 
          - task: VSTest@2
            displayName: 'Run Blaise Smoke Tests'
