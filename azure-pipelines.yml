@@ -165,7 +165,7 @@ stages:
                   project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
                   pipeline: '45'
                   buildVersionToDownload: 'latestFromBranch'
-                  branchName: 'refs/heads/master'
+                  branchName: 'refs/heads/azure-pipelines-james'
                   downloadType: 'single'
                   artifactName: '_blaiseRestAPI'
                   downloadPath: 'c:\BlaiseServices\$(Build.DefinitionName)\'
