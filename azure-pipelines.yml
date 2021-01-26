@@ -196,7 +196,7 @@ stages:
                 
                - task: PowerShell@2
                  inputs:
-                  filePath: 'delete-a-service.ps1'
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
                   arguments: '-ServiceName BlaiseRestApi'
          
                - task: PowerShell@2
