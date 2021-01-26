@@ -163,6 +163,7 @@ stages:
                  displayName: 'Register Blaise License'
                 
                - task: DownloadBuildArtifacts@0
+                 displayName: Download REST API Artifact
                  inputs:
                   buildType: 'specific'
                   project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
@@ -174,6 +175,7 @@ stages:
                   downloadPath: '$(System.ArtifactsDirectory)'
                 
                - task: replacetokens@3
+                 displayName: Replace Config Settings
                  inputs:
                   rootDirectory: '$(System.ArtifactsDirectory)'
                   targetFiles: '**/*.config'
@@ -187,6 +189,7 @@ stages:
                   enableTelemetry: true
                 
                - task: CopyFiles@2
+                 displayName: Copy REST API Binaries
                  inputs:
                   SourceFolder: '$(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release'
                   Contents: '**'
@@ -195,21 +198,25 @@ stages:
                   OverWrite: true
                 
                - task: PowerShell@2
+                 displayName: Deleting Current Service
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
                   arguments: '-ServiceName BlaiseRestApi'
          
                - task: PowerShell@2
+                 displayName: Create REST API Service
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
                   arguments: '-ServiceName BlaiseRestApi -exeName blaise.api'
 
                - task: VisualStudioTestPlatformInstaller@1
+                 displayName: Install VS Test Platform
                  inputs:
                    packageFeedSelector: 'nugetOrg'
                    versionSelector: 'latestPreRelease'
                   
                - task: VSTest@2
+                 displayName: Run REST API Smoke Tests
                  inputs:
                    testSelector: 'testAssemblies'
                    testAssemblyVer2: |
