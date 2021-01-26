@@ -134,6 +134,9 @@ stages:
 
   - stage: ${{parameters.Environment }}_RestApi
     displayName: ${{parameters.Environment }} Installation Of RestAPI
+    variables:
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+          ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_INTERNAL_SERVER_HOST_NAME)
     jobs:
        - deployment: InstallRestAPI
          displayName: InstallRestAPI
@@ -186,7 +189,7 @@ stages:
                - task: CopyFiles@2
                  inputs:
                   SourceFolder: '$(System.ArtifactsDirectory)'
-                  Contents: '**\Blaise.api\bin\$(BuildConfiguration)\**'
+                  Contents: '**'
                   TargetFolder: 'c:\blaiseServices\Blaise.API'
                   CleanTargetFolder: true
                   OverWrite: true
