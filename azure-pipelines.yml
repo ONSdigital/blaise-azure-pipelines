@@ -190,3 +190,17 @@ stages:
                - task: PowerShell@2
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
+                
+               - task: VisualStudioTestPlatformInstaller@1
+                 inputs:
+                   packageFeedSelector: 'nugetOrg'
+                   versionSelector: 'latestPreRelease'
+                  
+               - task: VSTest@2
+                 inputs:
+                   testSelector: 'testAssemblies'
+                   testAssemblyVer2: |
+                     **\Blaise.Api.Tests.Behaviour\**\Blaise.Api.Tests.Behaviour.dll
+                     !**\obj\**
+                   searchFolder: 'c:\BlaiseServices\$(Build.DefinitionName)\'
+                   vsTestVersion: 'toolsInstaller'
