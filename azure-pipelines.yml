@@ -190,7 +190,7 @@ stages:
                  inputs:
                   SourceFolder: '$(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release'
                   Contents: '**'
-                  TargetFolder: 'c:\blaiseServices'
+                  TargetFolder: 'c:\blaiseServices\BlaiseRestApi'
                   CleanTargetFolder: true
                   OverWrite: true
 
