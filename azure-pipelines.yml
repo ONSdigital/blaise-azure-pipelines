@@ -168,11 +168,11 @@ stages:
                   branchName: 'refs/heads/azure-pipelines-james'
                   downloadType: 'single'
                   artifactName: '_blaiseRestAPI'
-                  downloadPath: 'c:\BlaiseServices\$(Build.DefinitionName)\'
+                  downloadPath: '$(System.ArtifactsDirectory)'
                 
                - task: replacetokens@3
                  inputs:
-                  rootDirectory: 'c:\BlaiseServices\$(Build.DefinitionName)\'
+                  rootDirectory: '$(System.ArtifactsDirectory)'
                   targetFiles: '**/*.config'
                   encoding: 'auto'
                   writeBOM: true
@@ -182,15 +182,15 @@ stages:
                   tokenSuffix: '}#'
                   useLegacyPattern: false
                   enableTelemetry: true
-               - task: PowerShell@2
-                 inputs:
-                  filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
                 
-              
-               - task: PowerShell@2
+               - task: CopyFiles@2
                  inputs:
-                  filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
-                
+                  SourceFolder: '$(System.ArtifactsDirectory)'
+                  Contents: '**\Blaise.api\bin\$(BuildConfiguration)\**'
+                  TargetFolder: 'c:\blaiseServices\Blaise.API'
+                  CleanTargetFolder: true
+                  OverWrite: true
+
                - task: VisualStudioTestPlatformInstaller@1
                  inputs:
                    packageFeedSelector: 'nugetOrg'
@@ -202,5 +202,6 @@ stages:
                    testAssemblyVer2: |
                      **\Blaise.Api.Tests.Behaviour\**\Blaise.Api.Tests.Behaviour.dll
                      !**\obj\**
-                   searchFolder: 'c:\BlaiseServices\$(Build.DefinitionName)\'
+                   searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
+                  
