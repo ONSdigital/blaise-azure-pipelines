@@ -142,6 +142,7 @@ stages:
           runOnce:
              deploy:
                steps:
+               - checkout: self 
                - task: DownloadSecureFile@1
                  displayName: 'Download GCP Key'
                  name: gcpkey
@@ -158,4 +159,13 @@ stages:
                   regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
                  displayName: 'Register Blaise License'
                 
-               - 
+               - task: DownloadBuildArtifacts@0
+                 inputs:
+                  buildType: 'specific'
+                  project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+                  pipeline: '45'
+                  buildVersionToDownload: 'latestFromBranch'
+                  branchName: 'refs/heads/master'
+                  downloadType: 'single'
+                  artifactName: '_blaiseRestAPI'
+                  downloadPath: 'c:\BlaiseServices\$(Build.DefinitionName)\'
