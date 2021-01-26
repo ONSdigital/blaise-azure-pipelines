@@ -1,5 +1,3 @@
-function FuncCheckService
-{
     # Service Name paramater
     param($ServiceName)
     
@@ -47,6 +45,4 @@ function FuncCheckService
 
          return 
     }
-}
 
-FuncCheckService $(Build.DefinitionName)
