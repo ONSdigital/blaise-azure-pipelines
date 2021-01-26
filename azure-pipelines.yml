@@ -187,7 +187,13 @@ stages:
                   tokenSuffix: '}#'
                   useLegacyPattern: false
                   enableTelemetry: true
-                
+              
+               - task: PowerShell@2
+                 displayName: Deleting Current Service
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
+                  arguments: '-ServiceName BlaiseRestApi'
+
                - task: CopyFiles@2
                  displayName: Copy REST API Binaries
                  inputs:
@@ -196,13 +202,7 @@ stages:
                   TargetFolder: 'c:\blaiseServices\BlaiseRestApi'
                   CleanTargetFolder: true
                   OverWrite: true
-                
-               - task: PowerShell@2
-                 displayName: Deleting Current Service
-                 inputs:
-                  filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
-                  arguments: '-ServiceName BlaiseRestApi'
-         
+
                - task: PowerShell@2
                  displayName: Create REST API Service
                  inputs:
