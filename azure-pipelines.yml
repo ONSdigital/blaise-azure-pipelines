@@ -136,7 +136,6 @@ stages:
     displayName: ${{parameters.Environment }} Installation Of RestAPI
     variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-          ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_INTERNAL_SERVER_HOST_NAME)
     jobs:
        - deployment: InstallRestAPI
          displayName: InstallRestAPI
