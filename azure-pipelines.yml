@@ -135,6 +135,7 @@ stages:
   - stage: ${{parameters.Environment }}_RestApi
     displayName: ${{parameters.Environment }} Installation Of RestAPI
     variables:
+          ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
     jobs:
        - deployment: InstallRestAPI
