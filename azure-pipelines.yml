@@ -39,7 +39,7 @@ stages:
        - deployment: installSQLProxy_Blaise_Gusty_Node
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
-         dependsOn: CheckIfSQLProxyIsInstalled
+         dependsOn: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
          condition: eq(dependencies.CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
           runOnce:
@@ -69,7 +69,7 @@ stages:
        - deployment: installSQLProxy_RESTAPI
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.RESTAPI
-         dependsOn: CheckIfSQLProxyIsInstalled
+         dependsOn: CheckIfSQLProxyIsInstalled_RESTAPI
          condition: eq(dependencies.CheckIfSQLProxyIsInstalled_RESTAPI.outputs['Deploy_RESTAPI.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
           runOnce:
