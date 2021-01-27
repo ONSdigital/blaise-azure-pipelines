@@ -17,7 +17,41 @@ variables:
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
 
+
 stages:
+  - stage: ${{parameters.Environment }}_CloudSQLProxy
+    displayName: ${{parameters.Environment }} Installation Of Cloud SQL Proxy
+    jobs:
+       - deployment: CheckIfSQLProxyIsInstalled
+         displayName: Check If SQL proxy is installed
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
+                  name: IsSQLProxyInstalled
+
+       - deployment: installSQLProxy
+         displayName: Install SQL proxy
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         dependsOn: CheckIfSQLProxyIsInstalled
+         condition: eq(dependencies.CheckIfSQLProxyIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+              
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
+                  name: InstallCloudSQLProxy
+
   - stage: ${{parameters.Environment }}_BlaiseInstall
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
