@@ -36,9 +36,9 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
                   name: IsSQLProxyInstalled
 
-       - deployment: installSQLProxy_Blaise-Gusty-Node
+       - deployment: installSQLProxy_Blaise_Gusty_Node
          displayName: Install SQL proxy
-         environment: ${{parameters.Environment }}.BLAISE_GUSTY_NODE
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfSQLProxyIsInstalled
          condition: eq(dependencies.CheckIfSQLProxyIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
