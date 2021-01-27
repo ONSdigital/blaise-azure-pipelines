@@ -22,7 +22,7 @@ stages:
   - stage: ${{parameters.Environment }}_CloudSQLProxy
     displayName: ${{parameters.Environment }} Installation Of Cloud SQL Proxy
     jobs:
-       - deployment: CheckIfSQLProxyIsInstalled_Blaise-Gusty-Node
+       - deployment: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
          displayName: Check If SQL proxy is installed
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          strategy:
@@ -38,7 +38,7 @@ stages:
 
        - deployment: installSQLProxy_Blaise-Gusty-Node
          displayName: Install SQL proxy
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         environment: ${{parameters.Environment }}.BLAISE_GUSTY_NODE
          dependsOn: CheckIfSQLProxyIsInstalled
          condition: eq(dependencies.CheckIfSQLProxyIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
