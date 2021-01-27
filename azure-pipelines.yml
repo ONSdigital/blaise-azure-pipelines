@@ -22,7 +22,7 @@ stages:
   - stage: ${{parameters.Environment }}_CloudSQLProxy
     displayName: ${{parameters.Environment }} Installation Of Cloud SQL Proxy
     jobs:
-       - deployment: CheckIfSQLProxyIsInstalled
+       - deployment: CheckIfSQLProxyIsInstalled_Blaise-Gusty-Node
          displayName: Check If SQL proxy is installed
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          strategy:
@@ -36,7 +36,7 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
                   name: IsSQLProxyInstalled
 
-       - deployment: installSQLProxy
+       - deployment: installSQLProxy_Blaise-Gusty-Node
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfSQLProxyIsInstalled
@@ -52,7 +52,7 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
                   name: InstallCloudSQLProxy
 
-       - deployment: CheckIfSQLProxyIsInstalled
+       - deployment: CheckIfSQLProxyIsInstalled_RESTAPI
          displayName: Check If SQL proxy is installed
          environment: ${{parameters.Environment }}.RESTAPI
          strategy:
@@ -66,7 +66,7 @@ stages:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
                   name: IsSQLProxyInstalled
 
-       - deployment: installSQLProxy
+       - deployment: installSQLProxy_RESTAPI
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.RESTAPI
          dependsOn: CheckIfSQLProxyIsInstalled
