@@ -257,7 +257,7 @@ stages:
                   encoding: 'auto'
                   writeBOM: true
                   actionOnMissing: 'warn'
-                  keepToken: false
+                  keepToken: true
                   tokenPrefix: '#{'
                   tokenSuffix: '}#'
                   useLegacyPattern: false
