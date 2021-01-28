@@ -70,7 +70,6 @@ stages:
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.RESTAPI
          dependsOn: CheckIfSQLProxyIsInstalled_RESTAPI
-         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_RESTAPI.outputs['Deploy_RESTAPI.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
           runOnce:
              deploy:
