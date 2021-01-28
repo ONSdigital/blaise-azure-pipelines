@@ -40,7 +40,6 @@ stages:
          displayName: Install SQL proxy
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
-         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
          strategy:
           runOnce:
              deploy:
