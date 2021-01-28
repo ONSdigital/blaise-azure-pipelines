@@ -300,3 +300,19 @@ stages:
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
                   
+  - stage: ${{parameters.Environment }_Configuring_Blaise
+    displayName: Configuring Blaise
+    variables:
+          ENV_RESTAPI_URL: http://localhost:90
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+
+    jobs: 
+        - deployment: SetupRoles
+          displayName: Setup Roles
+          environment: ${{parameters.Environment }}.RESTAPI
+          strategy:
+           runOnce: 
+             deploy:
+               steps:
+               - checkout: self 
+              
