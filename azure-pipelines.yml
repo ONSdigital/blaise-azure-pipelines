@@ -314,5 +314,10 @@ stages:
            runOnce: 
              deploy:
                steps:
-               - checkout: self 
+               - checkout: self
+              
+               - task: PowerShell@2
+                 displayName: Create User Roles
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CreateUserRoles.ps1'
               
