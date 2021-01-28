@@ -17,9 +17,73 @@ variables:
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
 
+
 stages:
-  - stage: ${{parameters.Environment }}
-    displayName: ${{parameters.Environment }} Environment
+  - stage: ${{parameters.Environment }}_CloudSQLProxy
+    displayName: ${{parameters.Environment }} Installation Of Cloud SQL Proxy
+    jobs:
+       - deployment: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
+         displayName: Check If SQL proxy is installed
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
+                  name: IsSQLProxyInstalled
+
+       - deployment: installSQLProxy_Blaise_Gusty_Node
+         displayName: Install SQL proxy
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         dependsOn: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
+         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+              
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
+                  name: InstallCloudSQLProxy
+
+       - deployment: CheckIfSQLProxyIsInstalled_RESTAPI
+         displayName: Check If SQL proxy is installed
+         environment: ${{parameters.Environment }}.RESTAPI
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
+                  name: IsSQLProxyInstalled
+
+       - deployment: installSQLProxy_RESTAPI
+         displayName: Install SQL proxy
+         environment: ${{parameters.Environment }}.RESTAPI
+         dependsOn: CheckIfSQLProxyIsInstalled_RESTAPI
+         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_RESTAPI.outputs['Deploy_RESTAPI.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+              
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
+                  name: InstallCloudSQLProxy
+
+  - stage: ${{parameters.Environment }}_BlaiseInstall
+    displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
        - deployment: CheckIfBlaiseIsInstalled
          displayName: Check If Blaise is installed
@@ -52,7 +116,7 @@ stages:
 
        - job: "SmokeTests"
          dependsOn: installBlaise
-         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
+         condition: in(dependencies.installBlaise.result, 'Succeeded')
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
@@ -141,3 +205,108 @@ stages:
              codeCoverageEnabled: false
              testRunTitle: 'Instrument Test'
            continueOnError: false
+
+  - stage: ${{parameters.Environment }}_RestApi
+    displayName: ${{parameters.Environment }} Installation Of RestAPI
+    variables:
+          ENV_RESTAPI_URL: http://localhost:90
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+    jobs:
+       - deployment: InstallRestAPI
+         displayName: InstallRestAPI
+         environment: ${{parameters.Environment }}.RESTAPI
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+               - checkout: self 
+               - task: DownloadSecureFile@1
+                 displayName: 'Download GCP Key'
+                 name: gcpkey
+                 inputs:
+                  secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
+              
+               - task: PowerShell@2
+                 displayName: Download instrument
+                 inputs:
+                  targetType: 'inline'
+                  script: |
+                    Write-Host "Login to GCP"
+                        gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
+                        
+                        Write-Host "Downloading instrument"
+                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+
+               - task: DownloadSecureFile@1
+                 displayName: 'Download secure file'
+                 name: BlaiseRegistrySettings
+                 inputs:
+                   secureFile: blaise.reg
+
+               - powershell: |
+                  regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
+                 displayName: 'Register Blaise License'
+                
+               - task: DownloadBuildArtifacts@0
+                 displayName: Download REST API Artifact
+                 inputs:
+                  buildType: 'specific'
+                  project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+                  pipeline: '45'
+                  buildVersionToDownload: 'latestFromBranch'
+                  branchName: 'refs/heads/azure-pipelines-james'
+                  downloadType: 'single'
+                  artifactName: '_blaiseRestAPI'
+                  downloadPath: '$(System.ArtifactsDirectory)'
+                
+               - task: replacetokens@3
+                 displayName: Replace Config Settings
+                 inputs:
+                  rootDirectory: '$(System.ArtifactsDirectory)'
+                  targetFiles: '**/*.config'
+                  encoding: 'auto'
+                  writeBOM: true
+                  actionOnMissing: 'warn'
+                  keepToken: false
+                  tokenPrefix: '#{'
+                  tokenSuffix: '}#'
+                  useLegacyPattern: false
+                  enableTelemetry: true
+              
+               - task: PowerShell@2
+                 displayName: Deleting Current Service
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
+                  arguments: '-ServiceName BlaiseRestApi'
+
+               - task: CopyFiles@2
+                 displayName: Copy REST API Binaries
+                 inputs:
+                  SourceFolder: '$(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release'
+                  Contents: '**'
+                  TargetFolder: 'c:\blaiseServices\BlaiseRestApi'
+                  CleanTargetFolder: true
+                  OverWrite: true
+
+               - task: PowerShell@2
+                 displayName: Create REST API Service
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
+                  arguments: '-ServiceName BlaiseRestApi -exeName blaise.api'
+
+               - task: VisualStudioTestPlatformInstaller@1
+                 displayName: Install VS Test Platform
+                 inputs:
+                   packageFeedSelector: 'nugetOrg'
+                   versionSelector: 'latestPreRelease'
+                  
+               - task: VSTest@2
+                 displayName: Run REST API Smoke Tests
+                 inputs:
+                   testSelector: 'testAssemblies'
+                   testAssemblyVer2: |
+                     **\Blaise.Api.Tests.Behaviour\**\Blaise.Api.Tests.Behaviour.dll
+                     !**\obj\**
+                   searchFolder: '$(System.ArtifactsDirectory)'
+                   vsTestVersion: 'toolsInstaller'
+                  
