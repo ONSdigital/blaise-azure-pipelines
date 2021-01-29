@@ -19,8 +19,8 @@ variables:
 
 
 stages:
-  - stage: ${{parameters.Environment }}_CloudSQLProxy
-    displayName: ${{parameters.Environment }} Installation Of Cloud SQL Proxy
+  - stage: CloudSQLProxy_${{parameters.Environment }}
+    displayName: Installation Of Cloud SQL Proxy_${{parameters.Environment }}
     jobs:
        - deployment: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
          displayName: Check If SQL proxy is installed
@@ -33,7 +33,7 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/CheckCloudSQLProxyIsInstalled.ps1'
                   name: IsSQLProxyInstalled
 
        - deployment: installSQLProxy_Blaise_Gusty_Node
@@ -49,7 +49,7 @@ stages:
               
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/InstallCloudSQLProxy.ps1'
                   name: InstallCloudSQLProxy
 
        - deployment: CheckIfSQLProxyIsInstalled_RESTAPI
@@ -63,7 +63,7 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckCloudSQLProxyIsInstalled.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/CheckCloudSQLProxyIsInstalled.ps1'
                   name: IsSQLProxyInstalled
 
        - deployment: installSQLProxy_RESTAPI
@@ -79,10 +79,10 @@ stages:
               
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallCloudSQLProxy.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/InstallCloudSQLProxy.ps1'
                   name: InstallCloudSQLProxy
 
-  - stage: ${{parameters.Environment }}_BlaiseInstall
+  - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
        - deployment: CheckIfBlaiseIsInstalled
@@ -96,7 +96,7 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/CheckBlaiseIsInstalled.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
                   name: IsBlaiseInstalled
 
        - deployment: installBlaise
@@ -112,7 +112,7 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/InstallBlaise.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/InstallBlaise.ps1'
 
        - job: "SmokeTests"
          dependsOn: installBlaise
@@ -130,7 +130,7 @@ stages:
               secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
 
          - task: DownloadSecureFile@1
-           displayName: 'Download secure file'
+           displayName: 'Download blaise registry file'
            name: BlaiseRegistrySettings
            inputs:
               secureFile: blaise.reg
@@ -140,7 +140,7 @@ stages:
            displayName: 'Register Blaise License'
 
          - task: PowerShell@2
-           displayName: Download instrument
+           displayName: Download test instrument
            inputs:
               targetType: 'inline'
               script: |
@@ -151,11 +151,13 @@ stages:
                     gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
 
          - task: VisualStudioTestPlatformInstaller@1
+           displayName: Install Visual Studio Test Platform
            inputs:
               packageFeedSelector: 'nugetOrg'
               versionSelector: 'latestPreRelease'
               
          - task: DownloadBuildArtifacts@0
+           displayName: Download latest Automated tests binaries
            inputs:
               buildType: 'specific'
               project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
@@ -167,6 +169,7 @@ stages:
               downloadPath: '$(System.ArtifactsDirectory)'
 
          - task: replacetokens@3
+           displayName: Replace config settings
            inputs:
               rootDirectory: '$(System.ArtifactsDirectory)' 
               targetFiles: '**/*Behaviour*.config'
@@ -196,14 +199,14 @@ stages:
              testRunTitle: 'Instrument Test'
            continueOnError: false
 
-  - stage: ${{parameters.Environment }}_RestApi
-    displayName: ${{parameters.Environment }} Installation Of RestAPI
+  - stage: RestApi_${{parameters.Environment }}
+    displayName: Installation Of RestAPI ${{parameters.Environment }}
     variables:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
     jobs:
        - deployment: InstallRestAPI
-         displayName: InstallRestAPI
+         displayName: Install Rest API
          environment: ${{parameters.Environment }}.RESTAPI
          strategy:
           runOnce:
@@ -217,7 +220,7 @@ stages:
                   secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
               
                - task: PowerShell@2
-                 displayName: Download instrument
+                 displayName: Download Test instrument
                  inputs:
                   targetType: 'inline'
                   script: |
@@ -228,7 +231,7 @@ stages:
                         gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
 
                - task: DownloadSecureFile@1
-                 displayName: 'Download secure file'
+                 displayName: 'Download Blaise Registry settings file'
                  name: BlaiseRegistrySettings
                  inputs:
                    secureFile: blaise.reg
@@ -244,7 +247,7 @@ stages:
                   project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
                   pipeline: '45'
                   buildVersionToDownload: 'latestFromBranch'
-                  branchName: 'refs/heads/azure-pipelines-james'
+                  branchName: 'refs/heads/no-error-filter'
                   downloadType: 'single'
                   artifactName: '_blaiseRestAPI'
                   downloadPath: '$(System.ArtifactsDirectory)'
@@ -264,7 +267,7 @@ stages:
                   enableTelemetry: true
               
                - task: PowerShell@2
-                 displayName: Deleting Current Service
+                 displayName: Deleting Current REST API Service
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
                   arguments: '-ServiceName BlaiseRestApi'
@@ -300,3 +303,30 @@ stages:
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
                   
+  - stage: Configure_Blaise_${{parameters.Environment}}_
+    displayName: Configure Blaise ${{parameters.Environment}}_
+    variables:
+          ENV_RESTAPI_URL: http://localhost:90
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+
+    jobs: 
+        - deployment: SetupRoles
+          displayName: Setup User Roles
+          environment: ${{parameters.Environment }}.RESTAPI
+          strategy:
+           runOnce: 
+             deploy:
+               steps:
+               - checkout: self
+              
+               - task: PowerShell@2
+                 displayName: Create User Roles
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CreateUserRoles.ps1'
+              
+               - task: PowerShell@2
+                 displayName: Check User Roles have been created
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesAreCreated.ps1'
+                
+              
