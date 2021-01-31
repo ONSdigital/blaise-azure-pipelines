@@ -331,11 +331,11 @@ stages:
                 
   - stage: RunUISmokeTests
     displayName: Run UI Smoke Tests
-    jobs:
-       - job: "UISmokeTests"
-         variables:
+    variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+    jobs:
+       - job: "UISmokeTests"
          pool: 
           vmImage: 'windows-latest'
          
