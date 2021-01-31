@@ -389,7 +389,7 @@ stages:
            displayName: Replace config settings
            inputs:
               rootDirectory: '$(System.ArtifactsDirectory)' 
-              targetFiles: '**/*Behaviour*.config'
+              targetFiles: '**/*.config'
               encoding: 'auto'
               writeBOM: true
               actionOnMissing: 'warn'
