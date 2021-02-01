@@ -310,20 +310,48 @@ stages:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
 
     jobs: 
-        - deployment: SetupRoles
-          displayName: Setup User Roles
+        - deployment: CheckUserRolesAlreadyExist
+          displayName: Check User Roles already exist
           environment: ${{parameters.Environment }}.RESTAPI
           strategy:
            runOnce: 
              deploy:
                steps:
                - checkout: self
-              
+
+               - task: PowerShell@2
+                 name: DoUserRolesExist
+                 displayName: Check User Roles already exist
+                 inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesAlreadyExist.ps1'
+                
+        - deployment: CreateUserRoles
+          displayName: Create User Roles
+          environment: ${{parameters.Environment }}.RESTAPI
+          dependsOn: CheckUserRolesAlreadyExist
+          condition: eq(dependencies.CheckUserRolesAlreadyExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')          
+          strategy:
+           runOnce: 
+             deploy:
+               steps:
+               - checkout: self
+
                - task: PowerShell@2
                  displayName: Create User Roles
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CreateUserRoles.ps1'
               
+        - deployment: CheckUserRolesAreCreated
+          displayName: Check User Roles Are Created
+          environment: ${{parameters.Environment }}.RESTAPI
+          dependsOn: CreateUserRoles
+          condition: eq(dependencies.CreateUserRoles.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
+          strategy:
+           runOnce: 
+             deploy:
+               steps:
+               - checkout: self
+
                - task: PowerShell@2
                  displayName: Check User Roles have been created
                  inputs:
@@ -404,7 +432,7 @@ stages:
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
              testAssemblyVer2: |
-              **\Blaise.cati.tests.Behaviour\**\Blaise.cati.tests.Behaviour.dll
+              **\Blaise.cati.tests.behaviour\**\Blaise.cati.tests.behaviour.dll
               !**\obj\**
               resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
              runOnlyImpactedTests: false
