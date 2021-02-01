@@ -431,7 +431,7 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'TOBI Test'
-             testFiltercriteria: 'smoke'
+             testFiltercriteria: TestCategory=smoke
            continueOnError: false
 
          - task: VSTest@2
