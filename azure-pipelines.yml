@@ -441,7 +441,7 @@ stages:
              runInParallel: false
              runTestsInIsolation: false
              codeCoverageEnabled: false
-             testRunTitle: 'CATI Test'
+             testRunTitle: 'CATI Test
            continueOnError: false
 
          - task: VSTest@2
@@ -459,6 +459,7 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'TOBI Test'
+             testFiltercriteria: TestCategory=smoke
            continueOnError: false
 
          - task: VSTest@2
@@ -466,7 +467,7 @@ stages:
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
              testAssemblyVer2: |
-              **\BlaiseDQS.tests.behaviour\**\Blaise.DQS.tests.behaviour.dll
+              **\Blaise.DQS.tests.behaviour\**\Blaise.DQS.tests.behaviour.dll
               !**\obj\**
               resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
              runOnlyImpactedTests: false
