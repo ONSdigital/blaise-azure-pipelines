@@ -150,6 +150,9 @@ stages:
                     Write-Host "Downloading instrument"
                     gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
 
+                    Write-Host "GCP Login with compute service account"
+                    gcloud auth login $env:ENV_VM_SERVICEACCOUNT
+
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
            inputs:
@@ -204,6 +207,8 @@ stages:
     variables:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+          TEMP_PATH : c:\blaise\temp
+          PACKAGE_EXTENSION : zip
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
@@ -229,6 +234,9 @@ stages:
                         
                         Write-Host "Downloading instrument"
                         gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+
+                        Write-Host "GCP Login with compute service account"
+                        gcloud auth login $env:ENV_VM_SERVICEACCOUNT
 
                - task: DownloadSecureFile@1
                  displayName: 'Download Blaise Registry settings file'
