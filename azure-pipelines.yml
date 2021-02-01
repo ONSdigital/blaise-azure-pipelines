@@ -439,7 +439,7 @@ stages:
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
              testAssemblyVer2: |
-              **\BlaiseDQS.tests.Behaviour\**\Blaise.DQS.tests.Behaviour.dll
+              **\Blaise.DQS.tests.Behaviour\**\Blaise.DQS.tests.Behaviour.dll
               !**\obj\**
               resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
              runOnlyImpactedTests: false
