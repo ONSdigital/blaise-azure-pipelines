@@ -441,7 +441,7 @@ stages:
              runInParallel: false
              runTestsInIsolation: false
              codeCoverageEnabled: false
-             testRunTitle: 'CATI Test
+             testRunTitle: 'CATI Test'
            continueOnError: false
 
          - task: VSTest@2
