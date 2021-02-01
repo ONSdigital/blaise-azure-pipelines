@@ -329,7 +329,7 @@ stages:
           displayName: Create User Roles
           environment: ${{parameters.Environment }}.RESTAPI
           dependsOn: CheckUserRolesAlreadyExist
-          condition: eq(dependencies.CheckUserRolesAlreadyExist.outputs['Deploy_BLAISE-GUSTY-NODE.DoUserRolesExist.UserRolesExist'], 'False')          
+          condition: eq(dependencies.CheckUserRolesAlreadyExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')          
           strategy:
            runOnce: 
              deploy:
@@ -345,7 +345,7 @@ stages:
           displayName: Check User Roles Are Created
           environment: ${{parameters.Environment }}.RESTAPI
           dependsOn: CreateUserRoles
-          condition: eq(dependencies.CreateUserRoles.outputs['Deploy_BLAISE-GUSTY-NODE.DoUserRolesExist.UserRolesExist'], 'False')
+          condition: eq(dependencies.CreateUserRoles.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
           strategy:
            runOnce: 
              deploy:
