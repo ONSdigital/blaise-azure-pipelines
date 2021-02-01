@@ -150,9 +150,6 @@ stages:
                     Write-Host "Downloading instrument"
                     gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
 
-                    Write-Host "GCP Login with compute service account"
-                    gcloud auth login $env:ENV_VM_SERVICEACCOUNT
-
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
            inputs:
