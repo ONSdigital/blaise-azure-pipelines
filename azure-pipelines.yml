@@ -148,7 +148,7 @@ stages:
                     gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
@@ -163,7 +163,7 @@ stages:
               project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
               pipeline: '43'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/master'
+              branchName: 'refs/heads/DQS-Updates'
               downloadType: 'single'
               artifactName: '_AutomatedTests'
               downloadPath: '$(System.ArtifactsDirectory)'
@@ -205,7 +205,7 @@ stages:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
           TEMP_PATH : c:\blaise\temp
-          PACKAGE_EXTENSION : zip
+          PACKAGE_EXTENSION : bpkg
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
@@ -230,7 +230,7 @@ stages:
                         gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                         
                         Write-Host "Downloading instrument"
-                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
                         Write-Host "GCP Login with compute service account"
                         gcloud auth login $env:ENV_VM_SERVICEACCOUNT
@@ -398,7 +398,7 @@ stages:
                     gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
@@ -413,7 +413,7 @@ stages:
               project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
               pipeline: '43'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/master'
+              branchName: 'refs/heads/DQS-Updates'
               downloadType: 'single'
               artifactName: '_AutomatedTests'
               downloadPath: '$(System.ArtifactsDirectory)'
