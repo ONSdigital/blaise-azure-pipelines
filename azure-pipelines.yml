@@ -19,69 +19,6 @@ variables:
 
 
 stages:
-  - stage: CloudSQLProxy_${{parameters.Environment }}
-    displayName: Installation Of Cloud SQL Proxy_${{parameters.Environment }}
-    jobs:
-       - deployment: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
-         displayName: Check If SQL proxy is installed
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
-         strategy:
-          runOnce:
-             deploy:
-               steps:
-                - checkout: self
-
-                - task: PowerShell@2
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/CheckCloudSQLProxyIsInstalled.ps1'
-                  name: IsSQLProxyInstalled
-
-       - deployment: installSQLProxy_Blaise_Gusty_Node
-         displayName: Install SQL proxy
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
-         dependsOn: CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node
-         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_Blaise_Gusty_Node.outputs['Deploy_BLAISE-GUSTY-NODE.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
-         strategy:
-          runOnce:
-             deploy:
-               steps:
-                - checkout: self
-              
-                - task: PowerShell@2
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/InstallCloudSQLProxy.ps1'
-                  name: InstallCloudSQLProxy
-
-       - deployment: CheckIfSQLProxyIsInstalled_RESTAPI
-         displayName: Check If SQL proxy is installed
-         environment: ${{parameters.Environment }}.RESTAPI
-         strategy:
-          runOnce:
-             deploy:
-               steps:
-                - checkout: self
-
-                - task: PowerShell@2
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/CheckCloudSQLProxyIsInstalled.ps1'
-                  name: IsSQLProxyInstalled
-
-       - deployment: installSQLProxy_RESTAPI
-         displayName: Install SQL proxy
-         environment: ${{parameters.Environment }}.RESTAPI
-         dependsOn: CheckIfSQLProxyIsInstalled_RESTAPI
-         condition: eq(dependencies.CheckIfSQLProxyIsInstalled_RESTAPI.outputs['Deploy_RESTAPI.IsSQLProxyInstalled.SQLProxyInstalled'], 'False')
-         strategy:
-          runOnce:
-             deploy:
-               steps:
-                - checkout: self
-              
-                - task: PowerShell@2
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/SqlProxy/InstallCloudSQLProxy.ps1'
-                  name: InstallCloudSQLProxy
-
   - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
@@ -148,7 +85,7 @@ stages:
                     gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
@@ -205,7 +142,7 @@ stages:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
           TEMP_PATH : c:\blaise\temp
-          PACKAGE_EXTENSION : zip
+          PACKAGE_EXTENSION : bpkg
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
@@ -230,7 +167,7 @@ stages:
                         gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                         
                         Write-Host "Downloading instrument"
-                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
                         Write-Host "GCP Login with compute service account"
                         gcloud auth login $env:ENV_VM_SERVICEACCOUNT
@@ -398,7 +335,7 @@ stages:
                     gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.zip c:\survey\OPN2101A.zip
+                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
