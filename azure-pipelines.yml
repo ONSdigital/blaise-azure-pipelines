@@ -402,6 +402,7 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'DQS Test'
+             testFiltercriteria: TestCategory=smoke
            continueOnError: false
           
          - task: VSTest@2
