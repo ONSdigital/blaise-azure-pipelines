@@ -368,24 +368,7 @@ stages:
               tokenSuffix: '}#'
               useLegacyPattern: false
               enableTelemetry: true  
-
-         - task: VSTest@2
-           displayName: 'Run CATI Smoke Tests'
-           inputs:
-             searchFolder: '$(System.ArtifactsDirectory)'
-             testAssemblyVer2: |
-              **\Blaise.cati.tests.behaviour\**\Blaise.cati.tests.behaviour.dll
-              !**\obj\**
-              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
-             runOnlyImpactedTests: false
-             uiTests: true
-             vsTestVersion: toolsInstaller
-             runInParallel: false
-             runTestsInIsolation: false
-             codeCoverageEnabled: false
-             testRunTitle: 'CATI Test'
-           continueOnError: false
-
+         
          - task: VSTest@2
            displayName: 'Run TOBI Smoke Tests'
            inputs:
@@ -420,3 +403,21 @@ stages:
              codeCoverageEnabled: false
              testRunTitle: 'DQS Test'
            continueOnError: false
+          
+         - task: VSTest@2
+           displayName: 'Run CATI Smoke Tests'
+           inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
+             testAssemblyVer2: |
+              **\Blaise.cati.tests.behaviour\**\Blaise.cati.tests.behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'CATI Test'
+           continueOnError: false
+
