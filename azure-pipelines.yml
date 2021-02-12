@@ -244,6 +244,7 @@ stages:
                      !**\obj\**
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
+                   testFiltercriteria: TestCategory=smoke
                   
   - stage: Configure_Blaise_${{parameters.Environment}}_
     displayName: Configure Blaise ${{parameters.Environment}}_
