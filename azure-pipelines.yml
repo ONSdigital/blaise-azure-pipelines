@@ -16,7 +16,9 @@ variables:
     value: OPN2101A
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
-
+  - name: SmokeTest
+    ${{ if or (ne(parameters.Environment, 'prod')) (ne(parameters.Environment, 'preprod')) }}:
+      value: smoke
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
@@ -244,6 +246,7 @@ stages:
                      !**\obj\**
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
+                   testFiltercriteria: TestCategory=
                   
   - stage: Configure_Blaise_${{parameters.Environment}}_
     displayName: Configure Blaise ${{parameters.Environment}}_
@@ -384,7 +387,7 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'TOBI Test'
-             testFiltercriteria: TestCategory=smoke
+             testFiltercriteria: TestCategory='$(SmokeTest)'
            continueOnError: false
 
          - task: VSTest@2
