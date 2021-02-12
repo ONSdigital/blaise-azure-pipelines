@@ -245,6 +245,17 @@ stages:
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
                    testFiltercriteria: TestCategory=smoke
+                
+               - task: VSTest@2
+                 condition: in('${{ parameters.Environment }}', 'prod', 'preprod')
+                 displayName: Run REST API Full Integration Tests
+                 inputs:
+                   testSelector: 'testAssemblies'
+                   testAssemblyVer2: |
+                     **\Blaise.Api.Tests.Behaviour\**\Blaise.Api.Tests.Behaviour.dll
+                     !**\obj\**
+                   searchFolder: '$(System.ArtifactsDirectory)'
+                   vsTestVersion: 'toolsInstaller'
                   
   - stage: Configure_Blaise_${{parameters.Environment}}_
     displayName: Configure Blaise ${{parameters.Environment}}_
