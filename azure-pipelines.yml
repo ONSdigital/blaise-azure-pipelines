@@ -235,7 +235,7 @@ stages:
                    versionSelector: 'latestPreRelease'
                   
                - task: VSTest@2
-                 condition: not in('${{ parameters.Environment }}', 'prod', 'preprod')
+                 condition: notin('${{ parameters.Environment }}', 'prod', 'preprod')
                  displayName: Run REST API Smoke Tests
                  inputs:
                    testSelector: 'testAssemblies'
