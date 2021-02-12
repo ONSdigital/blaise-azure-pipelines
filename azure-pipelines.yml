@@ -382,6 +382,7 @@ stages:
               enableTelemetry: true  
          
          - task: VSTest@2
+           condition: notin('${{ parameters.Environment }}', 'prod', 'preprod')
            displayName: 'Run TOBI Smoke Tests'
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
@@ -396,10 +397,29 @@ stages:
              runTestsInIsolation: false
              codeCoverageEnabled: false
              testRunTitle: 'TOBI Test'
-             testFiltercriteria: TestCategory='$(SmokeTest)'
+             testFiltercriteria: TestCategory=smoke
+           continueOnError: false
+        
+         - task: VSTest@2
+           condition: in('${{ parameters.Environment }}', 'prod', 'preprod')
+           displayName: 'Run TOBI Full Integration Tests'
+           inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
+             testAssemblyVer2: |
+              **\Blaise.tobi.tests.Behaviour\**\Blaise.tobi.tests.Behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'TOBI Test'
            continueOnError: false
 
          - task: VSTest@2
+           condition: notin('${{ parameters.Environment }}', 'prod', 'preprod')
            displayName: 'Run DQS Smoke Tests'
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
@@ -416,9 +436,47 @@ stages:
              testRunTitle: 'DQS Test'
              testFiltercriteria: TestCategory=smoke
            continueOnError: false
-          
+        
          - task: VSTest@2
+           condition: in('${{ parameters.Environment }}', 'prod', 'preprod')
+           displayName: 'Run DQS Full Integration Tests'
+           inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
+             testAssemblyVer2: |
+              **\Blaise.DQS.tests.Behaviour\**\Blaise.DQS.tests.Behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'DQS Test'
+           continueOnError: false
+        
+         - task: VSTest@2
+           condition: notin('${{ parameters.Environment }}', 'prod', 'preprod')
            displayName: 'Run CATI Smoke Tests'
+           inputs:
+             searchFolder: '$(System.ArtifactsDirectory)'
+             testAssemblyVer2: |
+              **\Blaise.cati.tests.behaviour\**\Blaise.cati.tests.behaviour.dll
+              !**\obj\**
+              resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+             runOnlyImpactedTests: false
+             uiTests: true
+             vsTestVersion: toolsInstaller
+             runInParallel: false
+             runTestsInIsolation: false
+             codeCoverageEnabled: false
+             testRunTitle: 'CATI Test'
+             testFiltercriteria: TestCategory=smoke
+           continueOnError: false
+
+         - task: VSTest@2
+           condition: in('${{ parameters.Environment }}', 'prod', 'preprod')
+           displayName: 'Run CATI Full Integration Tests'
            inputs:
              searchFolder: '$(System.ArtifactsDirectory)'
              testAssemblyVer2: |
