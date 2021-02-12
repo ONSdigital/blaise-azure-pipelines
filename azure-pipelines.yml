@@ -16,9 +16,6 @@ variables:
     value: OPN2101A
   - name: BLAISE_VERSION
     value: Blaise5_8_7_2522
-  - name: SmokeTest
-    ${{ if or (ne(parameters.Environment, 'prod')) (ne(parameters.Environment, 'preprod')) }}:
-      value: smoke
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
@@ -238,6 +235,7 @@ stages:
                    versionSelector: 'latestPreRelease'
                   
                - task: VSTest@2
+                 condition: if(contains('${{ parameters.Environment }}', 'prod'))
                  displayName: Run REST API Smoke Tests
                  inputs:
                    testSelector: 'testAssemblies'
@@ -246,7 +244,7 @@ stages:
                      !**\obj\**
                    searchFolder: '$(System.ArtifactsDirectory)'
                    vsTestVersion: 'toolsInstaller'
-                   testFiltercriteria: TestCategory=
+                   testFiltercriteria: TestCategory=smoke
                   
   - stage: Configure_Blaise_${{parameters.Environment}}_
     displayName: Configure Blaise ${{parameters.Environment}}_
