@@ -65,7 +65,7 @@ stages:
 
        - job: "SmokeTests"
          dependsOn: installBlaise
-         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
+         condition: in(dependencies.installBlaise.result, 'Succeeded')
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
