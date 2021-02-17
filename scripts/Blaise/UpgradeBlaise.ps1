@@ -1,7 +1,7 @@
 $folderPath = "c:\dev\data\Blaise"
 
 Write-Host "Download Blaise redistributables"
-gsutil cp gs://$BLAISE_GCP_BUCKET/$env:BLAISE_VERSION.zip "C:\dev\data"
+gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$env:BLAISE_VERSION.zip "C:\dev\data"
 
 Write-Host "Expand archive to 'Blaise' dir"
 Remove-Item $folderPath -Recurse -ErrorAction Ignore
