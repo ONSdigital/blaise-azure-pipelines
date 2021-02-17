@@ -56,7 +56,7 @@ stages:
          displayName: Upgrade Blaise
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfBlaiseIsInstalled
-         condition: ne(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseVersion'], $(BLAISE_CURRENT_VERSION))
+         condition: ne(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseVersion'], '$(BLAISE_CURRENT_VERSION)')
          strategy:
           runOnce:
              deploy:
