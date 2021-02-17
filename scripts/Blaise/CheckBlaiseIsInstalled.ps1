@@ -6,5 +6,7 @@ if (!$app){
 else
 {
 Write-Host "##vso[task.setvariable variable=BlaiseInstalled;isOutput=true]True"
+$version = "##vso[task.setvariable variable=BlaiseVersion;isOutput=true]" + $app.DisplayVersion
+Write-Host $version
 }
 
