@@ -15,9 +15,9 @@ variables:
   - name: InstrumentName
     value: OPN2101A
   - name: BLAISE_VERSION
-    value: Blaise5_8_10_2534
+    value: Blaise5_9_1_2637
   - name: BLAISE_CURRENT_VERSION
-    value: '5.8.10'
+    value: '5.9.1'
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
@@ -61,12 +61,11 @@ stages:
                steps:
                 - task: PowerShell@2
                   inputs:
-                    targetType: 'inline'
-                    script: Write-Host Hello World
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/UpgradeBlaise.ps1'
 
        - job: "SmokeTests"
          dependsOn: installBlaise
-         condition: in(dependencies.installBlaise.result, 'Succeeded')
+         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
