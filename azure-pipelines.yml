@@ -17,7 +17,7 @@ variables:
   - name: BLAISE_VERSION
     value: Blaise5_8_10_2534
   - name: BLAISE_CURRENT_VERSION
-    value: '5.8.10'
+    value: '5.9.1'
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
@@ -65,7 +65,8 @@ stages:
 
                 - task: PowerShell@2
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/UpgradeBlaise.ps1'
+                    targetType: 'inline'
+                    script: Write-Host "Hello World"
 
        - job: "SmokeTests"
          dependsOn: installBlaise
