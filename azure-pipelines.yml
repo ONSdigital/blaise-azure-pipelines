@@ -66,7 +66,7 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     targetType: 'inline'
-                    script: Write-Host "Hello World"
+                    script: Write-Host "$(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseVersion'])"
 
        - job: "SmokeTests"
          dependsOn: installBlaise
