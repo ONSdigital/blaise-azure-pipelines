@@ -5,8 +5,15 @@ if (!$app){
 }
 else
 {
+Write-Host "Blaise Version " + $app.DisplayVersion + " is installed"
 Write-Host "##vso[task.setvariable variable=BlaiseInstalled;isOutput=true]True"
-$version = "##vso[task.setvariable variable=BlaiseVersion;isOutput=true]" + $app.DisplayVersion
-Write-Host $version
+
+    if ($app.DisplayVersion -eq $env:BLAISE_CURRENT_VERSION)
+    {
+        Write-Host "##vso[task.setvariable variable=UpgradeBlaise;isOutput=true]False" 
+    }
+    else {
+        Write-Host "##vso[task.setvariable variable=UpgradeBlaise;isOutput=true]True"       
+    }
 }
 
