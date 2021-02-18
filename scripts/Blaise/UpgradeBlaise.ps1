@@ -16,7 +16,7 @@ Start-Process -Wait "msiexec" -ArgumentList $blaise_args
 Write-Host "Blaise uninstall complete"
 
 Write-Host "Blaise admin user: $env:ENV_BLAISE_ADMIN_USER"
-Write-Host "Blaise admin password: $env:ENV_BLAISE_ADMIN_PASSWORD"
+Write-Host "Blaise admin password: $env:ENV_BLAISE_ADMIN_PASS"
 Write-Host "Setting Blaise upgrade args"
 $blaise_args = "/qn","/norestart","/log upgrade.log","/i C:\dev\data\Blaise\Blaise5.msi"
 $blaise_args += "FORCEINSTALL=1"

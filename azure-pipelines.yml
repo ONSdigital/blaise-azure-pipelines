@@ -63,7 +63,7 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/UpgradeBlaise.ps1'
                   env: 
-                    ENV_BLAISE_ADMIN_PASSWORD: $(ENV_BLAISE_ADMIN_PASSWORD)
+                    ENV_BLAISE_ADMIN_PASS: $(ENV_BLAISE_ADMIN_PASSWORD)
 
        - job: "SmokeTests"
          dependsOn: installBlaise
