@@ -46,6 +46,11 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/InstallBlaise.ps1'
 
+                - task: PowerShell@2
+                  displayName: Update Cati Database
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/SQL/CatiDatabaseUpdate.ps1'
+
        - deployment: upgradeBlaise
          displayName: Upgrade Blaise
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
