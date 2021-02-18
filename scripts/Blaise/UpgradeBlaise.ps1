@@ -1,13 +1,13 @@
 $folderPath = "c:\dev\data\Blaise"
 
 Write-Host "Download Blaise redistributables"
-gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$env:BLAISE_VERSION.zip "C:\dev\data"
+gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
 Write-Host "Expand archive to 'Blaise' dir"
 Remove-Item $folderPath -Recurse -ErrorAction Ignore
 mkdir $folderPath
 
-Expand-Archive -Force C:\dev\data\$env:BLAISE_VERSION.zip C:\dev\data\Blaise\
+Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 Write-Host "Setting Blaise uninstall args"
 $blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise\upgrade.log","/x {24691BB5-A1CE-455B-A2D5-FBDE1CE10675}"
 Write-Host "blaise_args: $blaise_args"

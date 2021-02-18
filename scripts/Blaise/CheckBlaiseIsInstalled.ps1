@@ -8,7 +8,7 @@ else
 Write-Host "Blaise Version " + $app.DisplayVersion + " is installed"
 Write-Host "##vso[task.setvariable variable=BlaiseInstalled;isOutput=true]True"
 
-    if ($app.DisplayVersion -eq $env:BLAISE_CURRENT_VERSION)
+    if ($app.DisplayVersion -eq $env:ENV_BLAISE_CURRENT_VERSION)
     {
         Write-Host "Blaise is currently on the correct version"
         Write-Host "##vso[task.setvariable variable=UpgradeBlaise;isOutput=true]False" 
