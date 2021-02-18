@@ -62,7 +62,9 @@ stages:
                     ENV_BLAISE_ADMIN_PASS: $(ENV_BLAISE_ADMIN_PASSWORD)
 
        - job: "SmokeTests"
-         dependsOn: installBlaise
+         dependsOn: 
+         - installBlaise
+         - upgradeBlaise
          condition: and(in(dependencies.installBlaise.result, 'Succeeded', 'Skipped'), in(dependencies.upgradeBlaise.result, 'Succeeded', 'Skipped'))
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
