@@ -15,9 +15,9 @@ variables:
   - name: InstrumentName
     value: OPN2101A
   - name: BLAISE_VERSION
-    value: Blaise5_9_1_2637
+    value: Blaise5_8_10_2534
   - name: BLAISE_CURRENT_VERSION
-    value: '5.9.1'
+    value: '5.8.10'
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
