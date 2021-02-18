@@ -48,8 +48,10 @@ Write-Host "Download Blaise redistributables from '$BLAISE_GCP_BUCKET'"
 gsutil cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
 # unzip blaise installer
+$folderPath = "c:\dev\data\Blaise"
 Write-Host "Expanding archive to 'Blaise' dir"
-mkdir C:\dev\data\Blaise
+Remove-Item $folderPath -Recurse -ErrorAction Ignore
+mkdir $folderPath
 Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 
 Write-Host "Setting Blaise install args"
