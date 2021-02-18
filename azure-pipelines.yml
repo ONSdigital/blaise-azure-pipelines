@@ -14,8 +14,6 @@ variables:
     value: gusty
   - name: InstrumentName
     value: OPN2101A
-  - name: BLAISE_VERSION
-    value: Blaise5_8_10_2534
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
@@ -33,26 +31,41 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
-                  name: IsBlaiseInstalled
+                  name: BlaiseVariables
 
        - deployment: installBlaise
          displayName: Install Blaise
          environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
          dependsOn: CheckIfBlaiseIsInstalled
-         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.IsBlaiseInstalled.BlaiseInstalled'], 'False')
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseInstalled'], 'False')
          strategy:
           runOnce:
              deploy:
                steps:
-                - checkout: self
-
                 - task: PowerShell@2
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/InstallBlaise.ps1'
 
+       - deployment: upgradeBlaise
+         displayName: Upgrade Blaise
+         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         dependsOn: CheckIfBlaiseIsInstalled
+         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.UpgradeBlaise'], 'True')
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/UpgradeBlaise.ps1'
+                  env: 
+                    ENV_BLAISE_ADMIN_PASS: $(ENV_BLAISE_ADMIN_PASSWORD)
+
        - job: "SmokeTests"
-         dependsOn: installBlaise
-         condition: in(dependencies.installBlaise.result, 'Succeeded', 'Skipped')
+         dependsOn: 
+         - installBlaise
+         - upgradeBlaise
+         condition: and(in(dependencies.installBlaise.result, 'Succeeded', 'Skipped'), in(dependencies.upgradeBlaise.result, 'Succeeded', 'Skipped'))
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
@@ -81,10 +94,10 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host "Login to GCP"
-                    gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
+                    gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
+                    gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.bpkg c:\survey\$env:InstrumentName.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
@@ -163,10 +176,10 @@ stages:
                   targetType: 'inline'
                   script: |
                     Write-Host "Login to GCP"
-                        gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
-                        
-                        Write-Host "Downloading instrument"
-                        gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
+                    gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
+                    
+                    Write-Host "Downloading instrument"
+                    gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.bpkg c:\survey\$env:InstrumentName.bpkg
 
                         Write-Host "GCP Login with compute service account"
                         gcloud auth login $env:ENV_VM_SERVICEACCOUNT
@@ -344,10 +357,10 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host "Login to GCP"
-                    gcloud auth activate-service-account pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com --key-file=$(gcpkey.secureFilePath)
+                    gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
                     
                     Write-Host "Downloading instrument"
-                    gsutil cp gs://ons-blaise-v2-europe-west2-shared-data/OPN2101A.bpkg c:\survey\OPN2101A.bpkg
+                    gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.bpkg c:\survey\$env:InstrumentName.bpkg
 
          - task: VisualStudioTestPlatformInstaller@1
            displayName: Install Visual Studio Test Platform
