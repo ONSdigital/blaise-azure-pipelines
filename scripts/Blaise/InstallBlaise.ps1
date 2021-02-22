@@ -37,6 +37,7 @@ CreateVariables1($metadataVariables)
 #################
 # INSTALL BLAISE
 #################
+Write-Host "Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION"
 
 Write-Host "LICENSEE: $BLAISE_LICENSEE"
 Write-Host "INSTALLDIR: $BLAISE_INSTALLDIR"
