@@ -3,7 +3,7 @@ $Blaise = Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\C
 
 if (!$Blaise){
     Write-Host "Blaise is not installed"
-    Invoke-Expression "$currentPath/InstallBlaise.ps1"
+    Invoke-Expression "$currentPath\scripts\blaise\InstallBlaise.ps1"
 }
 else
 {
@@ -14,6 +14,6 @@ Write-Host "Blaise Version " + $Blaise.DisplayVersion + " is installed"
     }
     else {
         Write-Host "Blaise needs to be upgraded to the latest version"
-        Invoke-Expression "$currentPath/UpgradeBlaise.ps1"     
+        Invoke-Expression "$currentPath\scripts\blaise\UpgradeBlaise.ps1" 
     }
 }
