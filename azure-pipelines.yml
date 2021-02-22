@@ -21,7 +21,10 @@ stages:
     jobs:
        - deployment: CheckIfBlaiseIsInstalled
          displayName: Check If Blaise is installed
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         environment:   
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise 
          strategy:
           runOnce:
              deploy:
@@ -35,7 +38,10 @@ stages:
 
        - deployment: installBlaise
          displayName: Install Blaise
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise 
          dependsOn: CheckIfBlaiseIsInstalled
          condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseInstalled'], 'False')
          strategy:
