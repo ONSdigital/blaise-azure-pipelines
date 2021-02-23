@@ -108,22 +108,6 @@ stages:
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
                   arguments: '-ServiceName BlaiseRestApi -exeName blaise.api'
-        
-       - deployment: CreateDataEntryAndResourceRoles
-         displayName: Create Data Entry and Resource Roles
-         environment: 
-            name: ${{parameters.Environment}}
-            resourceType: virtualMachine
-            tags: data-entry
-         strategy:
-          runOnce:
-             deploy:
-               steps:
-                - checkout: self
-                - task: PowerShell@2
-                  displayName: Register the Blaise Nodes
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/ConfigureBlaiseNodes.ps1'
 
   - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
@@ -143,6 +127,22 @@ stages:
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
                   name: BlaiseVariables
+
+       - deployment: CreateDataEntryAndResourceRoles
+         displayName: Create Data Entry and Resource Roles
+         environment: 
+            name: ${{parameters.Environment}}
+            resourceType: virtualMachine
+            tags: data-entry
+         strategy:
+          runOnce:
+             deploy:
+               steps:
+                - checkout: self
+                - task: PowerShell@2
+                  displayName: Register the Blaise Nodes
+                  inputs:
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/ConfigureBlaiseNodes.ps1'
 
        - job: "SmokeTests"
          dependsOn: 
