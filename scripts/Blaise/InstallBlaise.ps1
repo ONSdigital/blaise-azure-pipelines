@@ -33,6 +33,7 @@ function CreateVariables1($variableList)
 Write-Host "Setting up script and system variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
+[System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
 
 #################
 # INSTALL BLAISE
