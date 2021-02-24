@@ -13,7 +13,7 @@ variables:
   - name: ServerParkName
     value: gusty
   - name: InstrumentName
-    value: OPN2101A
+    value: OPN2102R
 
 stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
