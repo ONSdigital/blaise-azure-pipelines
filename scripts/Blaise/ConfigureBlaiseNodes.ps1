@@ -2,12 +2,12 @@ $ServerRoles = $env:ENV_BLAISE_SERVER_ROLES.ToUpper()
 
 [Collections.Generic.List[String]]$ListOfServerRoles = $ServerRoles.Split(',')
 
-$RESTAPI_URL = "$env:ENV_RESTAPI_URL/api/v1/serverparks/$env:ServerParkName/server"
+$RESTAPI_URL = "http://$env:ENV_RESTAPI_URL/api/v1/serverparks/$env:ServerParkName/server"
 
-$hostname = hostname
+$InternalComputerName = hostname
 
 $JsonObject = [ordered]@{
-    name = "$hostname"
+    name = "$InternalComputerName"
     logicalServerName = "Default"
     roles = @($ListOfServerRoles)
   }

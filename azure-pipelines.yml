@@ -13,7 +13,7 @@ variables:
   - name: ServerParkName
     value: gusty
   - name: InstrumentName
-    value: OPN2101A
+    value: OPN2102R
 
 stages:
   - stage: RestApi_${{parameters.Environment }}
@@ -263,8 +263,6 @@ stages:
            runOnce: 
              deploy:
                steps:
-               - checkout: self
-
                - task: PowerShell@2
                  displayName: Create User Roles
                  inputs:
