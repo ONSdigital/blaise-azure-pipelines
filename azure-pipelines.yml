@@ -130,6 +130,7 @@ stages:
 
        - deployment: CreateDataEntryAndResourceRoles
          displayName: Create Data Entry and Resource Roles
+         dependsOn: CheckIfBlaiseIsInstalled
          environment: 
             name: ${{parameters.Environment}}
             resourceType: virtualMachine
@@ -146,8 +147,8 @@ stages:
 
        - job: "SmokeTests"
          dependsOn: 
-         - CheckIfBlaiseIsInstalled
-         condition: in(dependencies.CheckIfBlaiseIsInstalled.result, 'Succeeded')
+         - CreateDataEntryAndResourceRoles
+         condition: in(dependencies.CreateDataEntryAndResourceRoles.result, 'Succeeded', 'Skipped')
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
