@@ -14,6 +14,8 @@ variables:
     value: gusty
   - name: InstrumentName
     value: OPN2102R
+  - name: PACKAGE_EXTENSION
+    value: bpkg
 
 stages:
   - stage: RestApi_${{parameters.Environment }}
@@ -22,7 +24,6 @@ stages:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
           TEMP_PATH : c:\blaise\temp
-          PACKAGE_EXTENSION : bpkg
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
@@ -69,7 +70,7 @@ stages:
                   project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
                   pipeline: '45'
                   buildVersionToDownload: 'latestFromBranch'
-                  branchName: 'refs/heads/master'
+                  branchName: 'refs/heads/multi-node'
                   downloadType: 'single'
                   artifactName: '_blaiseRestAPI'
                   downloadPath: '$(System.ArtifactsDirectory)'
