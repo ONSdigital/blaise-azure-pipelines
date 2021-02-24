@@ -300,7 +300,7 @@ stages:
           runOnce:
              deploy:
                steps:
-               
+               - checkout: self
                - task: VisualStudioTestPlatformInstaller@1
                  displayName: Install VS Test Platform
                  inputs:
