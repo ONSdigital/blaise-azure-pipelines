@@ -1,5 +1,5 @@
 $ServerRoles = "RESOURCE,WEB,DATAENTRY"
-Write-Host $env:ENV_BLAISE_SERVER_ROLES
+Write-Host "Blaise roles: $env:ENV_BLAISE_ROLES"
 
 [Collections.Generic.List[String]]$ListOfServerRoles = $ServerRoles.Split(',')
 
