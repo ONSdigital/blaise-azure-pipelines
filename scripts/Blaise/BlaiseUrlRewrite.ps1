@@ -1,5 +1,5 @@
 Write-Host "Install write url msi"
-Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_amd64.msi /quiet'
+Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
 $siteName = "Blaise"
 $ruleName = "Blaise data entry"
