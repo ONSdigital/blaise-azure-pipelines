@@ -1,5 +1,8 @@
+Write-Host "Install write url msi"
+Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_amd64.msi /quiet'
+
 $siteName = "Blaise"
-$ruleName = "Blaise data entry "
+$ruleName = "Blaise data entry"
 $serverName = "https://$env:ENV_BLAISE_CATI_URL"
 
 Write-Host "Adding rewrite rule"
