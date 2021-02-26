@@ -7,6 +7,7 @@ else
 {
 Write-Host "Blaise Version " + $app.DisplayVersion + " is installed"
 Write-Host "##vso[task.setvariable variable=BlaiseInstalled;isOutput=true]True"
+Invoke-Expression "$currentPath\scripts\blaise\BlaiseUrlRewrite.ps1"
 
     if ($app.DisplayVersion -eq $env:ENV_BLAISE_CURRENT_VERSION)
     {
