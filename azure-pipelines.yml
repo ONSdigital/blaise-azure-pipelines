@@ -29,6 +29,7 @@ stages:
                 - checkout: self
 
                 - task: PowerShell@2
+                  displayName: Check if blaise is installed
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
                   name: BlaiseVariables
@@ -43,6 +44,7 @@ stages:
              deploy:
                steps:
                 - task: PowerShell@2
+                  displayName: Installing Blaise
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/InstallBlaise.ps1'
 
