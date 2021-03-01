@@ -9,7 +9,7 @@ catch{
     exit 1
 }
 
-Try{
+try{
     Write-Host "Setting ISS idle time-out"
     Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value ( [TimeSpan]::FromMinutes(480))
     Write-Host "ISS idle set"

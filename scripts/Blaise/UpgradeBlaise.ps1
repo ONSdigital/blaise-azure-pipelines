@@ -1,5 +1,7 @@
 $folderPath = "c:\dev\data\Blaise"
 
+Write-Host "Upgrade blaise to version: $env:ENV_BLAISE_CURRENT_VERSION"
+
 Write-Host "Download Blaise redistributables"
 gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
