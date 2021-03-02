@@ -42,7 +42,7 @@ stages:
                 - task: PowerShell@2
                   displayName: Increase session time-out
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/IncreaseISSTimeout.ps1'
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/IncreaseIISTimeout.ps1'
 
        - job: "SmokeTests"
          dependsOn: 
