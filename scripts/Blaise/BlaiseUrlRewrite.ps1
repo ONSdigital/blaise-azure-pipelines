@@ -22,8 +22,7 @@ try{
 
     Write-Host "Rewrite rules applied"
 }
-catch
-{
+catch{
     Write-Host $_.ScriptStackTrace
     Write-Host "Rewrite rules have not been applied"
     exit 1

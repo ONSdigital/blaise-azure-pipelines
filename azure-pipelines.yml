@@ -19,9 +19,12 @@ stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
-       - deployment: CheckIfBlaiseIsInstalled
-         displayName: Check If Blaise is installed
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+       - deployment: InstallBlaise
+         displayName: Install Blaise
+         environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
          strategy:
           runOnce:
              deploy:
@@ -29,50 +32,25 @@ stages:
                 - checkout: self
 
                 - task: PowerShell@2
-                  displayName: Check if blaise is installed
+                  displayName: Install Blaise
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
                   name: BlaiseVariables
 
-       - deployment: installBlaise
-         displayName: Install Blaise
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
-         dependsOn: CheckIfBlaiseIsInstalled
-         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.BlaiseInstalled'], 'False')
-         strategy:
-          runOnce:
-             deploy:
-               steps:
                 - task: PowerShell@2
-                  displayName: Installing Blaise
-                  inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/InstallBlaise.ps1'
-
-                - task: PowerShell@2
-                  displayName: "Rewrite cati url"
+                  displayName: Rewrite URL
                   inputs:
                     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/BlaiseUrlRewrite.ps1'
 
-       - deployment: upgradeBlaise
-         displayName: Upgrade Blaise
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
-         dependsOn: CheckIfBlaiseIsInstalled
-         condition: eq(dependencies.CheckIfBlaiseIsInstalled.outputs['Deploy_BLAISE-GUSTY-NODE.BlaiseVariables.UpgradeBlaise'], 'True')
-         strategy:
-          runOnce:
-             deploy:
-               steps:
                 - task: PowerShell@2
+                  displayName: Increase session time-out
                   inputs:
-                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/UpgradeBlaise.ps1'
-                  env: 
-                    ENV_BLAISE_ADMIN_PASS: $(ENV_BLAISE_ADMIN_PASSWORD)
+                    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/IncreaseIISTimeout.ps1'
 
        - job: "SmokeTests"
          dependsOn: 
-         - installBlaise
-         - upgradeBlaise
-         condition: and(in(dependencies.installBlaise.result, 'Succeeded', 'Skipped'), in(dependencies.upgradeBlaise.result, 'Succeeded', 'Skipped'))
+         - InstallBlaise
+         condition: in(dependencies.InstallBlaise.result, 'Succeeded', 'Skipped')
          variables:
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
@@ -165,7 +143,10 @@ stages:
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
-         environment: ${{parameters.Environment }}.RESTAPI
+         environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: restapi
          strategy:
           runOnce:
              deploy:
