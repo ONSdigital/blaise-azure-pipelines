@@ -21,7 +21,10 @@ stages:
     jobs:
        - deployment: InstallBlaise
          displayName: Install Blaise
-         environment: ${{parameters.Environment }}.BLAISE-GUSTY-NODE
+         environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
          strategy:
           runOnce:
              deploy:
@@ -140,7 +143,10 @@ stages:
     jobs:
        - deployment: InstallRestAPI
          displayName: Install Rest API
-         environment: ${{parameters.Environment }}.RESTAPI
+         environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: restapi
          strategy:
           runOnce:
              deploy:
