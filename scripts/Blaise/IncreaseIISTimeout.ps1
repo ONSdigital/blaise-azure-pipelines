@@ -19,3 +19,14 @@ catch{
     Write-Host $_.ScriptStackTrace
     exit 1
 }
+
+try
+{
+    Write-Host "Restarting BlaiseAppPool"
+    Restart-WebAppPool BlaiseAppPool
+    Write-Host "BlaiseAppPool has been restarted"
+}
+catch{
+    Write-Host "Unable to restart BlaiseAppPool"
+    exit 1
+}
