@@ -19,18 +19,19 @@ stages:
 - stage: BlaiseInstall_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Installation Of Blaise
   jobs:
-    variables: 
-      ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
-      ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
-    pool: 
-      vmImage: 'windows-latest'
-    steps:
-    - template: /templates/blaise_reg_settings.yml
-    - template: /templates/download_test_instrument.yml
-    - template: /templates/automated_test_steps.yml
-      parameters: 
-        GitBranch: 'master'
-        ArtifactName: _AutomatedTests
-        BehaviourSolutionName: Blaise.Tests.Behaviour
-        TestName: Instrument Test
-        TestCategory: 
+    - job: "Smoke tests"
+      variables:
+        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+      pool: 
+        vmImage: 'windows-latest'
+      steps:
+      - template: /templates/blaise_reg_settings.yml
+      - template: /templates/download_test_instrument.yml
+      - template: /templates/automated_test_steps.yml
+        parameters: 
+          GitBranch: 'master'
+          ArtifactName: _AutomatedTests
+          BehaviourSolutionName: Blaise.Tests.Behaviour
+          TestName: Instrument Test
+          TestCategory: 
