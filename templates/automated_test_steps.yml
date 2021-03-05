@@ -1,0 +1,62 @@
+parameters:
+  - name: GitBranch
+    displayName: Name of the git branch 
+  - name: ArtifactName
+    displayName: Name of the previously built artifact (binaries) 
+  - name: BehaviourSolutionName
+    displayName: The name of the solution as it appears in git 
+  - name: TestName
+    displayName: The name to be displayed during test run 
+  - name: TestCategory
+    displayName: The category of tests 
+
+steps: 
+- task: VisualStudioTestPlatformInstaller@1
+  displayName: Install Visual Studio Test Platform
+  inputs:
+      packageFeedSelector: 'nugetOrg'
+      versionSelector: 'latestPreRelease'
+      
+- task: DownloadBuildArtifacts@0
+  displayName: Download latest Automated tests binaries
+  inputs:
+      buildType: 'specific'
+      project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+      pipeline: '43'
+      buildVersionToDownload: 'latestFromBranch'
+      branchName: 'refs/heads/${{parameters.GitBranch}}'
+      downloadType: 'single'
+      artifactName: '${{parameters.ArtifactName}}'
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+- task: replacetokens@3
+  displayName: Replace config settings
+  inputs:
+      rootDirectory: '$(System.ArtifactsDirectory)' 
+      targetFiles: '**/*Behaviour*.config'
+      encoding: 'auto'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      tokenPrefix: '#{'
+      tokenSuffix: '}#'
+      useLegacyPattern: false
+      enableTelemetry: true
+
+- task: VSTest@2
+  displayName: 'Run Blaise Smoke Tests'
+  inputs:
+    searchFolder: '$(System.ArtifactsDirectory)'
+    testAssemblyVer2: |
+      **\${{parameters.BehaviourSolutionName}}\**\${{parameters.BehaviourSolutionName}}.dll
+      !**\obj\**
+      resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+    runOnlyImpactedTests: false
+    uiTests: true
+    vsTestVersion: toolsInstaller
+    runInParallel: false
+    runTestsInIsolation: false
+    codeCoverageEnabled: false
+    testRunTitle: '${{parameters.TestName}}'
+    testFiltercriteria: TestCategory=${{parameters.TestCategory}}
+  continueOnError: false
