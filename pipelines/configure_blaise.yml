@@ -24,4 +24,4 @@ stages:
             deploy:
               steps:
               - checkout: self
-              - template: /template/configure_blaise_steps.yml
+              - template: /templates/configure_blaise_steps.yml
