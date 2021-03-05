@@ -19,7 +19,7 @@ stages:
 - stage: BlaiseInstall_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Installation Of Blaise
   jobs:
-    - job: "Smoke tests"
+    - job: "SmokeTests"
       variables:
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
         ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
