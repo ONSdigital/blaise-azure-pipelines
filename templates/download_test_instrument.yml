@@ -1,0 +1,12 @@
+steps: 
+- task: DownloadSecureFile@1
+  displayName: 'Download GCP Key'
+  name: gcpkey
+  inputs:
+    secureFile: 'ons-blaise-v2-shared-221e50eb36c7.json'
+
+
+- task: PowerShell@2
+  displayName: Download test instrument
+  inputs:
+    filepath: '$(Agent.BuildDirectory)/s/scripts/helpers/download_test_instrument.ps1'

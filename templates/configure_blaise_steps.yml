@@ -1,0 +1,16 @@
+steps: 
+- task: PowerShell@2
+  displayName: Install Blaise
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/CheckBlaiseIsInstalled.ps1'
+  name: BlaiseVariables
+
+- task: PowerShell@2
+  displayName: Rewrite URL
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/BlaiseUrlRewrite.ps1'
+
+- task: PowerShell@2
+  displayName: Increase session time-out
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/IncreaseIISTimeout.ps1'

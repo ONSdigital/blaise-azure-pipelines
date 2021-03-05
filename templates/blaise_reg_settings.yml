@@ -1,0 +1,10 @@
+steps: 
+- task: DownloadSecureFile@1
+  displayName: 'Download blaise registry file'
+  name: BlaiseRegistrySettings
+  inputs:
+    secureFile: blaise.reg
+
+- powershell: |
+    regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
+  displayName: 'Register Blaise License'
