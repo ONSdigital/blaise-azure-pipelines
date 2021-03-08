@@ -23,14 +23,14 @@ stages:
       steps:
       - template: /templates/blaise_reg_settings.yml
       - template: /templates/download_test_instrument.yml
-    - ${{ in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+    - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
       - template: /templates/smoke_automated_test_steps.yml
         parameters: 
           GitBranch: 'master'
           ArtifactName: _AutomatedTests
           BehaviourSolutionName: Blaise.Tests.Behaviour
           TestName: Instrument Test
-    - ${{ notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+    - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
       - template: /templates/smoke_automated_test_steps.yml
         parameters: 
           GitBranch: 'master'
