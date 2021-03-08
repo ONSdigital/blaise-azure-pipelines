@@ -1,0 +1,41 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+  - template: variables.yml
+
+stages:
+- stage: BlaiseInstall_${{parameters.Environment }}
+  displayName: ${{parameters.Environment }} Installation Of Blaise
+  jobs:
+    - job: "SmokeTests"
+      variables:
+        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+      pool: 
+        vmImage: 'windows-latest'
+      steps:
+      - template: /templates/blaise_reg_settings.yml
+      - template: /templates/download_test_instrument.yml
+    - ${{ in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+      - template: /templates/smoke_automated_test_steps.yml
+        parameters: 
+          GitBranch: 'master'
+          ArtifactName: _AutomatedTests
+          BehaviourSolutionName: Blaise.Tests.Behaviour
+          TestName: Instrument Test
+    - ${{ notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+      - template: /templates/smoke_automated_test_steps.yml
+        parameters: 
+          GitBranch: 'master'
+          ArtifactName: _AutomatedTests
+          BehaviourSolutionName: Blaise.DQS.tests.Behaviour
+          TestName: DQS Test
+          TestCategory: Smoke
+

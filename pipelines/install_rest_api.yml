@@ -1,1 +1,31 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
 
+trigger: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+  - template: variables.yml
+
+stages:
+displayName: Installation Of RestAPI ${{parameters.Environment }}
+jobs:
+    - deployment: InstallRestAPI
+      displayName: Install Rest API
+      variables:
+        ENV_RESTAPI_URL: http://localhost:90
+        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+      environment:  
+      name: ${{parameters.Environment}}
+      resourceType: virtualMachine
+      tags: restapi
+      strategy:
+      runOnce:
+          deploy:
+            steps:
+            - checkout: self
+            - template: /templates/blaise_reg_settings.yml
+            - template: /templates/download_test_instrument.yml
