@@ -8,7 +8,7 @@ trigger: none
 
 variables:
   - group: ${{ parameters.VarGroup }}
-  - template: variables.yml
+  - template: /templates/variables.yml
 
 stages:
 - stage: BlaiseInstall_${{parameters.Environment }}

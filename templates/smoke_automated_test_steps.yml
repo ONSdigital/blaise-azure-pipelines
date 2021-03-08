@@ -10,7 +10,7 @@ parameters:
   - name: TestCategory
     displayName: The category of tests 
 
-steps: 
+steps:
 - task: VisualStudioTestPlatformInstaller@1
   displayName: Install Visual Studio Test Platform
   inputs:
