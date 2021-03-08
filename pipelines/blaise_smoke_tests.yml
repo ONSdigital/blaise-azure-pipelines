@@ -23,7 +23,7 @@ stages:
       steps:
       - template: /templates/blaise_reg_settings.yml
       - template: /templates/download_test_instrument.yml
-      - template: /templates/automated_test_steps.yml
+      - template: /templates/automated_test_with_category_steps.yml
         parameters: 
           GitBranch: 'master'
           ArtifactName: _AutomatedTests

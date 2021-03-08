@@ -24,7 +24,7 @@ stages:
       - template: /templates/blaise_reg_settings.yml
       - template: /templates/download_test_instrument.yml
       - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
-        - template: /templates/automated_test_steps.yml
+        - template: /templates/automated_test_with_category_steps.yml
           parameters: 
             GitBranch: 'master'
             ArtifactName: _AutomatedTests
@@ -38,5 +38,3 @@ stages:
             ArtifactName: _AutomatedTests
             BehaviourSolutionName: Blaise.DQS.tests.Behaviour
             TestName: DQS Test
-            TestCategory: Smoke
-

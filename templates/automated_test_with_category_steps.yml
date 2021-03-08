@@ -7,6 +7,8 @@ parameters:
     displayName: The name of the solution as it appears in git 
   - name: TestName
     displayName: The name to be displayed during test run 
+  - name: TestCategory
+    displayName: The category of tests 
 
 steps:
 - task: VisualStudioTestPlatformInstaller@1
@@ -56,4 +58,5 @@ steps:
     runTestsInIsolation: false
     codeCoverageEnabled: false
     testRunTitle: '${{parameters.TestName}}'
+    testFiltercriteria: TestCategory=${{parameters.TestCategory}}
   continueOnError: false
