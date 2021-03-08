@@ -8,12 +8,7 @@ trigger: none
 
 variables:
   - group: ${{ parameters.VarGroup }}
-  - name: InstrumentPath
-    value: c:\survey
-  - name: ServerParkName
-    value: gusty
-  - name: InstrumentName
-    value: OPN2102R
+  - template: variables.yml
 
 stages:
 - stage: BlaiseInstall_${{parameters.Environment }}
