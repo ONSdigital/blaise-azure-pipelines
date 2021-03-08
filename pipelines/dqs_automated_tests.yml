@@ -11,10 +11,10 @@ variables:
   - template: /templates/variables.yml
 
 stages:
-- stage: BlaiseInstall_${{parameters.Environment }}
-  displayName: ${{parameters.Environment }} Installation Of Blaise
+- stage: DQSTests_${{parameters.Environment }}
+  displayName: ${{parameters.Environment }} DQS Automated Tests
   jobs:
-    - job: "SmokeTests"
+    - job: "AutomatedTests"
       variables:
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
         ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
