@@ -23,12 +23,20 @@ stages:
       steps:
       - template: /templates/blaise_reg_settings.yml
       - template: /templates/download_test_instrument.yml
-      - template: /templates/automated_test_steps.yml
-        parameters: 
-          GitBranch: 'master'
-          ArtifactName: _AutomatedTests
-          BehaviourSolutionName: Blaise.Tests.Behaviour
-          TestName: Instrument Test
-          TestCategory: Smoke
-
+      - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+        - template: /templates/automated_test_steps.yml
+          parameters: 
+            GitBranch: 'master'
+            ArtifactName: _AutomatedTests
+            BehaviourSolutionName: Blaise.Tests.Behaviour
+            TestName: Instrument Test
+            TestCategory: Smoke
+      - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+        - template: /templates/automated_test_steps.yml
+          parameters: 
+            GitBranch: 'master'
+            ArtifactName: _AutomatedTests
+            BehaviourSolutionName: Blaise.DQS.tests.Behaviour
+            TestName: DQS Test
+            TestCategory: Smoke
 
