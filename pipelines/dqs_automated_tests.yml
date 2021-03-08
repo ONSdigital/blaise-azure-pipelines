@@ -29,5 +29,6 @@ stages:
           ArtifactName: _AutomatedTests
           BehaviourSolutionName: Blaise.Tests.Behaviour
           TestName: Instrument Test
+          TestCategory: Smoke
 
 
