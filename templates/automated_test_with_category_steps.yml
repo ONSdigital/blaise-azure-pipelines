@@ -1,8 +1,4 @@
 parameters:
-  - name: GitBranch
-    displayName: Name of the git branch 
-  - name: ArtifactName
-    displayName: Name of the previously built artifact (binaries) 
   - name: BehaviourSolutionName
     displayName: The name of the solution as it appears in git 
   - name: TestName
@@ -16,32 +12,6 @@ steps:
   inputs:
       packageFeedSelector: 'nugetOrg'
       versionSelector: 'latestPreRelease'
-      
-- task: DownloadBuildArtifacts@0
-  displayName: Download latest Automated tests binaries
-  inputs:
-      buildType: 'specific'
-      project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
-      pipeline: '43'
-      buildVersionToDownload: 'latestFromBranch'
-      branchName: 'refs/heads/${{parameters.GitBranch}}'
-      downloadType: 'single'
-      artifactName: '${{parameters.ArtifactName}}'
-      downloadPath: '$(System.ArtifactsDirectory)'
-
-- task: replacetokens@3
-  displayName: Replace config settings
-  inputs:
-      rootDirectory: '$(System.ArtifactsDirectory)' 
-      targetFiles: '**/*Behaviour*.config'
-      encoding: 'auto'
-      writeBOM: true
-      actionOnMissing: 'warn'
-      keepToken: false
-      tokenPrefix: '#{'
-      tokenSuffix: '}#'
-      useLegacyPattern: false
-      enableTelemetry: true
 
 - task: VSTest@2
   displayName: 'Run Blaise Smoke Tests'
@@ -60,3 +30,4 @@ steps:
     testRunTitle: '${{parameters.TestName}}'
     testFiltercriteria: TestCategory=${{parameters.TestCategory}}
   continueOnError: false
+

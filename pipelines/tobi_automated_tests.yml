@@ -26,15 +26,11 @@ stages:
       - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
         - template: /templates/automated_test_with_category_steps.yml
           parameters: 
-            GitBranch: 'master'
-            ArtifactName: _AutomatedTests
             BehaviourSolutionName: Blaise.Tests.Behaviour
             TestName: Instrument Test
             TestCategory: Smoke
       - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
         - template: /templates/automated_test_steps.yml
           parameters: 
-            GitBranch: 'master'
-            ArtifactName: _AutomatedTests
             BehaviourSolutionName: Blaise.TOBI.tests.Behaviour
             TestName: TOBI Test

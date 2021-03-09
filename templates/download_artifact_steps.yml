@@ -1,0 +1,36 @@
+parameters:
+  - name: GitBranch
+    displayName: Name of the git branch 
+  - name: ArtifactName
+    displayName: Name of the previously built artifact (binaries) 
+  - name: DownloadPath
+    displayName: The path to download binaries to
+  - name: TargetFiles
+    displayName: The expression of the files you wish to target whilst replacing tokens
+
+steps:
+- task: DownloadBuildArtifacts@0
+    displayName: Download latest binaries
+    inputs:
+        buildType: 'specific'
+        project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+        pipeline: '43'
+        buildVersionToDownload: 'latestFromBranch'
+        branchName: 'refs/heads/${{parameters.GitBranch}}'
+        downloadType: 'single'
+        artifactName: '${{parameters.ArtifactName}}'
+        downloadPath: '${{parameters.DownloadPath}}'
+
+- task: replacetokens@3
+    displayName: Replace config settings
+    inputs:
+        rootDirectory: '$(System.ArtifactsDirectory)' 
+        targetFiles: '${{parameters.TargetFiles}}'
+        encoding: 'auto'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        useLegacyPattern: false
+        enableTelemetry: true

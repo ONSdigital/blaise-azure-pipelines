@@ -22,11 +22,18 @@ stages:
         vmImage: 'windows-latest'
       steps:
       - template: /templates/blaise_reg_settings.yml
+
       - template: /templates/download_test_instrument.yml
-      - template: /templates/automated_test_with_category_steps.yml
+
+      - template: /templates/download_artifact_steps.yml
         parameters: 
           GitBranch: 'master'
           ArtifactName: _AutomatedTests
+          DownloadPath: $(System.ArtifactsDirectory)
+          TargetFiles: '**/*Behaviour*.config'
+
+      - template: /templates/automated_test_with_category_steps.yml
+        parameters: 
           BehaviourSolutionName: Blaise.Tests.Behaviour
-          TestName: Instrument Test
+          TestName: Blaise Smoke Tests
           TestCategory: Smoke
