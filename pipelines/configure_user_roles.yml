@@ -16,7 +16,7 @@ stages:
   jobs:
     - job: "CheckIfUserRolesExist"      
       steps:
-      - template: /templates/check_user_roles_exist.yml
+      - template: /templates/check_user_roles_already_exist.yml
 
     - job: "CreateUserRoles"
       dependsOn: CheckIfUserRolesExist
@@ -24,4 +24,4 @@ stages:
       steps:
       - template: /templates/create_user_roles.yml
 
-      - template: /templates/check_user_roles_created.yml
+      - template: /templates/check_user_roles_were_created.yml

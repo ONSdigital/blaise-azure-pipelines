@@ -3,4 +3,4 @@ steps:
     name: CheckUserRolesAreCreated
     displayName: Check User Roles Have Been Created
     inputs:
-      filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesAreCreated.ps1'
+      filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesWereCreated.ps1'
