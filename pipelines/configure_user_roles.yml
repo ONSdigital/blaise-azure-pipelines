@@ -17,8 +17,8 @@ stages:
         ENV_RESTAPI_URL: http://localhost:90
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
   jobs:
-      - deployment: CheckUserRolesAlreadyExist
-        displayName: Check User Roles Already Exist
+      - deployment: UserRoles
+        displayName: Configure User Roles
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
