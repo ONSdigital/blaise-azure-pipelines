@@ -20,9 +20,9 @@ stages:
           ENV_RESTAPI_URL: http://localhost:90
           ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
         environment:  
-        name: ${{parameters.Environment}}
-        resourceType: virtualMachine
-        tags: restapi
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: restapi
         strategy:
         runOnce:
             deploy:
