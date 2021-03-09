@@ -25,7 +25,7 @@ stages:
             deploy:
               steps:
               - checkout: self
-              - template: /templates/check_user_roles_exist.yml
+              - template: /templates/check_user_roles_already_exist.yml
 
       #- job: "CreateUserRoles"
       #  dependsOn: CheckIfUserRolesExist
