@@ -14,10 +14,14 @@ stages:
 - stage: ConfigureUserRoles_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Configure User Roles
   jobs:
-    - job: "ConfigureUserRoles"      
+    - job: "CheckIfUserRolesExist"      
       steps:
       - template: /templates/check_user_roles_exist.yml
 
+    - job: "CreateUserRoles"
+      dependsOn: CheckIfUserRolesExist
+      condition: eq(dependencies.CheckUserRolesAlreadyExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
+      steps:
       - template: /templates/create_user_roles.yml
 
       - template: /templates/check_user_roles_created.yml
