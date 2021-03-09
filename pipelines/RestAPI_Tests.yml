@@ -12,7 +12,7 @@ variables:
 
 stages:
 - stage: ${{parameters.Environment }}_BlaiseRESTAPI
-  displayName: Installation Of RestAPI in ${{parameters.Environment }}
+  displayName: Automated tests for RestAPI in ${{parameters.Environment }}
   jobs:
       - deployment: InstallRestAPI
         displayName: Install Rest API
