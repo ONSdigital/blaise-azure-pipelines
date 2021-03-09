@@ -16,7 +16,6 @@ stages:
   variables:
         ENV_RESTAPI_URL: http://localhost:90
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-  
   jobs:
       - job: CheckUserRolesAlreadyExist
       - deployment: CheckUserRolesAlreadyExist
@@ -48,11 +47,11 @@ stages:
               - checkout: self
               - template: /templates/create_user_roles.yml
 
-      - job: CreateUserRoles
+      - job: CheckUserRolesWereCreated
         dependsOn: CreateUserRoles
         condition: eq(dependencies.CreateUserRoles.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
-      - deployment: CreateUserRoles
-        displayName: Create User Roles
+      - deployment: CheckUserRolesWereCreated
+        displayName: Chec kUser Roles Were Created
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
