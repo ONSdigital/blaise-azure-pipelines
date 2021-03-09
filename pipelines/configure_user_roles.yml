@@ -20,4 +20,4 @@ stages:
 
       - template: /templates/create_user_roles.yml
 
-      - template: /templates/check_user_roles_exist.yml
+      - template: /templates/check_user_roles_created.yml
