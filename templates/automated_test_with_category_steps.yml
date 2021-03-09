@@ -14,7 +14,7 @@ steps:
       versionSelector: 'latestPreRelease'
 
 - task: VSTest@2
-  displayName: 'Run Blaise Smoke Tests'
+  displayName: 'Run Smoke Tests'
   inputs:
     searchFolder: '$(System.ArtifactsDirectory)'
     testAssemblyVer2: |
