@@ -1,6 +1,6 @@
 steps: 
   - task: PowerShell@2
-    name: CheckUserRolesAreCreated
-    displayName: Check User Roles Have Been Created
+    name: CheckUserRolesWereCreated
+    displayName: Check User Roles Were Created
     inputs:
       filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesWereCreated.ps1'
