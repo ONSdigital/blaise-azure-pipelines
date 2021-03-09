@@ -1,6 +1,10 @@
 steps: 
   - task: PowerShell@2
-    name: CheckUserRolesWereCreated
+    displayName: Check User Roles Already Exist
+    inputs:
+      filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesAlreadyExist.ps1'
+
+  - task: PowerShell@2
     displayName: Check User Roles Were Created
     inputs:
       filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesWereCreated.ps1'
