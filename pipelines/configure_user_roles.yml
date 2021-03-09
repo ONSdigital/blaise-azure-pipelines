@@ -23,15 +23,14 @@ stages:
         strategy:
           runOnce:
             deploy:
+              steps:
+              - checkout: self
+              - template: /templates/check_user_roles_exist.yml
 
-      - job: "CheckIfUserRolesExist"      
-        steps:
-        - template: /templates/check_user_roles_exist.yml
-
-      - job: "CreateUserRoles"
-        dependsOn: CheckIfUserRolesExist
-        condition: eq(dependencies.CheckIfUserRolesExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
-        steps:
-        - template: /templates/create_user_roles.yml
-
-        - template: /templates/check_user_roles_exist.yml
+      #- job: "CreateUserRoles"
+      #  dependsOn: CheckIfUserRolesExist
+      #  condition: eq(dependencies.CheckIfUserRolesExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
+      #  steps:
+      #  - template: /templates/create_user_roles.yml
+      #
+      #  - template: /templates/check_user_roles_exist.yml
