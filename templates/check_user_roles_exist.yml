@@ -1,0 +1,6 @@
+steps: 
+  - task: PowerShell@2
+    name: CheckUserRolesExist
+    displayName: Check User Roles Exist
+    inputs:
+      filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesExist.ps1'
