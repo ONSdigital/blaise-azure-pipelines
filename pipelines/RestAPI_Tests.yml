@@ -29,6 +29,14 @@ stages:
                 steps:
                 - template: /templates/download_test_instrument.yml
 
+                - template: /templates/download_artifact_steps.yml
+                  parameters: 
+                    GitBranch: 'master'
+                    ArtifactName: '_blaiseRestAPI'
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
+                    PipelineNumber: 45
+
                 - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
                   - template: /templates/automated_test_with_category_steps.yml
                     parameters: 
