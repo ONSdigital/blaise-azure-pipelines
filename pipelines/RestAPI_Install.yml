@@ -37,6 +37,7 @@ stages:
                     ArtifactName: '_blaiseRestAPI'
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
+                    PipelineNumber: 45
 
                 - template: /templates/deploy_service_steps.yml
                   parameters:

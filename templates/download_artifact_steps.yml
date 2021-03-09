@@ -7,6 +7,8 @@ parameters:
     displayName: The path to download binaries to
   - name: TargetFiles
     displayName: The expression of the files you wish to target whilst replacing tokens
+  - name: PipelineNumber
+    displayName: Number of the pipeline which builds the project
 
 steps:
 - task: DownloadBuildArtifacts@0
@@ -14,7 +16,7 @@ steps:
   inputs:
     buildType: 'specific'
     project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
-    pipeline: '43'
+    pipeline: '${{parameters.PipelineNumber}}'
     buildVersionToDownload: 'latestFromBranch'
     branchName: 'refs/heads/${{parameters.GitBranch}}'
     downloadType: 'single'
