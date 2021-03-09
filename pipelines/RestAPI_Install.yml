@@ -34,7 +34,7 @@ stages:
                 - template: /templates/download_artifact_steps.yml
                   parameters: 
                     GitBranch: master
-                    ArtifactName: _blaiseRestAPI
+                    ArtifactName: '_blaiseRestAPI'
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
 
