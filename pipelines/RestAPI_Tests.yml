@@ -24,21 +24,21 @@ stages:
           resourceType: virtualMachine
           tags: restapi
         strategy:
-        runOnce:
-            deploy:
-              steps:
-              - template: /templates/download_test_instrument.yml
+          runOnce:
+              deploy:
+                steps:
+                - template: /templates/download_test_instrument.yml
 
-              - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
-                - template: /templates/automated_test_with_category_steps.yml
-                  parameters: 
-                    BehaviourSolutionName: Blaise.Api.Tests.Behaviour
-                    TestName: REST API SMOKE TEST
-                    TestCategory: Smoke
+                - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+                  - template: /templates/automated_test_with_category_steps.yml
+                    parameters: 
+                      BehaviourSolutionName: Blaise.Api.Tests.Behaviour
+                      TestName: REST API SMOKE TEST
+                      TestCategory: Smoke
 
-              - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
-                - template: /templates/automated_test_steps.yml
-                  parameters: 
-                    BehaviourSolutionName: Blaise.Api.Tests.Behaviour
-                    TestName: Full Regression REST API Test
+                - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+                  - template: /templates/automated_test_steps.yml
+                    parameters: 
+                      BehaviourSolutionName: Blaise.Api.Tests.Behaviour
+                      TestName: Full Regression REST API Test
 

@@ -24,26 +24,26 @@ stages:
           resourceType: virtualMachine
           tags: restapi
         strategy:
-        runOnce:
-            deploy:
-              steps:
-              - checkout: self
+          runOnce:
+              deploy:
+                steps:
+                - checkout: self
 
-              - template: /templates/blaise_reg_settings.yml
+                - template: /templates/blaise_reg_settings.yml
 
-              - template: /templates/download_artifact_steps.yml
-                parameters: 
-                  GitBranch: master
-                  ArtifactName: _blaiseRestAPI
-                  DownloadPath: $(System.ArtifactsDirectory)
-                  TargetFiles: '**/*.config'
+                - template: /templates/download_artifact_steps.yml
+                  parameters: 
+                    GitBranch: master
+                    ArtifactName: _blaiseRestAPI
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
 
-              - template: /templates/deploy_service_steps.yml
-                parameters:
-                  ServiceName: BlaiseRestApi
-                  ExeName: blaise.api
-                  TargetFolder: c:\blaiseServices\BlaiseRestApi
-                  SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
+                - template: /templates/deploy_service_steps.yml
+                  parameters:
+                    ServiceName: BlaiseRestApi
+                    ExeName: blaise.api
+                    TargetFolder: c:\blaiseServices\BlaiseRestApi
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
 
 
 
