@@ -14,8 +14,8 @@ stages:
 - stage: ConfigureUserRoles_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Configure User Roles
   jobs:
-      - deployment: InstallBlaise
-        displayName: Install Blaise
+      - deployment: CheckIfUserRolesAlreadyExist
+        displayName: Check If User Roles Already Exist
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -26,11 +26,4 @@ stages:
               steps:
               - checkout: self
               - template: /templates/check_user_roles_already_exist.yml
-
-      #- job: "CreateUserRoles"
-      #  dependsOn: CheckIfUserRolesExist
-      #  condition: eq(dependencies.CheckIfUserRolesExist.outputs['Deploy_RESTAPI.DoUserRolesExist.UserRolesExist'], 'False')
-      #  steps:
-      #  - template: /templates/create_user_roles.yml
-      #
-      #  - template: /templates/check_user_roles_exist.yml
+              
