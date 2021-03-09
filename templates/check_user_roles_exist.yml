@@ -3,4 +3,4 @@ steps:
     name: CheckUserRoles
     displayName: Check User Roles Exist
     inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesExist.ps1'
+      filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesExist.ps1'
