@@ -1,0 +1,23 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
+
+variables:
+  ENV_RESTAPI_URL: http://localhost:90
+  ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+
+stages:
+- stage: ConfigureUserRoles_${{parameters.Environment }}
+  displayName: ${{parameters.Environment }} Configure User Roles
+  jobs:
+    - job: "ConfigureUserRoles"      
+      steps:
+      - template: /templates/check_user_roles_exist.yml
+
+      - template: /templates/create_user_roles.yml
+
+      - template: /templates/check_user_roles_exist.yml

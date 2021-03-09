@@ -311,7 +311,7 @@ stages:
                  displayName: Check User Roles have been created
                  inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CheckUserRolesAreCreated.ps1'
-                
+                    
   - stage: RunUISmokeTests
     displayName: Run UI Smoke Tests
     variables:
