@@ -10,14 +10,14 @@ parameters:
 
 steps:
 - task: PowerShell@2
-    displayName: Deleting Current ${{parameters.ServiceName}} Service
-    inputs:
+  displayName: Deleting Current ${{parameters.ServiceName}} Service
+  inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
     arguments: '-ServiceName ${{parameters.ServiceName}}'
 
 - task: CopyFiles@2
-    displayName: Copy ${{parameters.ServiceName}} Binaries
-    inputs:
+  displayName: Copy ${{parameters.ServiceName}} Binaries
+  inputs:
     SourceFolder: '${{parameters.SourceFolder}}'
     Contents: '**'
     TargetFolder: '${{parameters.TargetFolder}}'
@@ -25,7 +25,7 @@ steps:
     OverWrite: true
 
 - task: PowerShell@2
-    displayName: Create ${{parameters.ServiceName}} Service
-    inputs:
+  displayName: Create ${{parameters.ServiceName}} Service
+  inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
     arguments: '-ServiceName ${{parameters.ServiceName}} -exeName ${{parameters.ExeName}}'

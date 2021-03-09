@@ -10,27 +10,27 @@ parameters:
 
 steps:
 - task: DownloadBuildArtifacts@0
-    displayName: Download latest binaries
-    inputs:
-        buildType: 'specific'
-        project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
-        pipeline: '43'
-        buildVersionToDownload: 'latestFromBranch'
-        branchName: 'refs/heads/${{parameters.GitBranch}}'
-        downloadType: 'single'
-        artifactName: '${{parameters.ArtifactName}}'
-        downloadPath: '${{parameters.DownloadPath}}'
+  displayName: Download latest binaries
+  inputs:
+    buildType: 'specific'
+    project: 'fbaf94f7-2d40-410a-8a27-de142d8d2313'
+    pipeline: '43'
+    buildVersionToDownload: 'latestFromBranch'
+    branchName: 'refs/heads/${{parameters.GitBranch}}'
+    downloadType: 'single'
+    artifactName: '${{parameters.ArtifactName}}'
+    downloadPath: '${{parameters.DownloadPath}}'
 
 - task: replacetokens@3
-    displayName: Replace config settings
-    inputs:
-        rootDirectory: '$(System.ArtifactsDirectory)' 
-        targetFiles: '${{parameters.TargetFiles}}'
-        encoding: 'auto'
-        writeBOM: true
-        actionOnMissing: 'warn'
-        keepToken: false
-        tokenPrefix: '#{'
-        tokenSuffix: '}#'
-        useLegacyPattern: false
-        enableTelemetry: true
+  displayName: Replace config settings
+  inputs:
+    rootDirectory: '$(System.ArtifactsDirectory)' 
+    targetFiles: '${{parameters.TargetFiles}}'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    tokenPrefix: '#{'
+    tokenSuffix: '}#'
+    useLegacyPattern: false
+    enableTelemetry: true
