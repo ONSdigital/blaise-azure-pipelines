@@ -10,7 +10,7 @@ foreach ($userRole in $userRoles)
     If ($exists -ne $true) {
         Write-Host "User roles does not exist. Creating user roles"
         Invoke-Expression "$currentPath\scripts\UserRoles\CreateUserRoles.ps1"
-        exit 
+        exit
     }
 
     $response = Invoke-RestMethod -UseBasicParsing "$($userRolesUri)/$($userRole.name)" -ContentType "application/json" -Method GET
