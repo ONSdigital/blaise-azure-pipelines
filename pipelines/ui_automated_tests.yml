@@ -1,0 +1,31 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+  - template: /templates/variables.yml
+  
+stages: 
+- stage: RunUISmokeTests
+  displayName: Run UI Smoke Tests
+  variables:
+        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+
+  jobs:
+    - job: "DownloadTestInstrument"
+      displayName: Download Test Instrument
+    - template: /templates/download_test_instrument.yml
+
+    - job: "DownloadArtifacts"
+      displayName: Download Artifacts
+    - template: /templates/download_artifact_steps.yml
+
+    - job: "RunUITest"
+      displayName: 
+    - template: /templates/ui_automated_test_steps.yml

@@ -1,0 +1,19 @@
+steps: 
+- task: VSTest@2
+  condition: notin('${{ parameters.Environment }}', 'prod', 'preprod')
+  displayName: 'Run TOBI Smoke Tests'
+  inputs:
+    searchFolder: '$(System.ArtifactsDirectory)'
+    testAssemblyVer2: |
+    **\Blaise.tobi.tests.Behaviour\**\Blaise.tobi.tests.Behaviour.dll
+    !**\obj\**
+    resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+    runOnlyImpactedTests: false
+    uiTests: true
+    vsTestVersion: toolsInstaller
+    runInParallel: false
+    runTestsInIsolation: false
+    codeCoverageEnabled: false
+    testRunTitle: 'TOBI Test'
+    testFiltercriteria: TestCategory=smoke
+  continueOnError: false
