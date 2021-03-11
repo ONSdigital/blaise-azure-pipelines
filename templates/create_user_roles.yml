@@ -2,4 +2,4 @@ steps:
 - task: PowerShell@2
   displayName: Create User Roles
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/CreateUserRoles.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/UserRoles/create_user_roles.ps1'
