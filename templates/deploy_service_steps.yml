@@ -12,7 +12,7 @@ steps:
 - task: PowerShell@2
   displayName: Deleting Current ${{parameters.ServiceName}} Service
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/delete-a-service.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/delete_a_service.ps1'
     arguments: '-ServiceName ${{parameters.ServiceName}}'
 
 - task: CopyFiles@2
@@ -27,5 +27,5 @@ steps:
 - task: PowerShell@2
   displayName: Create ${{parameters.ServiceName}} Service
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/create-a-service.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/create_a_service.ps1'
     arguments: '-ServiceName ${{parameters.ServiceName}} -exeName ${{parameters.ExeName}}'
