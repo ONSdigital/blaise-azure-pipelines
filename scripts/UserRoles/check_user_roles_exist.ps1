@@ -10,7 +10,7 @@ foreach ($userRole in $userRoles)
     
     If ($exists -ne $true) {
         Write-Host "User roles does not exist. Creating user roles"
-        Invoke-Expression "$currentPath\scripts\UserRoles\CreateUserRoles.ps1"
+        Invoke-Expression "$currentPath\scripts\UserRoles\create_user_roles.ps1"
         exit
     }
 
@@ -21,7 +21,7 @@ foreach ($userRole in $userRoles)
 
     If ($roleEqual -ne $true) {
         Write-Host "User role permissions do not exist. Creating user role permissons"
-        Invoke-Expression "$currentPath\scripts\UserRoles\CreateUserRoles.ps1"
+        Invoke-Expression "$currentPath\scripts\UserRoles\create_user_roles.ps1"
         exit
     }
 }
