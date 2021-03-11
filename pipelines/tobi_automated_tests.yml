@@ -40,7 +40,7 @@ stages:
             TestName: Instrument Test
             TestCategory: Smoke
 
-      - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+      - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
         - template: /templates/automated_test_steps.yml
           parameters: 
             BehaviourSolutionName: Blaise.TOBI.tests.Behaviour
