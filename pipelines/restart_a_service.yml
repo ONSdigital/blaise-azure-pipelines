@@ -15,6 +15,6 @@ stages:
   jobs:
     - job: "RestartAService"
       displayName: Restart A Service
-    - template: /templates/Restart-A-Service.yml
+    - template: /templates/restart-a-service.yml
       parameters: 
-        serviceName: BlaiseServices5
+        ServiceName: BlaiseServices5
