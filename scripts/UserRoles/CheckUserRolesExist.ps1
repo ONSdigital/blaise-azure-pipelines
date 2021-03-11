@@ -1,5 +1,6 @@
 $userRolesUri = "$env:ENV_RESTAPI_URL/api/v1/userroles"
 $rolesJsonFile = "scripts/UserRoles/userroles.json"
+$currentPath = Get-Location
 
 $userRoles = Get-Content -Raw -Path $rolesJsonFile | ConvertFrom-Json 
 
