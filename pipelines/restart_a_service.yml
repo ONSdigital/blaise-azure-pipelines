@@ -12,10 +12,9 @@ variables:
 
 stages: 
 - stage: ServiceRestart
-  variables: 
-    - ServiceName: BlaiseServices5
-  
   jobs:
     - job: "RestartAService"
       displayName: Restart A Service
     - template: /templates/Restart-A-Service.yml
+      parameters: 
+        serviceName: BlaiseServices5

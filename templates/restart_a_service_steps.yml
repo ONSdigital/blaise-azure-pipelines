@@ -1,0 +1,10 @@
+parameters: 
+    - name: ServiceName
+      displayName: Name Of The Service To Be Restarted
+
+steps: 
+- task: PowerShell@2
+  displayName: Restarting ${{parameters.ServiceName}} Service
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Restart-A-Service.ps1'
+    arguments: '-ServiceName ${{parameters.ServiceName}}'
