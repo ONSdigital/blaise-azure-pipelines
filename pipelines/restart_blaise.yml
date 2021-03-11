@@ -13,8 +13,17 @@ variables:
 stages: 
 - stage: ServiceRestart
   jobs:
-    - job: "RestartAService"
-      displayName: Restart A Service
-    - template: /templates/restart-a-service.yml
-      parameters: 
-        ServiceName: BlaiseServices5
+      - deployment: RestartBlaise
+        displayName: Restart Blaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/restart-a-service.yml
+                parameters: 
+                  ServiceName: BlaiseServices5
