@@ -9,7 +9,7 @@ trigger: none
 variables:
   - group: ${{ parameters.VarGroup }}
   - template: /templates/variables.yml
-  
+
 stages: 
 - stage: RunUISmokeTests
   displayName: Run UI Smoke Tests
