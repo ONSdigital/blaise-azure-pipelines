@@ -1,0 +1,29 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+  - template: /templates/variables.yml
+
+stages: 
+- stage: ServiceRestart
+  jobs:
+      - deployment: RestartBlaise
+        displayName: Restart Blaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/restart-a-service.yml
+                parameters: 
+                  ServiceName: BlaiseServices5
