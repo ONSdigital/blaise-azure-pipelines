@@ -9,6 +9,7 @@ trigger: none
 variables:
   - group: ${{ parameters.VarGroup }}
   - template: /templates/variables.yml
+  - env: ${{ parameters.Environment }}
 
 stages:
 - stage: DQSTests_${{parameters.Environment }}
@@ -33,14 +34,14 @@ stages:
           TargetFiles: '**/*Behaviour*.config'
           PipelineNumber: 43
 
-      - ${{ if notin('${{ parameters.Environment }}', 'nik', 'sam') }}:
+      - ${{ if notin('${{ variables.env }}', 'nik', 'sam') }}:
         - template: /templates/automated_test_with_category_steps.yml
           parameters: 
             BehaviourSolutionName: Blaise.Tests.Behaviour
             TestName: Instrument Test
             TestCategory: Smoke
 
-      - ${{ if in('${{ parameters.Environment }}', 'nik', 'sam') }}:
+      - ${{ if in('${{ variables.env }}', 'nik', 'sam') }}:
         - template: /templates/automated_test_steps.yml
           parameters: 
             BehaviourSolutionName: Blaise.DQS.tests.Behaviour
