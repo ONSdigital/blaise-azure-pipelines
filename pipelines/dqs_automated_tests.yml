@@ -9,7 +9,8 @@ trigger: none
 variables:
   - group: ${{ parameters.VarGroup }}
   - template: /templates/variables.yml
-  - env: ${{ parameters.Environment }}
+  - name: env
+    value: ${{ parameters.Environment }}
 
 stages:
 - stage: DQSTests_${{parameters.Environment }}
