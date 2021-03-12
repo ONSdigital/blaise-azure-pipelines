@@ -1,0 +1,27 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+
+trigger: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+
+stages:
+  - stage: BlaiseInstall_${{parameters.Environment }}
+    displayName: ${{parameters.Environment }} Installation Of Blaise
+    jobs:
+      - deployment: InstallBlaise
+        displayName: Install Blaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/configure_blaise_steps.yml

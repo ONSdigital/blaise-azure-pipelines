@@ -9,3 +9,4 @@ foreach ($userRole in $userRoles)
 
     Invoke-RestMethod -UseBasicParsing $userRolesUri -ContentType "application/json" -Method POST -Body $body
 }
+Write-Host "User roles created"
