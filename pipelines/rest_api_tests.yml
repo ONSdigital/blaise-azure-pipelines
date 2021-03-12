@@ -44,14 +44,14 @@ stages:
                     TargetFiles: '**/*.config'
                     PipelineNumber: 60
 
-                - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+                - ${{ if notin('${{ parameters.Environment }}', 'nik', 'sam') }}:
                   - template: /templates/automated_test_with_category_steps.yml
                     parameters: 
                       BehaviourSolutionName: Blaise.Api.Tests.Behaviour
                       TestName: REST API SMOKE TEST
                       TestCategory: Smoke
 
-                - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+                - ${{ if in('${{ parameters.Environment }}', 'nik', 'sam') }}:
                   - template: /templates/automated_test_steps.yml
                     parameters: 
                       BehaviourSolutionName: Blaise.Api.Tests.Behaviour
