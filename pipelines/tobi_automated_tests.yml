@@ -6,6 +6,8 @@ parameters:
 
 trigger: none
 
+pr: none
+
 variables:
   - group: ${{ parameters.VarGroup }}
   - template: /templates/variables.yml
@@ -33,14 +35,14 @@ stages:
           TargetFiles: '**/*Behaviour*.config'
           PipelineNumber: 43
 
-      - ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+      - ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
         - template: /templates/automated_test_with_category_steps.yml
           parameters: 
             BehaviourSolutionName: Blaise.Tests.Behaviour
             TestName: Instrument Test
             TestCategory: Smoke
 
-      - ${{ if in('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+      - ${{ if in(parameters.Environment, 'preprod', 'prod') }}:
         - template: /templates/automated_test_steps.yml
           parameters: 
             BehaviourSolutionName: Blaise.TOBI.tests.Behaviour

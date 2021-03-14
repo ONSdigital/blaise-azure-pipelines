@@ -8,6 +8,8 @@ parameters:
 
 trigger: none
 
+pr: none
+
 variables:
   - group: ${{ parameters.VarGroup }}
   - template: /templates/variables.yml
@@ -33,25 +35,25 @@ stages:
 
                 - template: /templates/download_artifact_steps.yml
                   parameters: 
-                    ${{ if notin('${{ parameters.Environment }}', 'prod', 'preprod') }}:
+                    ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
                       GitBranch: ${{ parameters.GitBranch }}
-                    ${{ if eq('${{ parameters.Environment }}', 'prod') }}:
+                    ${{ if eq(parameters.Environment, 'prod') }}:
                       GitBranch: 'prod'
-                    ${{ if eq('${{ parameters.Environment }}', 'preprod') }}:
+                    ${{ if eq(parameters.Environment, 'preprod') }}:
                       GitBranch: 'preprod'
                     ArtifactName: '_blaiseRestAPI'
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 60
 
-                - ${{ if notin('${{ parameters.Environment }}', 'nik', 'sam') }}:
+                - ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
                   - template: /templates/automated_test_with_category_steps.yml
                     parameters: 
                       BehaviourSolutionName: Blaise.Api.Tests.Behaviour
                       TestName: REST API SMOKE TEST
                       TestCategory: Smoke
 
-                - ${{ if in('${{ parameters.Environment }}', 'nik', 'sam') }}:
+                - ${{ if in(parameters.Environment, 'preprod', 'prod') }}:
                   - template: /templates/automated_test_steps.yml
                     parameters: 
                       BehaviourSolutionName: Blaise.Api.Tests.Behaviour
