@@ -6,6 +6,8 @@ parameters:
 
 trigger: none
 
+pr: none
+
 variables:
   - group: ${{ parameters.VarGroup }}
 
