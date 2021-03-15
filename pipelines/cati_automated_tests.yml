@@ -45,5 +45,6 @@ stages:
       - ${{ if in(parameters.Environment, 'prod', 'preprod') }}:
         - template: /templates/automated_test_steps.yml
           parameters: 
-            ArtifactName: _AutomatedTests
             BehaviourSolutionName: Blaise.CATI.tests.Behaviour
+            TestName: Full Cati Regression Test
+
