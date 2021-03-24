@@ -27,3 +27,16 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
+
+      - deployment: InstallBlaise
+        displayName: Install Blaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/blaise_management_steps.yml
