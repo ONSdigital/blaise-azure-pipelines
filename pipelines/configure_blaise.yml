@@ -28,8 +28,8 @@ stages:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
 
-      - deployment: InstallBlaise
-        displayName: Install Blaise
+      - deployment: ManagementSetup
+        displayName: Setup blaise management node
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
