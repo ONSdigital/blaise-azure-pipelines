@@ -30,6 +30,7 @@ stages:
 
       - deployment: ManagementSetup
         displayName: Setup blaise management node
+        dependsOn: InstallBlaise
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
