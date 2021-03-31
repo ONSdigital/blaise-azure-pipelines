@@ -11,8 +11,7 @@ try {
         Write-Host "Node roles updated"
 
         Write-Host "Restarting Blaise services"
-        sc.exe stop blaiseservices5 
-        sc.exe start blaiseservices5
+        restart-service blaiseservices5 
         Write-Host "Blaise has been restarted"
     }
     else {
