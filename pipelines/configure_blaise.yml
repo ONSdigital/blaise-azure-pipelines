@@ -27,6 +27,7 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
+              - template: /templates/configure_node_roles_steps.yml
 
       - deployment: ManagementSetup
         displayName: Setup blaise management node
@@ -41,3 +42,17 @@ stages:
               steps:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
+
+      - deployment: RegisterDataEntryNodes
+        displayName: Register Data Entry Node
+        dependsOn: InstallBlaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-entry
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/Register_node_steps.yml
