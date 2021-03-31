@@ -55,4 +55,4 @@ stages:
             deploy:
               steps:
               - checkout: self
-              - template: /templates/Register_node_steps.yml
+              - template: /templates/register_node_steps.yml
