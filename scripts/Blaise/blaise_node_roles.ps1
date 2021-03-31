@@ -7,7 +7,7 @@ try {
         $roles = RolesNodeShouldHave
 
         Write-Host "Updating node roles to: $roles"
-        c:\blaise5\bin servermanager -role:$roles
+        c:\blaise5\bin\servermanager -role:$roles
         Write-Host "Node roles updated"
 
         Write-Host "Restarting Blaise services"
