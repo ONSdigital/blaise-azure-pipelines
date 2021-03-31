@@ -1,7 +1,8 @@
 . "$PSScriptRoot\check_server_roles.ps1"
 
 try {
-    if (NodeHasTheCorrectRoles)
+    $applyRules = NodeHasTheCorrectRoles
+    if (-not $applyRules)
     {
         $roles = RolesNodeShouldHave
 
@@ -10,8 +11,8 @@ try {
         Write-Host "Node roles updated"
 
         Write-Host "Restarting Blaise services"
-        sc.exe stop blaise5services 
-        sc.exe start blaise5services
+        sc.exe stop blaiseservices5 
+        sc.exe start blaiseservices5
         Write-Host "Blaise has been restarted"
     }
     else {
