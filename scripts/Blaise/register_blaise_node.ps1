@@ -3,7 +3,7 @@ function RegisterNode{
         [string] $CurrentNode = $(hostname),
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
         [string] $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
-        [securestring] $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
+        [string] $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
         [string] $BlaiseServerPark = $env:ENV_BLAISE_SERVER_PARK_NAME,
         [string] $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
     )
