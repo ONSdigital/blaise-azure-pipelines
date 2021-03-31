@@ -1,5 +1,4 @@
 . "$PSScriptRoot\check_server_roles.ps1"
-. "$PSScriptRoot\..\check_server_roles.ps1"
 
 try {
     if (NodeHasTheCorrectRoles)
