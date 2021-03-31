@@ -1,6 +1,6 @@
 function RegisterNode{
     param(
-        [string] $CurrentNode = $env:computername,
+        [string] $CurrentNode = $(hostname),
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
         [string] $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
         [securestring] $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
@@ -30,9 +30,7 @@ function RegisterNode{
 
     Write-Host "Registering $currentNode on management node $managementNode"
 
-    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode 
-    -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort 
-    -serverbinding:http -masterhostname:$managementNode -logicalroot:default -server:$managementNode -binding:http -port:$connectionPort
+    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -server:$managementNode -binding:http -port:$connectionPort
 
     Write-Host "$currentNode registered"
 }
