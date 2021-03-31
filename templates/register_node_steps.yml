@@ -1,5 +1,5 @@
 steps:
 - task: PowerShell@2
-  displayName: Increase session time-out
+  displayName: Register Blaise Node
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/register_blaise_node.ps1.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/register_blaise_node.ps1'

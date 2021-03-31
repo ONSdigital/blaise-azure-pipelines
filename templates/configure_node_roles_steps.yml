@@ -1,5 +1,5 @@
 steps:
 - task: PowerShell@2
-  displayName: Increase session time-out
+  displayName: Configure Blaise node roles
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_node_roles.ps1'
