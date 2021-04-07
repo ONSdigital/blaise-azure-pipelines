@@ -6,7 +6,7 @@ parameters:
 
 steps:
 - task: PowerShell@2
-  displayName: Restarting ${{parameters.ServiceName}} Service
+  displayName: Applying Blaise Firewall rules
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/restart_a_service.ps1'
     arguments: '-inbound_ports ${{parameters.InboundPorts}} -outbound_ports OutboundPorts'
