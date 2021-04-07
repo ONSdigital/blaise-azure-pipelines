@@ -1,0 +1,12 @@
+parameters: 
+    - name: InboundPorts
+      displayName: Ports to be opened on inbound traffic (comma seperated)
+    - name: OutboundPorts
+      displayName: Ports to be opened on outbound traffic (comma seperated)
+
+steps:
+- task: PowerShell@2
+  displayName: Restarting ${{parameters.ServiceName}} Service
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/restart_a_service.ps1'
+    arguments: '-inbound_ports ${{parameters.InboundPorts}} -outbound_ports OutboundPorts'
