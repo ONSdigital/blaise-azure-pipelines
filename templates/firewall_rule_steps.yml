@@ -8,5 +8,5 @@ steps:
 - task: PowerShell@2
   displayName: Applying Blaise Firewall rules
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/helpers/firewall_rules.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/firewall_rules.ps1'
     arguments: '-inbound_ports ${{parameters.InboundPorts}} -outbound_ports OutboundPorts'
