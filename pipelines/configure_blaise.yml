@@ -31,7 +31,7 @@ stages:
               - template: /templates/firewall_rule_steps.yml
                 parameters:
                   InboundPorts: 8031,8033
-                  OutboundPorts: 8031,,8033
+                  OutboundPorts: 8031,8033
 
       - deployment: ManagementSetup
         displayName: Setup blaise management node
