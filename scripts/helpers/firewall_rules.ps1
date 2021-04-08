@@ -39,8 +39,8 @@ function PortsMatch {
         }
     }
 }
-
-    if (Get-NetFirewallRule -DisplayName "$RuleName")
+try {
+    if (Get-NetFirewallRule -DisplayName "$RuleName" -ErrorAction SilentlyContinue)
     {
         $LocalPortExists = PortsMatch -RuleName:"$RuleName" -Ports:$Inbound_Ports -Direction:"Inbound" -PortType:"LocalPort"
         $RemotePortExists = PortsMatch -RuleName:"$RuleName" -Ports:$Outbound_Ports -Direction:"Outbound" -PortType:"RemotePort"
@@ -62,3 +62,9 @@ function PortsMatch {
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Outbound" -Ports:$Outbound_Ports -PortType:"RemotePort"
     }
+}
+catch {
+    Write-Host "Unable to setup firewall rules"
+    Write-Host $_.ScriptStackTrace
+    exit 1
+}
