@@ -1,3 +1,16 @@
+function CheckIfURLRewriteMsiExists {
+    If (Test-Path "C:\dev\data\rewrite_url.msi") 
+    {
+      Write-Host "Skipping as Rewrite URL already downloaded..."
+    }
+    else
+    {
+      Write-Host "Downloading rewrite_url.msi"
+      gsutil cp gs://$GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
+    }    
+}
+
+CheckIfURLRewriteMsiExists
 Write-Host "Install write url msi"
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 

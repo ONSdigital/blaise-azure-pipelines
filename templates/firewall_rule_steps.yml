@@ -11,4 +11,4 @@ steps:
   displayName: Applying Blaise Firewall rules
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/firewall_rules.ps1'
-    arguments: '-RuleName:${{parameters.RuleName}} -Inbound_Ports 80, 443,${{parameters.InboundPorts}} -Outbound_Ports 80,443,${{parameters.OutboundPorts}}'
+    arguments: '-RuleName:${{parameters.RuleName}} -Inbound_Ports ${{parameters.InboundPorts}} -Outbound_Ports ${{parameters.OutboundPorts}}'
