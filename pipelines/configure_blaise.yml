@@ -30,6 +30,7 @@ stages:
               - template: /templates/configure_node_roles_steps.yml
               - template: /templates/firewall_rule_steps.yml
                 parameters:
+                  RuleName: Blaise
                   InboundPorts: $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                   OutboundPorts: $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
 

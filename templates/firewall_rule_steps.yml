@@ -1,4 +1,6 @@
 parameters: 
+    - name: RuleName
+      displayName: Name of the firewall rule
     - name: InboundPorts
       displayName: Ports to be opened on inbound traffic (comma seperated)
     - name: OutboundPorts
@@ -9,4 +11,4 @@ steps:
   displayName: Applying Blaise Firewall rules
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/firewall_rules.ps1'
-    arguments: '-inbound_ports ${{parameters.InboundPorts}} -outbound_ports ${{parameters.OutboundPorts}}'
+    arguments: '-RuleName ${{parameters.RuleName}} -Inbound_Ports ${{parameters.InboundPorts}} -Outbound_Ports ${{parameters.OutboundPorts}}'
