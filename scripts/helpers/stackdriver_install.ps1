@@ -43,20 +43,3 @@ Else {
     Write-Host "Installed Stackdriver monitoring agent"
 }
 
-############
-# LOGGING
-############
-
-$log_service = "StackdriverLogging"
-
-If (Get-Service $log_service -ErrorAction SilentlyContinue) 
-{
-    StartServiceIfStopped -ServiceName $log_service
-}
-Else {
-    DownloadFileIfItDoesntExist -FileName:$LoggingExe -FolderPath $FolderPath
-
-    Write-Host "Installing Stackdriver Logging agents..."
-    & $FolderPath\$LoggingExe /S /D="$FolderPath\LoggingAgent"
-    Write-Host "Installed Stackdriver Logging agent"
-}
