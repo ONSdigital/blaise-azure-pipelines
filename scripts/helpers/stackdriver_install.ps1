@@ -6,7 +6,7 @@ function DownloadFileIfItDoesntExist {
     {
     $env:ENV_BLAISE_GCP_BUCKET = "ons-blaise-v2-dev-multi-winvm-data"
     Write-Host "Downloading $FileName..."
-    gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$FileName $FolderPath\$FileName
+    gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$FileName $FolderPath\$FileName -ErrorAction SilentlyContinue
     }
 }
 
