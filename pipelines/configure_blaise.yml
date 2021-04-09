@@ -33,6 +33,11 @@ stages:
                   RuleName: Blaise
                   InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                   OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+              - template: /templates/stackdriver_steps.yml
+                parameters:
+                  LoggingExe: StackdriverLogging-v1-14.exe
+                  MonitoringExe: StackdriverMonitoring-GCM-46.exe
+                  FolderPath: c:\dev\stackdriver
 
       - deployment: ManagementSetup
         displayName: Setup blaise management node
