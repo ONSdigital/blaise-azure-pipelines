@@ -40,6 +40,7 @@ Else {
 
     Write-Host "Installing Stackdriver monitoring agent..."
     & $FolderPath\$MonitoringExe /S /D="$FolderPath\MonitoringAgent"
+    Write-Host "Installed Stackdriver monitoring agent"
 }
 
 ############
@@ -57,4 +58,5 @@ Else {
 
     Write-Host "Installing Stackdriver Logging agents..."
     & $FolderPath\$LoggingExe /S /D="$FolderPath\LoggingAgent"
+    Write-Host "Installed Stackdriver Logging agent"
 }
