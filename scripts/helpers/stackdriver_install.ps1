@@ -39,6 +39,6 @@ Else {
     DownloadFileIfItDoesntExist -FileName:$MonitoringExe -FolderPath $FolderPath
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    Start-Process $FolderPath\$monitor_service -Wait
+    Start-Process $FolderPath\$MonitoringExe -Wait
     Write-Host "Installed Stackdriver monitoring agent"
 }
