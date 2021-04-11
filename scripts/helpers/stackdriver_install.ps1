@@ -39,7 +39,7 @@ Else {
     DownloadFileIfItDoesntExist -FileName:$MonitoringExe -FolderPath $FolderPath
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    & $FolderPath\$MonitoringExe /S /D="$FolderPath\MonitoringAgent"
+    C:\dev\stackdriver\StackdriverMonitoring-GCM-46.exe /S /D="C:\dev\stackdriver\monitoringAgent"
     Write-Host "Installed Stackdriver monitoring agent"
 }
 
@@ -57,6 +57,6 @@ Else {
     DownloadFileIfItDoesntExist -FileName:$LoggingExe -FolderPath $FolderPath
 
     Write-Host "Installing Stackdriver Logging agents..."
-    & $FolderPath\$LoggingExe /S /D="$FolderPath\LoggingAgent"
+    C:\dev\stackdriver\StackdriverLogging-v1-11.exe /S /D="C:\dev\stackdriver\loggingAgent"
     Write-Host "Installed Stackdriver Logging agent"
 }
