@@ -39,7 +39,6 @@ Else {
     DownloadFileIfItDoesntExist -FileName:$MonitoringExe -FolderPath $FolderPath
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    c:\dev\stackdriver\StackdriverMonitoring-GCM-46.exe /S /D="$FolderPath\MonitoringAgent"
+    Start-Process $FolderPath\$LoggingExe -Wait
     Write-Host "Installed Stackdriver monitoring agent"
 }
-
