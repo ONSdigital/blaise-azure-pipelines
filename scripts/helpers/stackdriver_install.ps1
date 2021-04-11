@@ -37,26 +37,8 @@ If (Get-Service $monitor_service -ErrorAction SilentlyContinue)
 }
 Else {
     DownloadFileIfItDoesntExist -FileName:$MonitoringExe -FolderPath $FolderPath
-
+    Start-Sleep -s 10
     Write-Host "Installing Stackdriver monitoring agent..."
-    C:\dev\stackdriver\StackdriverMonitoring-GCM-46.exe /S /D="C:\dev\stackdriver\monitoring"
+    C:\dev\stackdriver\StackdriverMonitoring-GCM-46.exe /S /D="c:\dev\stackdriver\monitoring"
     Write-Host "Installed Stackdriver monitoring agent"
-}
-
-############
-# LOGGING
-############
-
-$log_service = "StackdriverLogging"
-
-If (Get-Service $log_service -ErrorAction SilentlyContinue) 
-{
-    StartServiceIfStopped -ServiceName $log_service
-}
-Else {
-    DownloadFileIfItDoesntExist -FileName:$LoggingExe -FolderPath $FolderPath
-
-    Write-Host "Installing Stackdriver Logging agents..."
-    C:\dev\stackdriver\StackdriverLogging-v1-14.exe /S /D="c:\dev\stackdriver\logging"
-    Write-Host "Installed Stackdriver Logging agent"
 }
