@@ -27,7 +27,7 @@ function StartServiceIfStopped {
 New-Item -Path "$FolderPath" -ItemType "directory" -Force
 
 #############
-# MONITORING
+# MONITORING!
 #############
 $monitor_service = "StackdriverMonitoring"
 
@@ -37,7 +37,6 @@ If (Get-Service $monitor_service -ErrorAction SilentlyContinue)
 }
 Else {
     DownloadFileIfItDoesntExist -FileName:$MonitoringExe -FolderPath $FolderPath
-    Start-Sleep -s 10
     Write-Host "Installing Stackdriver monitoring agent..."
     C:\dev\stackdriver\StackdriverMonitoring-GCM-46.exe /S
     Write-Host "Installed Stackdriver monitoring agent"
