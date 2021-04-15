@@ -3,6 +3,8 @@ parameters:
     displayName: Variable Group
   - name: Environment
     displayName: Environment to use
+  - name: MultiNode
+    displayName: Is environment MultiNode (Bool)
 
 trigger: none
 
@@ -48,6 +50,7 @@ stages:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
 
+    ${{ if eq(parameters.Environment, 'preprod') }}:
       - deployment: RegisterDataEntryNodes
         displayName: Register Data Entry Node
         dependsOn: InstallBlaise
