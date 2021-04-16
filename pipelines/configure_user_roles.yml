@@ -16,7 +16,6 @@ stages:
 - stage: ConfigureUserRoles_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Configure User Roles
   variables:
-        ENV_RESTAPI_URL: http://localhost:90
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
   jobs:
       - deployment: UserRoles
@@ -24,7 +23,7 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: restapi
+          tags: restapitests
         strategy:
           runOnce:
             deploy:
