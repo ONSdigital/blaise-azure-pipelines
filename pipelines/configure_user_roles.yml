@@ -16,6 +16,7 @@ stages:
 - stage: ConfigureUserRoles_${{parameters.Environment }}
   displayName: ${{parameters.Environment }} Configure User Roles
   variables:
+        ENV_RESTAPI_URL: $(ENV_REST_API_URL)
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
   jobs:
       - deployment: UserRoles
