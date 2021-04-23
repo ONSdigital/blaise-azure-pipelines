@@ -28,7 +28,6 @@ stages:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
               - template: /templates/configure_node_roles_steps.yml
-                condition: eq(variables.MultiNode, true)
               - template: /templates/firewall_rule_steps.yml
                 parameters:
                   RuleName: Blaise
