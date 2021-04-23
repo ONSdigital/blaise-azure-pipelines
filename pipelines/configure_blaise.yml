@@ -3,8 +3,6 @@ parameters:
     displayName: Variable Group
   - name: Environment
     displayName: Environment to use
-  - name: MultiNode
-    displayName: Is environment MultiNode (Bool)
 
 trigger: none
 
