@@ -49,7 +49,7 @@ stages:
               - template: /templates/blaise_management_steps.yml
 
       - deployment: RegisterDataEntryNodes
-        condition: eq(variables.MultiNode, true)
+        condition: eq(variables.ENV_MULTI_NODE, true)
         displayName: Register Data Entry Node
         dependsOn: InstallBlaise
         environment:  
