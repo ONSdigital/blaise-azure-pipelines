@@ -70,7 +70,7 @@ function CreateVariables($variableList)
 
         $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
 
-         New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3')
+         New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3') -Force
 
          Write-Host $varName '=' ($varValue -replace $pattern, '$3')
         }
