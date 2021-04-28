@@ -2,11 +2,11 @@ param ($ServiceName)
 
 try{
     restart-service $ServiceName
-    Write-Host "Restarted Blaise Service"
+    Write-Host "Restarted $ServiceName Service"
 }
 
 catch{
-    Write-Host "Could Not Restart Blaise Service"
+    Write-Host "Could Not Restart $ServiceName Service"
     Write-Host $_.ScriptStackTrace
     exit 1
 }
