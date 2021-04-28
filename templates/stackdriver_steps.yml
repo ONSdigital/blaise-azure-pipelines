@@ -1,0 +1,14 @@
+parameters: 
+    - name: MonitoringExe
+      displayName: Name of the exe for stack driver monitoring
+    - name: LoggingExe
+      displayName: Name of the exe for stack driver monitoring
+    - name: FolderPath
+      displayName: Path where stackdriver should be installed
+
+steps:
+- task: PowerShell@2
+  displayName: Applying Blaise Firewall rules
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/stackdriver_install.ps1'
+    arguments: '-MonitoringExe ${{parameters.MonitoringExe}} -LoggingExe ${{parameters.LoggingExe}} -FolderPath ${{parameters.FolderPath}}'

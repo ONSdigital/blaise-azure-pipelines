@@ -27,3 +27,38 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
+              - template: /templates/configure_node_roles_steps.yml
+              - template: /templates/firewall_rule_steps.yml
+                parameters:
+                  RuleName: Blaise
+                  InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                  OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+
+      - deployment: ManagementSetup
+        displayName: Setup blaise management node
+        dependsOn: InstallBlaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/blaise_management_steps.yml
+
+      - deployment: RegisterDataEntryNodes
+        condition: eq(variables.ENV_MULTI_NODE, true)
+        displayName: Register Data Entry Node
+        dependsOn: InstallBlaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-entry
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/register_node_steps.yml

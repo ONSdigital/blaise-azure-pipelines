@@ -1,0 +1,5 @@
+steps:
+- task: PowerShell@2
+  displayName: Register Blaise Node
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/register_blaise_node.ps1'
