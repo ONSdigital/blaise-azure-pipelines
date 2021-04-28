@@ -4,6 +4,11 @@ function NodeHasTheCorrectRoles {
     return CheckNodeHasCorrectRoles -CurrentNodeRoles $currentRoles -RolesNodeShouldHave $requiredRoles
 }
 function RolesNodeShouldHave {
+    Write-Host "Setting up script and system variables..."
+    $metadataVariables = GetMetadataVariables
+    CreateVariables($metadataVariables)
+    [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
+
     $rolesItShouldHave = $env:ENV_BLAISE_ROLES.Trim().Split(',') | Sort-Object
     return $rolesItShouldHave -join ','
 }
@@ -47,6 +52,28 @@ function CheckNodeHasCorrectRoles {
     return $CurrentNodeRoles -eq $RolesNodeShouldHave
 }
 
+function GetMetadataVariables
+{
+  $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
+  return $variablesFromMetadata | Get-Member -MemberType NoteProperty
+}
 
+function CreateVariables($variableList)
+{
 
+  foreach ($variable in $variableList)
+  {
+      if ($variable.Name -Like "BLAISE_*")
+      {
+        $varName = $variable.Name
+        $varValue = $variable.Definition
+
+        $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
+
+         New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3')
+
+         Write-Host $varName '=' ($varValue -replace $pattern, '$3')
+        }
+  }
+}
 
