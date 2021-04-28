@@ -19,6 +19,6 @@ try {
     }
 }
 catch {
-    Write-Host "Error updating blaise node roles. $($_.ScriptStackTrace)"
+    Write-Host "Error updating blaise node roles. $($_.Exception.Message) at: $($_.ScriptStackTrace)"
     exit 1
 }
