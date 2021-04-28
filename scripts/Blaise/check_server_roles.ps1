@@ -7,7 +7,7 @@ function RolesNodeShouldHave {
     Write-Host "Setting up script and system variables..."
     $metadataVariables = GetMetadataVariables
     CreateVariables($metadataVariables)
-    [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
+    [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
 
     $rolesItShouldHave = $env:ENV_BLAISE_ROLES.Trim().Split(',') | Sort-Object
     return $rolesItShouldHave -join ','
