@@ -60,20 +60,44 @@ function GetMetadataVariables
 
 function CreateVariables($variableList)
 {
+  # start
+  # get the blaise install vars
+  $blaise_install_vars = $variableList.Clone()
+  Write-Host "Got vars: $blaise_install_vars"
+  $blaise_install_var_keys = @($variableList.Keys)
+  Write-Host "Got Keys: $blaise_install_var_keys"
 
+  $blaise_install_var_keys | ForEach-Object {
+    if ($_ -notmatch "BLAISE_.*") {
+      $blaise_install_vars.Remove($_)
+    }
+  }
+
+  # drop the BLAISE_ prefix and concat kv pairs into a string array
+  $global:blaise_install_params = $blaise_install_vars.GetEnumerator().ForEach({ "$($_.Name.substring(7))=$($_.Value)" })
+  #### end
+
+
+  # original foreach processing...
   foreach ($variable in $variableList)
   {
-      if ($variable.Name -Like "BLAISE_*")
-      {
-        $varName = $variable.Name
-        $varValue = $variable.Definition
+    $varName = $variable.Name
+    $varValue = $variable.Definition
 
-        $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
+    # The variable value (varValue) above is in the format NAME = VALUE.
+    # We only want the variables that include 'BLAISE' or 'SCRIPT' in the name
+    # This pattern will help extract the VALUE by removing the 'NAME =' part.
+    $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
 
-         New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3') -Force
-
-         Write-Host $varName '=' ($varValue -replace $pattern, '$3')
-        }
+    if ($varName -Like "BLAISE_*" -or $varName -Like "SCRIPT_*")
+    {
+      New-Variable -Scope script -Name ($varName -replace "BLAISE_", "") -Value ($varValue -replace $pattern, '$3')
+      Write-Host "Script Var: $varName = $( $varValue -replace $pattern, '$3' )"
+    }
+    if ($varName -Like "ENV_*")
+    {
+      [System.Environment]::SetEnvironmentVariable($varName, ($varValue -replace $pattern, '$3'), [System.EnvironmentVariableTarget]::Machine)
+      Write-Host "Env Var   : $varName = $( $varValue -replace $pattern, '$3' )"
+    }
   }
 }
-
