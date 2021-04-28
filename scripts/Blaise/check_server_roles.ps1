@@ -69,7 +69,13 @@ function CreateVariables($variableList)
 
   $blaise_install_var_keys | ForEach-Object {
     if ($_ -notmatch "BLAISE_.*") {
-      $blaise_install_vars.Remove($_)
+        try {
+            $blaise_install_vars.Remove($_)            
+        }
+        catch{
+            #just skip over.
+            continue
+        }
     }
   }
 
