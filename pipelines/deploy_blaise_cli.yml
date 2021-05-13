@@ -39,7 +39,12 @@ stages:
                     ${{ if eq(parameters.Environment, 'preprod') }}:
                       GitBranch: 'preprod'
                     ArtifactName: '_blaiseCli'
-                    DownloadPath: c:\blaiseServices\BlaiseCli
+                    DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 66
+
+                - template: /templates/copy_binary_files_steps.yml
+                  parameters:
+                    TargetFolder: c:\blaiseServices\BlaiseCli
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
 
