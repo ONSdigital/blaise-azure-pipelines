@@ -6,7 +6,7 @@ parameters:
 
 steps:
 - task: CopyFiles@2
-  displayName: Copy ${{parameters.ServiceName}} Binaries
+  displayName: Copy Binaries
   inputs:
     SourceFolder: '${{parameters.SourceFolder}}'
     Contents: '**'
