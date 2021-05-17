@@ -8,6 +8,7 @@ try {
 
     #register data interface
     RegisterCatiDataInterfaceFile -filePath $filePath
+    restart-service blaiseservices5
     Write-Host ".bcdi file registered"
 }
 catch {
