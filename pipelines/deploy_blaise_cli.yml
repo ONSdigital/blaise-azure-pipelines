@@ -23,7 +23,7 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: data-delivery
+          tags: data-delivery, blaise
         strategy:
           runOnce:
               deploy:
