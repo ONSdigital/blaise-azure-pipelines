@@ -1,0 +1,50 @@
+parameters:
+  - name: VarGroup
+    displayName: Variable Group
+  - name: Environment
+    displayName: Environment to use
+  - name: GitBranch
+    displayName: Branch to deploy
+
+trigger: none
+
+pr: none
+
+variables:
+  - group: ${{ parameters.VarGroup }}
+  - template: /templates/variables.yml
+
+stages:
+- stage: ${{parameters.Environment }}_BlaiseCli
+  displayName: Deploying Blaise Cli ${{parameters.Environment }}
+  jobs:
+      - deployment: DeployBlaiseCli
+        displayName: Deploy Blaise Cli
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-delivery
+        strategy:
+          runOnce:
+              deploy:
+                steps:
+                - checkout: self
+
+                - template: /templates/download_artifact_steps.yml
+                  parameters: 
+                    ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
+                      GitBranch: ${{ parameters.GitBranch }}
+                    ${{ if eq(parameters.Environment, 'prod') }}:
+                      GitBranch: 'prod'
+                    ${{ if eq(parameters.Environment, 'preprod') }}:
+                      GitBranch: 'preprod'
+                    ArtifactName: '_blaiseCli'
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
+                    PipelineNumber: 66
+
+                - template: /templates/copy_binary_files_steps.yml
+                  parameters:
+                    TargetFolder: c:\blaiseServices\BlaiseCli
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
+
