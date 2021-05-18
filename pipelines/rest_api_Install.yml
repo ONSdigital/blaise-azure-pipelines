@@ -38,7 +38,7 @@ stages:
                   script: |
                     $hostname = hostname
                     Write-Host "hostname is: $hostname"
-                    gcloud compute instance-groups unmanaged remove-instances restapi-group --instances=$hostname
+                    gcloud compute instance-groups unmanaged remove-instances restapi-group --instances=$hostname --zone europe-west2-a
             deploy:
               steps:
               - checkout: self
@@ -85,7 +85,7 @@ stages:
                   script: |
                     $hostname = hostname
                     Write-Host "hostname is: $hostname"
-                    gcloud compute instance-groups unmanaged add-instances restapi-group --instances=$hostname
+                    gcloud compute instance-groups unmanaged add-instances restapi-group --instances=$hostname --zone europe-west2-a
                     Write-Host
 
 
