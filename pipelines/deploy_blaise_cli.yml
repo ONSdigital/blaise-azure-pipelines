@@ -20,10 +20,12 @@ stages:
   jobs:
       - deployment: DeployBlaiseCli
         displayName: Deploy Blaise Cli
+        variables:
+          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: data-delivery
+          tags: blaise
         strategy:
           runOnce:
               deploy:
