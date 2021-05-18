@@ -36,11 +36,21 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                    $hostname = hostname
-                    Write-Host "hostname is: $hostname"
-                    gcloud compute instance-groups unmanaged remove-instances restapi-group --instances=$hostname --zone europe-west2-a
-                    Write-Host "Removed $hostname from rest-api group"
-                    gcloud config list
+                    try
+                    {
+                      $hostname = hostname
+                      Write-Host "hostname is: $hostname"
+                      gcloud auth login $env:ENV_VM_SERVICEACCOUNT
+                      gcloud compute instance-groups unmanaged remove-instances restapi-group --instances=$hostname --zone europe-west2-a
+                      Write-Host "Removed $hostname from rest-api group"
+                      gcloud config list
+                    }
+                    catch
+                    {
+                      Write-Host "Errored"
+                      exit 1
+                    }
+                    
             deploy:
               steps:
               - checkout: self
@@ -85,10 +95,20 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: |
-                    $hostname = hostname
-                    Write-Host "hostname is: $hostname"
-                    gcloud compute instance-groups unmanaged add-instances restapi-group --instances=$hostname --zone europe-west2-a
-                    Write-Host "Added $hostname back to rest-api group"
+                    try
+                    {
+                      $hostname = hostname
+                      Write-Host "hostname is: $hostname"
+                      gcloud auth login $env:ENV_VM_SERVICEACCOUNT
+                      gcloud compute instance-groups unmanaged add-instances restapi-group --instances=$hostname --zone europe-west2-a
+                      Write-Host "Added $hostname back to rest-api group"
+                    }
+                    catch 
+                    {
+                      Write-Host "Errored"
+                      exit 1
+                    }
+                    
 
 
 
