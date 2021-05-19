@@ -34,7 +34,7 @@ function AddRewriteRule {
     Write-Host "$ruleName applied"
   }
   catch{
-      Write-Host $_.ScriptStackTrace
+      Write-Host $_.Exception.Message
       Write-Host "Rewrite rules have not been applied"
       exit 1
   }
