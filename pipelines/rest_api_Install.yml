@@ -32,12 +32,12 @@ stages:
             preDeploy:
               steps:
               - task: PowerShell@2
-                displayName: Restarting ${{parameters.ServiceName}} Service
+                displayName: Logging into gcp
                 inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
 
               - task: PowerShell@2
-                displayName: Restarting ${{parameters.ServiceName}} Service
+                displayName: removing from load balancer
                 inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
                   arguments: 'removefromloadbalancer -instancegroup restapi-group -zone europe-west2-a'
@@ -81,12 +81,12 @@ stages:
             routeTraffic:
               steps:
               - task: PowerShell@2
-                displayName: Restarting ${{parameters.ServiceName}} Service
+                displayName: logging into gcp
                 inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
 
               - task: PowerShell@2
-                displayName: Restarting ${{parameters.ServiceName}} Service
+                displayName: adding back to load balancer
                 inputs:
                   filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
                   arguments: 'addtoloadbalancer -instancegroup restapi-group -zone europe-west2-a'
