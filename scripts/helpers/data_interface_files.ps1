@@ -14,4 +14,8 @@ function RegisterCatiDataInterfaceFile {
     c:\blaise5\bin\servermanager -ecs -catidatainterface:$filePath
 }
 
+function ListOfConfigurationSettings {
+    $configurationSettings = c:\blaise5\bin\servermanager -listconfigurationsettings | Out-String
+    return $configurationSettings
+}
 
