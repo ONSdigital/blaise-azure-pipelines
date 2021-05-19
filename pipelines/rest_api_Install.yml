@@ -41,8 +41,8 @@ stages:
               - task: PowerShell@2
                 displayName: removing from load balancer
                 inputs:
-                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
-                  arguments: 'removefromloadbalancer -instancegroup restapi-group -zone europe-west2-a'
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/remove_from_instance_group.ps1'
+                  arguments: '-instancegroup restapi-group -zone europe-west2-a'
             deploy:
               steps:
               - template: /templates/firewall_rule_steps.yml
@@ -88,8 +88,8 @@ stages:
               - task: PowerShell@2
                 displayName: adding back to load balancer
                 inputs:
-                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
-                  arguments: 'addtoloadbalancer -instancegroup restapi-group -zone europe-west2-a'
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/add_to_load_balancer.ps1'
+                  arguments: '-instancegroup restapi-group -zone europe-west2-a'
                     
 
 
