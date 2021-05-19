@@ -1,5 +1,5 @@
 try {
-    $response = Invoke-WebRequest $env:TESTING_URL -Method Get
+    $response = Invoke-WebRequest $env:TESTING_URL -Method Get -UseBasicParsing
     $hostname = hostname
     $response.StatusCode
 
