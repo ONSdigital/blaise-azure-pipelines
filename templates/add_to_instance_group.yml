@@ -18,5 +18,5 @@ steps:
 - task: PowerShell@2
   displayName: adding back to load balancer
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/add_to_load_balancer.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/add_to_instance_group.ps1'
     arguments: '-instancegroup ${{parameters.instancegroup}} -zone ${{parameters.zone}}'
