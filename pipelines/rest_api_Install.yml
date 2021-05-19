@@ -31,6 +31,8 @@ stages:
             maxParallel: 50%
             preDeploy:
               steps:
+              - checkout: self
+
               - task: PowerShell@2
                 displayName: Logging into gcp
                 inputs:
@@ -43,8 +45,6 @@ stages:
                   arguments: 'removefromloadbalancer -instancegroup restapi-group -zone europe-west2-a'
             deploy:
               steps:
-              - checkout: self
-
               - template: /templates/firewall_rule_steps.yml
                 parameters:
                   RuleName: RestAPI
