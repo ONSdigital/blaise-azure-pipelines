@@ -32,25 +32,15 @@ stages:
             preDeploy:
               steps:
               - task: PowerShell@2
-                displayName: Download SPSS Manipula Package
+                displayName: Restarting ${{parameters.ServiceName}} Service
                 inputs:
-                  targetType: 'inline'
-                  script: |
-                    try
-                    {
-                      $hostname = hostname
-                      Write-Host "hostname is: $hostname"
-                      gcloud auth login $env:ENV_VM_SERVICEACCOUNT
-                      gcloud compute instance-groups unmanaged remove-instances restapi-group --instances=$hostname --zone europe-west2-a
-                      Write-Host "Removed $hostname from rest-api group"
-                      gcloud config list
-                    }
-                    catch
-                    {
-                      Write-Host "Errored"
-                      exit 1
-                    }
-                    
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
+
+              - task: PowerShell@2
+                displayName: Restarting ${{parameters.ServiceName}} Service
+                inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
+                  arguments: 'removefromloadbalancer -instancegroup restapi-group -zone europe-west2-a'
             deploy:
               steps:
               - checkout: self
@@ -91,23 +81,15 @@ stages:
             routeTraffic:
               steps:
               - task: PowerShell@2
-                displayName: Download SPSS Manipula Package
+                displayName: Restarting ${{parameters.ServiceName}} Service
                 inputs:
-                  targetType: 'inline'
-                  script: |
-                    try
-                    {
-                      $hostname = hostname
-                      Write-Host "hostname is: $hostname"
-                      gcloud auth login $env:ENV_VM_SERVICEACCOUNT
-                      gcloud compute instance-groups unmanaged add-instances restapi-group --instances=$hostname --zone europe-west2-a
-                      Write-Host "Added $hostname back to rest-api group"
-                    }
-                    catch 
-                    {
-                      Write-Host "Errored"
-                      exit 1
-                    }
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
+
+              - task: PowerShell@2
+                displayName: Restarting ${{parameters.ServiceName}} Service
+                inputs:
+                  filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/modify_instance_groups.ps1'
+                  arguments: 'addtoloadbalancer -instancegroup restapi-group -zone europe-west2-a'
                     
 
 
