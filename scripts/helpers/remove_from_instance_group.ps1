@@ -1,6 +1,7 @@
 param ($instancegroup, $zone)
 
     try {
+        $hostname = hostname
         gcloud compute instance-groups unmanaged remove-instances $instancegroup --instances=$hostname --zone $zone
         Write-Host "removed $hostname from $instancegroup group"
     }
