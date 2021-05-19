@@ -20,8 +20,7 @@ function AddRewriteRule {
   $existing = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "."
 
   if ($existing){
-      Write-Host "Re write rule already exists."
-      exit 0
+      Write-Host "$ruleName already exists."
   }
 
   try{
@@ -32,7 +31,7 @@ function AddRewriteRule {
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 
-    Write-Host "Rewrite rules applied"
+    Write-Host "$ruleName applied"
   }
   catch{
       Write-Host $_.ScriptStackTrace
