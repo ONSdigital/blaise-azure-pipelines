@@ -2,14 +2,14 @@
 
 try {
     $filePath = "D:\Blaise5\Settings\catidb.bcdi"
-    if (-not (Test-Path $filePath))
+    if (Test-Path $filePath)
     {
+        Write-Host "$filePath already exists"  
+    }
+    else {
         #Create data interface
         CreateDataInterfaceFile -applicationType cati -filePath $filePath
         Write-Host "Created Cati Data Interface File"
-    }
-    else {
-        Write-Host "$filePath already exists"
     }
     
     #Get a list of all configuration settings for Blaise
