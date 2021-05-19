@@ -21,6 +21,7 @@ function AddRewriteRule {
 
   if ($existing){
       Write-Host "$ruleName already exists."
+      return
   }
 
   try{
