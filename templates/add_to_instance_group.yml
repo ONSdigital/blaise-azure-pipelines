@@ -6,7 +6,7 @@ parameters:
 
 steps:
 - task: PowerShell@2
-  displayName: logging into gcp
+  displayName: Restapi uptime test
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/check_restapi_health_point.ps1'
 
