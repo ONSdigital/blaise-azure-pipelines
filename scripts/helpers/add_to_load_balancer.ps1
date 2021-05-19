@@ -1,6 +1,7 @@
 param ($instancegroup, $zone)
 
 try {
+    $hostname = hostname
     gcloud compute instance-groups unmanaged add-instances $instancegroup --instances=$hostname --zone $zone
     Write-Host "added $hostname to the $instancegroup group"
 }
