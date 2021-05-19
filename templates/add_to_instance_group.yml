@@ -8,6 +8,11 @@ steps:
 - task: PowerShell@2
   displayName: logging into gcp
   inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/check_restapi_health_point.ps1'
+
+- task: PowerShell@2
+  displayName: logging into gcp
+  inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
 
 - task: PowerShell@2
