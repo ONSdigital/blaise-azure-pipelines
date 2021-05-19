@@ -1,0 +1,17 @@
+parameters: 
+    - name: instancegroup
+      displayName: The instance group name
+    - name: zone
+      displayName: zone name
+
+steps:
+- task: PowerShell@2
+  displayName: logging into gcp
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
+
+- task: PowerShell@2
+  displayName: adding back to load balancer
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/add_to_load_balancer.ps1'
+    arguments: '-instancegroup ${{parameters.instancegroup}} -zone ${{parameters.zone}}'
