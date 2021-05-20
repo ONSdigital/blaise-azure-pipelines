@@ -1,7 +1,6 @@
 try {
     $response = Invoke-WebRequest $env:TESTING_URL -Method Get -UseBasicParsing
     $hostname = hostname
-    $response.StatusCode
 
     if ($response.StatusCode -eq 200)
     {
@@ -14,6 +13,6 @@ try {
     }
 }
 catch {
-    Write-Host "Error: $($_.Exception.Message)"
+    Write-Host "Rest Api has responded with an OK status, error: $($_.Exception.Message)"
     exit 1
 }
