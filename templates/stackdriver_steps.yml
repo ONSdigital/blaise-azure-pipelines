@@ -11,4 +11,4 @@ steps:
   displayName: Install Stackdriver Agents
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
-    arguments: '-$loggingagent ${{parameters.LoggingAgent}} -$monitoringagent ${{parameters.MonitoringAgent}} -$GCP_BUCKET ${{parameters.GCP_Bucket}}'
+    arguments: '-loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}} -GCP_BUCKET ${{parameters.GCP_Bucket}}'
