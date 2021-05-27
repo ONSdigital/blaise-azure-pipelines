@@ -13,7 +13,7 @@ else {
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
     Write-Host "Installing Stackdriver logging agent..."
-    & cmd.exe /c C:\dev\stackdriver\$($loggingagent) /S /D="C:\dev\stackdriver\loggingAgent"
+    & cmd.exe /c C:\dev\data\stackdriver\$($loggingagent) /S /D="C:\dev\stackdriver\loggingAgent"
 }
 
 Write-Host "Checking if target monitoring agent version has been installed already..."
@@ -25,5 +25,5 @@ else {
     gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    & cmd.exe /c C:\dev\stackdriver\$($monitoringagent) /S /D="C:\dev\stackdriver\monitoringAgent"
+    & cmd.exe /c C:\dev\data\stackdriver\$($monitoringagent) /S /D="C:\dev\stackdriver\monitoringAgent"
 }
