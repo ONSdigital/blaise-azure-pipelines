@@ -11,4 +11,4 @@ steps:
   displayName: Applying Blaise Firewall rules
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
-    arguments: '-$loggingagent ${{parameters.MonitoringExe}} -$monitoringagent ${{parameters.LoggingExe}} -$GCP_BUCKET ${{parameters.gcpbucket}}'
+    arguments: '-$loggingagent ${{parameters.loggingagent}} -$monitoringagent ${{parameters.monitoringagent}} -$GCP_BUCKET ${{parameters.gcpbucket}}'
