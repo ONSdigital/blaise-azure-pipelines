@@ -14,7 +14,7 @@ else {
 
     Write-Host "Installing Stackdriver logging agent..."
     $logging_install = "C:\dev\data\stackdriver\$($loggingagent) /S /D='C:\dev\stackdriver\loggingAgent'"
-    & $logging_install
+    & cmd /c $logging_install
 }
 
 Write-Host "Checking if target monitoring agent version has been installed already..."
@@ -27,7 +27,7 @@ else {
 
     Write-Host "Installing Stackdriver monitoring agent..."
     $monitoring_install = "C:\dev\data\stackdriver\$($monitoringagent) /S /D='C:\dev\stackdriver\monitoringAgent'"
-    & $monitoring_install
+    & cmd /c $monitoring_install
 }
 
 Write-Host "Agent Installation Completed"
