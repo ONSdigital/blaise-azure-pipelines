@@ -27,3 +27,7 @@ else {
     Write-Host "Installing Stackdriver monitoring agent..."
     & cmd.exe /c 'C:\dev\data\stackdriver\$($monitoringagent) /S /D="C:\dev\stackdriver\monitoringAgent"'
 }
+
+Write-Host "Agent Installation Completed"
+
+exit 0
