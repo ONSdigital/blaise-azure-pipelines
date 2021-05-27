@@ -1,9 +1,9 @@
 parameters: 
-    - name: loggingagent
+    - name: LoggingAgent
       displayName: Name of the exe for stackdriver monitoring
-    - name: monitoringagent
+    - name: MonitoringAgent
       displayName: Name of the exe for stackdriver monitoring
-    - name: gcpbucket
+    - name: GCP_Bucket
       displayName: Name of the bucket where agents are downloaded from
 
 steps:
@@ -11,4 +11,4 @@ steps:
   displayName: Applying Blaise Firewall rules
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
-    arguments: '-$loggingagent ${{parameters.loggingagent}} -$monitoringagent ${{parameters.monitoringagent}} -$GCP_BUCKET ${{parameters.gcpbucket}}'
+    arguments: '-$loggingagent ${{parameters.LoggingAgent}} -$monitoringagent ${{parameters.MonitoringAgent}} -$GCP_BUCKET ${{parameters.GCP_Bucket}}'

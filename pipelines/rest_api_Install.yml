@@ -51,9 +51,9 @@ stages:
 
                 - template: /templates/stackdriver_steps.yml
                   parameters:
-                    loggingagent: $($env:ENV_LOGGING_AGENT)
-                    monitoringagent: $($env:ENV_MONITORING_AGENT)
-                    gcpbucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
                 - template: /templates/blaise_reg_settings.yml
 
