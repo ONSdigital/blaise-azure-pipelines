@@ -28,9 +28,9 @@ stages:
               - checkout: self
               - template: /templates/stackdriver_steps.yml
                 parameters:
-                  LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                  MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                  LoggingAgent: $ENV_LOGGING_AGENT
+                  MonitoringAgent: $ENV_MONITORING_AGENT
+                  GCP_Bucket: $ENV_BLAISE_GCP_BUCKET
 
       - deployment: InstallBlaise
         displayName: Install Blaise
