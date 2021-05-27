@@ -1,5 +1,9 @@
 param ($loggingagent, $monitoringagent, $GCP_BUCKET)
 
+Write-Host "Target logging agent is: $loggingagent"
+Write-Host "Target monitoring agent is: $monitoringagent"
+Write-Host "GCP artifact bucket is: $GCP_BUCKET"
+
 Write-Host "Checking if target logging agent version has been installed already..."
 if (Test-Path C:\dev\stackdriver\$loggingagent) {
     Write-Host "Version already installed, skipping..."
