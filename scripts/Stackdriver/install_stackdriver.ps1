@@ -1,4 +1,4 @@
-param ($loggingagent, $monitoringagent, $GCP_BUCKET)
+param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
 
 Write-Host "Target logging agent is: $loggingagent"
 Write-Host "Target monitoring agent is: $monitoringagent"
