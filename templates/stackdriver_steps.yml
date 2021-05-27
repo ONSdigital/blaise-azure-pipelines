@@ -1,14 +1,14 @@
 parameters: 
-    - name: MonitoringExe
-      displayName: Name of the exe for stack driver monitoring
-    - name: LoggingExe
-      displayName: Name of the exe for stack driver monitoring
-    - name: FolderPath
-      displayName: Path where stackdriver should be installed
+    - name: loggingagent
+      displayName: Name of the exe for stackdriver monitoring
+    - name: monitoringagent
+      displayName: Name of the exe for stackdriver monitoring
+    - name: gcpbucket
+      displayName: Name of the bucket where agents are downloaded from
 
 steps:
 - task: PowerShell@2
   displayName: Applying Blaise Firewall rules
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/stackdriver_install.ps1'
-    arguments: '-MonitoringExe ${{parameters.MonitoringExe}} -LoggingExe ${{parameters.LoggingExe}} -FolderPath ${{parameters.FolderPath}}'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
+    arguments: '-$loggingagent ${{parameters.MonitoringExe}} -$monitoringagent ${{parameters.LoggingExe}} -$GCP_BUCKET ${{parameters.gcpbucket}}'
