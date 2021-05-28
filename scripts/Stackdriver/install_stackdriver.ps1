@@ -6,7 +6,18 @@ Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
 
 Write-Host "Checking if target logging agent version has been installed already..."
 if (Test-Path C:\dev\data\$($loggingagent)) {
-    Write-Host "Version already installed, skipping..."
+    Write-Host "Version already installed, checking it has been started"
+    if (Get-Service -Displayname "StackdriverLogging" | Where-Object {$_.Status -eq "Running"}) {
+        Write-Host "Already started, nothing to do..."
+    }
+    elseif (Get-Service -Displayname "StackdriverLogging" | Where-Object {$_.Status -eq "Stopped"}) {
+        Write-Host "Starting service"
+        Start-Service -Displayname "StackdriverLogging"
+    }
+    else {
+        Write-Host "Error, service not found..."
+        exit 1
+    }
 }
 else {
     Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
@@ -20,6 +31,17 @@ else {
 Write-Host "Checking if target monitoring agent version has been installed already..."
 if (Test-Path C:\dev\data\$monitoringagent) {
     Write-Host "Version already installed, skipping..."
+    if (Get-Service -Displayname "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
+        Write-Host "Already started, nothing to do..."
+    }
+    elseif (Get-Service -Displayname "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
+        Write-Host "Starting service"
+        Start-Service -Displayname "StackdriverMonitoring"
+    }
+    else {
+        Write-Host "Error, service not found..."
+        exit 1
+    }
 }
 else {
     Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
