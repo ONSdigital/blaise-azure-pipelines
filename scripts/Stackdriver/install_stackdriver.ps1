@@ -5,7 +5,7 @@ Write-Host "Target monitoring agent is: $($monitoringagent)"
 Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
 
 Write-Host "Checking if target logging agent version has been installed already..."
-if (Test-Path C:\dev\stackdriver\$($loggingagent)) {
+if (Test-Path C:\dev\data\$($loggingagent)) {
     Write-Host "Version already installed, skipping..."
 }
 else {
@@ -18,7 +18,7 @@ else {
 }
 
 Write-Host "Checking if target monitoring agent version has been installed already..."
-if (Test-Path C:\dev\stackdriver\$monitoringagent) {
+if (Test-Path C:\dev\data\$monitoringagent) {
     Write-Host "Version already installed, skipping..."
 }
 else {
