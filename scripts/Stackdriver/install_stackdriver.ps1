@@ -13,8 +13,8 @@ else {
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
     Write-Host "Installing Stackdriver logging agent..."
-    $logging_install = "C:\dev\data\stackdriver\$($loggingagent) /S /D='C:\dev\stackdriver\loggingAgent'"
-    & cmd /c $logging_install
+    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
+    Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
 }
 
 Write-Host "Checking if target monitoring agent version has been installed already..."
@@ -26,8 +26,8 @@ else {
     gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_install = "C:\dev\data\stackdriver\$($monitoringagent) /S /D='C:\dev\stackdriver\monitoringAgent'"
-    & cmd /c $monitoring_install
+    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
 }
 
 Write-Host "Agent Installation Completed"
