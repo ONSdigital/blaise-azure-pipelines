@@ -32,6 +32,21 @@ stages:
                   MonitoringAgent: $($env:ENV_MONITORING_AGENT)
                   GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
+      - deployment: InstallMySQLConnector
+        displayName: Install MySQL .Net Connector
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/mysql_connector_steps.yml
+                parameters:
+                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+
       - deployment: InstallBlaise
         displayName: Install Blaise
         environment:  
