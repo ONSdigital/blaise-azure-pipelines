@@ -12,7 +12,7 @@ if (Test-Path C:\dev\data\$($loggingagent)) {
     }
     elseif (Get-Service "StackdriverLogging" | Where-Object {$_.Status -eq "Stopped"}) {
         Write-Host "Starting service"
-        Start-Service "StackdriverLogging"
+        Start-Service -Name "StackdriverLogging"
     }
     else {
         Write-Host "Error, service not found..."
@@ -36,7 +36,7 @@ if (Test-Path C:\dev\data\$monitoringagent) {
     }
     elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
         Write-Host "Starting service"
-        Start-Service "StackdriverMonitoring"
+        Start-Service -Name "StackdriverMonitoring"
     }
     else {
         Write-Host "Error, service not found..."
