@@ -6,7 +6,7 @@ function CheckIfURLRewriteMsiExists {
     else
     {
       Write-Host "Downloading rewrite_url.msi"
-      gsutil cp gs://$GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
+      gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
     }    
 }
 

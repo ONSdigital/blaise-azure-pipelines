@@ -79,8 +79,6 @@ stages:
               steps:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
-                parameters:
-                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
       - deployment: RegisterDataEntryNodes
         condition: eq(variables.ENV_MULTI_NODE, true)
