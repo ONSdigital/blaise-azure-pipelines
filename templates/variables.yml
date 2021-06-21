@@ -1,6 +1,6 @@
 variables:
     InstrumentPath: c:\survey
     ServerParkName: gusty
-    InstrumentName: OPN2102R
+    InstrumentName: DST2106Z
     TEMP_PATH : c:\blaise\temp
     PACKAGE_EXTENSION : bpkg
