@@ -26,7 +26,7 @@ function Check_Service {
         }
     }
     else {
-        Write-Host "Error, service $Service_Name not found..."
+        Write-Host "Service $Service_Name not found, continuing..."
         return $FALSE
     }
 }
