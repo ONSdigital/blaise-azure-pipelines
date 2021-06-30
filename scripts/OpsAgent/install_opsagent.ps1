@@ -36,7 +36,7 @@ elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Old Stackdriver Monitoring Agent is running, uninstalling and installing Ops Agent"
     Start-Service -Name StackdriverMonitoring
     sc.exe delete StackdriverMonitoring
-    Install_OpsAgent "-AlsoInstall -UninstallStandaloneLoggingAgent"
+    Install_OpsAgent "-AlsoInstall -Verbose -UninstallStandaloneLoggingAgent"
 }
 elseif (Check_Service StackdriverLogging) {
     Write-Host "Old Stackdriver Logging Agent is running, uninstalling and installing Ops Agent"
@@ -44,7 +44,7 @@ elseif (Check_Service StackdriverLogging) {
 }
 else {
     Write-Host "No evidence of agents found, installing ops agent"
-    Install_OpsAgent "-AlsoInstall"
+    Install_OpsAgent "-AlsoInstall -Verbose"
 }
 
 Write-Host "Agent Installation Completed"
