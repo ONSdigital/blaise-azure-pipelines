@@ -33,8 +33,10 @@ if (Check_Service google-cloud-ops-agent) {
     Upgrade_OpsAgent
 }
 elseif (Check_Service StackdriverMonitoring) {
-    Write-Host "Old Stackdriver Monitoring Agent is running please manually uninstall using sc.exe delete StackdriverMonitoring and stop the service before you rerun this script"
-    exit 1
+    Write-Host "Old Stackdriver Monitoring Agent is running, uninstalling and installing Ops Agent"
+    Start-Service -Name StackdriverMonitoring
+    sc.exe delete StackdriverMonitoring
+    Install_OpsAgent "-AlsoInstall -UninstallStandaloneLoggingAgent"
 }
 elseif (Check_Service StackdriverLogging) {
     Write-Host "Old Stackdriver Logging Agent is running, uninstalling and installing Ops Agent"
