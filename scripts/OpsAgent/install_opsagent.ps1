@@ -1,6 +1,6 @@
 function Install_OpsAgent($flags) {
-    (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1")
-    Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 $flags"
+    (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "add-google-cloud-ops-agent-repo.ps1")
+    Invoke-Expression "add-google-cloud-ops-agent-repo.ps1 $flags"
 }
 
 function Upgrade_OpsAgent {
@@ -29,7 +29,7 @@ function Check_Service($Service_Name) {
 }
 
 if (Check_Service google-cloud-ops-agent) {
-    Write-Host "Google Cloud Ops Agent Running, Checking to see if it requires and update"
+    Write-Host "Google Cloud Ops Agent Running, Checking to see if it requires an update"
     Upgrade_OpsAgent
 }
 elseif (Check_Service StackdriverMonitoring) {
