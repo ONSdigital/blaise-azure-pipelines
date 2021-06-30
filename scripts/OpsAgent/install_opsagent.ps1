@@ -1,6 +1,6 @@
 function Install_OpsAgent($flags) {
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
-    & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1 $flags"
+    & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" $flags
 }
 
 function Upgrade_OpsAgent {
