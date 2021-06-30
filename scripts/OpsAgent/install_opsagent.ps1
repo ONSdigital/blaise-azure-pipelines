@@ -24,7 +24,8 @@ function Check_Service {
 }
 
 if (Check_Service google-cloud-ops-agent) {
-    Write-Host "Google Cloud Ops Agent Running"
+    Write-Host "Google Cloud Ops Agent Running, Checking to see if it requires and update"
+    Install_OpsAgent
 }
 elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Old Stackdriver Monitoring Agent is running please manually uninstall using sc.exe delete StackdriverMonitoring and stop the service, you may also need to install the logging agent"
