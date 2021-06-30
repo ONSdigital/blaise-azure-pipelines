@@ -7,15 +7,16 @@ function Check_Service {
     param (
         $Service_Name
     )
-    if (Get-Service $Service_Name | Where-Object {$_.Status -eq "Running"}) {
-        Write-Host "$Service_Name already started, nothing to do..."
-        return $TRUE
-    }
-    elseif (Get-Service $Service_Name | Where-Object {$_.Status -eq "Stopped"}) {
-        Write-Host "Starting service $Service_Name"
-        Start-Service -Name $Service_Name
-        return $TRUE
-    }
+    if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
+        if (Get-Service $Service_Name | Where-Object {$_.Status -eq "Running"}) {
+            Write-Host "$Service_Name already started, nothing to do..."
+            return $TRUE
+        }
+        else {
+            Write-Host "Starting service $Service_Name"
+            Start-Service -Name $Service_Name
+            return $TRUE
+        }
     else {
         Write-Host "Error, service $Service_Name not found..."
         return $FALSE
