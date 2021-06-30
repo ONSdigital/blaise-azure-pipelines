@@ -38,8 +38,8 @@ stages:
       - ${{ if notin(parameters.Environment, 'dev', 'preprod') }}:
         - template: /templates/automated_test_with_category_steps.yml
           parameters: 
-            BehaviourSolutionName: Blaise.Tests.Behaviour
-            TestName: Instrument Test
+            BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
+            TestName: Cati Smoke Tests
             TestCategory: Smoke
             
       - ${{ if in(parameters.Environment, 'dev', 'preprod') }}:
