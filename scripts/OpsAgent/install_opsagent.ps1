@@ -3,6 +3,13 @@ function Install_OpsAgent {
     Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 -AlsoInstall"
 }
 
+function Upgrade_OpsAgent {
+    Write-Host "Removing old ops agent"
+    googet -noconfirm remove google-cloud-ops-agent
+    Write-Host "Installing new ops agent"
+    googet -noconfirm install google-cloud-ops-agent
+}
+
 function Check_Service {
     param (
         $Service_Name
@@ -25,7 +32,7 @@ function Check_Service {
 
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops Agent Running, Checking to see if it requires and update"
-    Install_OpsAgent
+    Upgrade_OpsAgent
 }
 elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Old Stackdriver Monitoring Agent is running please manually uninstall using sc.exe delete StackdriverMonitoring and stop the service, you may also need to install the logging agent"
