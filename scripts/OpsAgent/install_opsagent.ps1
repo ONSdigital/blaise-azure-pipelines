@@ -24,6 +24,7 @@ function Check_Service {
             Start-Service -Name $Service_Name
             return $TRUE
         }
+    }
     else {
         Write-Host "Error, service $Service_Name not found..."
         return $FALSE
