@@ -1,6 +1,6 @@
-function Install_OpsAgent {
+function Install_OpsAgent($flags) {
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1")
-    Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 -AlsoInstall"
+    Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 -AlsoInstall$flags"
 }
 
 function Upgrade_OpsAgent {
@@ -10,10 +10,7 @@ function Upgrade_OpsAgent {
     googet -noconfirm install google-cloud-ops-agent
 }
 
-function Check_Service {
-    param (
-        $Service_Name
-    )
+function Check_Service($Service_Name) {
     if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
         if (Get-Service $Service_Name | Where-Object {$_.Status -eq "Running"}) {
             Write-Host "$Service_Name already started, nothing to do..."
@@ -36,17 +33,16 @@ if (Check_Service google-cloud-ops-agent) {
     Upgrade_OpsAgent
 }
 elseif (Check_Service StackdriverMonitoring) {
-    Write-Host "Old Stackdriver Monitoring Agent is running please manually uninstall using sc.exe delete StackdriverMonitoring and stop the service, you may also need to install the logging agent"
-    Write-Host "Once the old stackdriver agents are install rerun this script"
+    Write-Host "Old Stackdriver Monitoring Agent is running please manually uninstall using sc.exe delete StackdriverMonitoring and stop the service before you rerun this script"
     exit 1
 }
 elseif (Check_Service StackdriverLogging) {
-    Write-Host "Old Stackdriver Logging Agent is running please manually uninstall using add/remove programs then rerun this script"
-    exit 1
+    Write-Host "Old Stackdriver Logging Agent is running, uninstalling and installing Ops Agent"
+    Install_OpsAgent "-AlsoInstall -UninstallStandaloneLoggingAgent"
 }
 else {
     Write-Host "No evidence of agents found, installing ops agent"
-    Install_OpsAgent
+    Install_OpsAgent "-AlsoInstall"
 }
 
 Write-Host "Agent Installation Completed"
