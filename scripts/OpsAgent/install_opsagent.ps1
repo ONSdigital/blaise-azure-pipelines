@@ -6,7 +6,7 @@ function Check_Service($Service_Name) {
         }
         else {
             Write-Host "$Service_Name found and running..."
-            return $True
+            return $TRUE
         }
     }
     else {
