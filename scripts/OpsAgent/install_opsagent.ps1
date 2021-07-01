@@ -16,6 +16,8 @@ function Check_Service($Service_Name) {
     }
 }
 
+$ErrorActionPreference = "Continue"
+
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops agent running, executing update..."
     googet -noconfirm remove google-cloud-ops-agent
