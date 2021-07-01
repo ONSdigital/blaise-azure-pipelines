@@ -33,7 +33,9 @@ elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Old Stackdriver Monitoring agent is running, uninstalling and installing Ops Agent"
     Stop-Service -Name StackdriverMonitoring
     sc.exe delete StackdriverMonitoring
-    Uninstall-StackdriverLogging
+    if (Check_Service StackdriverLogging) {
+        Uninstall-StackdriverLogging
+    }
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
     $ErrorActionPreference = "Continue"
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall
