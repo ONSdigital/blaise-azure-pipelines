@@ -52,6 +52,13 @@ else {
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall
 }
 
-Write-Host "Agent Installation Completed"
-
-exit 0
+Write-Host "Agent Installation Completed attempting to start it"
+try {
+    Start-Service google-cloud-ops-agent
+    Write-Host "Started Successfully"
+    exit 0
+}
+catch {
+    Write-Host "Failed to start, this is typically caused by the legacy agents still existing!"
+    exit 1
+}
