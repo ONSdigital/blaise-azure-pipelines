@@ -25,7 +25,7 @@ if (Check_Service google-cloud-ops-agent) {
 }
 elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Old Stackdriver Monitoring agent is running, uninstalling and installing Ops Agent"
-    Start-Service -Name StackdriverMonitoring
+    Stop-Service -Name StackdriverMonitoring
     sc.exe delete StackdriverMonitoring
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall -UninstallStandaloneLoggingAgent
