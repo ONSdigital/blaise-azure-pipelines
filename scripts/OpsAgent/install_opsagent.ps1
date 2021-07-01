@@ -5,9 +5,8 @@ function Check_Service($Service_Name) {
             return $TRUE
         }
         else {
-            Write-Host "Starting service $Service_Name"
-            Start-Service -Name $Service_Name
-            return $TRUE
+            Write-Host "Service found but not started, please investigate..."
+            exit 1
         }
     }
     else {
