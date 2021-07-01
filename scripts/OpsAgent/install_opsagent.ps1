@@ -16,8 +16,6 @@ function Check_Service($Service_Name) {
     }
 }
 
-$ErrorActionPreference = "Continue"
-
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops agent running, executing update..."
     googet -noconfirm remove google-cloud-ops-agent
@@ -28,16 +26,19 @@ elseif (Check_Service StackdriverMonitoring) {
     Stop-Service -Name StackdriverMonitoring
     sc.exe delete StackdriverMonitoring
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
+    $ErrorActionPreference = "Continue"
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall -UninstallStandaloneLoggingAgent
 }
 elseif (Check_Service StackdriverLogging) {
     Write-Host "Old Stackdriver Logging agent is running, uninstalling and installing Ops Agent"
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
+    $ErrorActionPreference = "Continue"
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall -UninstallStandaloneLoggingAgent
 }
 else {
     Write-Host "No evidence of agents found, installing ops agent"
     (New-Object Net.WebClient).DownloadFile("https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1", "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1")
+    $ErrorActionPreference = "Continue"
     & "$PSScriptRoot\add-google-cloud-ops-agent-repo.ps1" -AlsoInstall
 }
 
