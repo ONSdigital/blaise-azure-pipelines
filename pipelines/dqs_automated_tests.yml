@@ -3,6 +3,9 @@ parameters:
     displayName: Variable Group
   - name: Environment
     displayName: Environment to use
+  - name: AutomatedTestsBranch
+    displayName: Automated tests git branch
+    default: master
 
 trigger: none
 
@@ -31,7 +34,7 @@ stages:
 
       - template: /templates/download_artifact_steps.yml
         parameters: 
-          GitBranch: 'master'
+          GitBranch: ${{parameters.AutomatedTestsBranch}}
           ArtifactName: _AutomatedTests
           DownloadPath: $(System.ArtifactsDirectory)
           TargetFiles: '**/*Behaviour*.config'
