@@ -5,6 +5,7 @@ parameters:
     displayName: Environment to use
   - name: AutomatedTestsBranch
     displayName: Automated tests git branch
+    default: master
 
 trigger: none
 
