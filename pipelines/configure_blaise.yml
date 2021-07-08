@@ -62,6 +62,7 @@ stages:
                   RuleName: Blaise
                   InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                   OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+              - template: /templates/set_environment.yml
 
       - deployment: ManagementSetup
         displayName: Setup blaise management node
@@ -105,3 +106,5 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_databases.yml
+
+
