@@ -11,12 +11,18 @@ else {
 
     Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
 
-    $allAppPools = Get-IISAppPool
-
-    foreach($appPool in $allAppPools.name)
+    if (Get-Command Get-IISAppPool -ErrorAction SilentlyContinue)
     {
-        Restart-WebAppPool -Name $appPool
-        Write-Host "Restarted: $($appPool)"
+        $allAppPools = Get-IISAppPool
+
+        foreach($appPool in $allAppPools.name)
+        {
+            Restart-WebAppPool -Name $appPool
+            Write-Host "Restarted: $($appPool)"
+        }
+    }
+    else {
+        Write-Host "IIS is not on this box"
     }
 
     $newTimeZone = Get-TimeZone
