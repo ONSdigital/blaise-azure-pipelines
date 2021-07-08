@@ -40,6 +40,8 @@ stages:
           TargetFiles: '**/*Behaviour*.config'
           PipelineNumber: 43
 
+      - template: /templates/setup_region_and_culture.yml
+
       - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
         - template: /templates/automated_test_with_category_steps.yml
           parameters: 
