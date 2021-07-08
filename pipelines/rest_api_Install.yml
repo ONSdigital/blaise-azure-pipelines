@@ -72,6 +72,8 @@ stages:
                   ExeName: blaise.api
                   TargetFolder: c:\blaiseServices\BlaiseRestApi
                   SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
+
+              - template: /templates/set_environment.yml
             routeTraffic:
               steps:
               - template: /templates/add_to_instance_group.yml
