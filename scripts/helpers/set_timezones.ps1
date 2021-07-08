@@ -2,12 +2,12 @@
 
 $currentTimeZone = Get-TimeZone
 
-if ($currentTimeZone -eq $env:Blaise_TimeZone)
+if ($currentTimeZone.Id -eq $env:Blaise_TimeZone)
 {
-    Write-Host "Time Zone is set correct to $($currentTimeZone)"
+    Write-Host "Time Zone is set correct to $($currentTimeZone.Id)"
 }
 else {
-    Write-Host "Time zone is not correct $($currentTimeZone)"
+    Write-Host "Time zone is not correct $($currentTimeZone.Id)"
 
     Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
 
