@@ -105,17 +105,3 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_databases.yml
-
-      - deployment: ConfigureCatiDatabase
-        displayName: Configure Cati Sql DB
-        dependsOn: ManagementSetup
-        environment:  
-          name: ${{parameters.Environment}}
-          resourceType: virtualMachine
-          tags: mgmt
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - checkout: self
-              - template: /templates/set_environment.yml
