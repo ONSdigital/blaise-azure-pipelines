@@ -4,3 +4,5 @@ variables:
     InstrumentName: DST2106Z
     TEMP_PATH : c:\blaise\temp
     PACKAGE_EXTENSION : bpkg
+    Blaise_TimeZone: "GMT Standard Time"
+    Blaise_Service: "BlaiseServices5" 
