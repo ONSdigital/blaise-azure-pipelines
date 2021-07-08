@@ -30,6 +30,8 @@ stages:
 
       - template: /templates/download_test_instrument.yml
 
+      - template: /templates/setup_region_and_culture.yml
+
       - template: /templates/download_artifact_steps.yml
         parameters: 
           GitBranch: ${{parameters.AutomatedTestsBranch}}
