@@ -1,32 +1,9 @@
 . "$PSScriptRoot\..\helpers\data_interface_files.ps1"
 
-try {
-    $filePath = "D:\Blaise5\Settings\catidb.bcdi"
-    if (Test-Path $filePath)
-    {
-        Write-Host "$filePath already exists"  
-    }
-    else {
-        #Create data interface
-        CreateDataInterfaceFile -applicationType cati -filePath $filePath
-        Write-Host "Created Cati Data Interface File"
-    }
+    CreateAndRegisterDataInterfaceFile -filePath "D:\Blaise5\Settings\audittraildb.badi" -applicationType audittrail -registerCommand audittraildatainterface
+    CreateAndRegisterDataInterfaceFile -filePath "D:\Blaise5\Settings\sessiondb.bsdi" -applicationType session -registerCommand sessiondatainterface
+    CreateAndRegisterDataInterfaceFile -filePath "D:\Blaise5\Settings\catidb.bcdi" -applicationType cati -registerCommand catidatainterface
     
-    #Get a list of all configuration settings for Blaise
-    $configurationSettings = ListOfConfigurationSettings
+    restart-service blaiseservices5
 
-    if ($configurationSettings.contains($filePath))
-    {
-        Write-Host "$filePath is already registered"
-    }
-    else {
-        #register data interface
-        RegisterCatiDataInterfaceFile -filePath $filePath
-        restart-service blaiseservices5
-        Write-Host "$filePath registered"
-    }
-}
-catch {
-    Write-Host "Error occured updated Cati database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
-}
 
