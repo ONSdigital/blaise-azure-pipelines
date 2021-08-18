@@ -1,5 +1,5 @@
 steps:
 - task: PowerShell@2
-  displayName: Update Cati Database to MySql
+  displayName: Update Blaise Databases to MySql
   inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/cati_mysql_database.ps1'
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/mysql_database_setup.ps1'
