@@ -93,8 +93,8 @@ stages:
               - checkout: self
               - template: /templates/register_node_steps.yml
 
-      - deployment: ConfigureCatiDatabase
-        displayName: Configure Cati Sql DB
+      - deployment: ConfigureBlaisesDatabases
+        displayName: Configure Blaises Sql Databases
         dependsOn: ManagementSetup
         environment:  
           name: ${{parameters.Environment}}
