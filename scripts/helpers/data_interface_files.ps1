@@ -67,7 +67,7 @@ function RegisterDatainterfaceViaXML {
             $xmlFragment = $xml.CreateDocumentFragment()
             $xmlFragment.InnerXml = $txtFragment
             $node = $xml.SelectSingleNode('//appSettings')
-            $node.AppendChild($value)
+            $node.AppendChild($xmlFragment)
     
             $xml.Save($configFile)
             Write-Host "$filePath database has been set"
