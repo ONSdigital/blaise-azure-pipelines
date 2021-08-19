@@ -16,7 +16,7 @@ function CreateDataInterfaceFile {
         }
     }
     catch {
-        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Host "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -26,17 +26,22 @@ function RegisterDataInterfaceFile {
         [string] $filePath,
         [string] $registerCommand
     )
-    #Get a list of all configuration settings for Blaise
-    $configurationSettings = ListOfConfigurationSettings
+    try {
+        #Get a list of all configuration settings for Blaise
+        $configurationSettings = ListOfConfigurationSettings
     
-    if ($configurationSettings.contains($filePath))
-    {
-        Write-Host "$filePath is already registered"
+        if ($configurationSettings.contains($filePath))
+        {
+            Write-Host "$filePath is already registered"
+        }
+        else {
+            #register data interface
+            c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
+            Write-Host "$filePath registered"
+        }
     }
-    else {
-        #register data interface
-        c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
-        Write-Host "$filePath registered"
+    catch {
+        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -47,27 +52,32 @@ function RegisterDatainterfaceViaXML {
         [string] $configFile,
         [string] $interfaceFileName
     )
-    $configFile = ""
+    try {
+        $xml = [xml](Get-Content $configFile)
 
-    $xml = [xml](Get-Content $configFile)
-
-    $txtFragment = @"
-    <add key="$interfaceFileName" value="$filePath"/>
+        $txtFragment = @"
+        <add key="$interfaceFileName" value="$filePath"/>
 "@
-
-    if($xml.InnerXml.Contains($filePath)){
-        Write-Host "$filePath database is already set"
+    
+        if($xml.InnerXml.Contains($filePath)){
+            Write-Host "$filePath database is already set"
+        }
+        else
+        {
+            $xmlFragment = $xml.CreateDocumentFragment()
+            $xmlFragment.InnerXml = $txtFragment
+            $node = $xml.SelectSingleNode('//appSettings')
+            $node.AppendChild($value)
+    
+            $xml.Save($configFile)
+            Write-Host "$filePath database has been set"
+        }
     }
-    else
-    {
-        $xmlFragment = $xml.CreateDocumentFragment()
-        $xmlFragment.InnerXml = $txtFragment
-        $node = $xml.SelectSingleNode('//appSettings')
-        $node.AppendChild($value)
-
-        $xml.Save($configFile)
-        Write-Host "$filePath database has been set"
+    catch{
+        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        exit 1
     }
+    
 }
 
 function ListOfConfigurationSettings {
