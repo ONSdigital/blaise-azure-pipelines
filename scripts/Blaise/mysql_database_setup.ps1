@@ -16,7 +16,7 @@
     RegisterDataInterfaceFile -filePath $cati_db_file_path -registerCommand catidatainterface
 
     #Config
-    $config_db_file_path = "D:\Blaise5\Settings\configurationdb.bcdi"
+    $config_db_file_path = "D:\Blaise5\Settings\configurationdb.bidi"
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration 
     RegisterDatainterfaceViaXML -filePath $config_db_file_path -configFile "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config" -interfaceFileName "ConfigurationDataInterfaceFile"
 
