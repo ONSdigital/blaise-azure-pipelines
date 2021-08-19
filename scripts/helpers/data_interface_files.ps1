@@ -1,8 +1,7 @@
-function CreateAndRegisterDataInterfaceFile {
+function CreateDataInterfaceFile {
     param (
         [string] $filePath,
-        [string] $applicationType,
-        [string] $registerCommand
+        [string] $applicationType
     )
     try {
         #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
@@ -12,34 +11,14 @@ function CreateAndRegisterDataInterfaceFile {
         }
         else {
             #Create data interface
-            CreateDataInterfaceFile -applicationType $applicationType -filePath $filePath
-            Write-Host "Created Cati Data Interface File"
-        }
-        
-        #Get a list of all configuration settings for Blaise
-        $configurationSettings = ListOfConfigurationSettings
-    
-        if ($configurationSettings.contains($filePath))
-        {
-            Write-Host "$filePath is already registered"
-        }
-        else {
-            #register data interface
-            RegisterDataInterfaceFile -registerCommand $registerCommand -filePath $filePath
-            Write-Host "$filePath registered"
+            C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
+            Write-Host "Created $applicationType Data Interface File"
         }
     }
     catch {
         Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        exit 1
     }
-}
-
-function CreateDataInterfaceFile {
-    param (
-        [string] $applicationType, 
-        [string] $filePath
-    )
-    C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
 }
 
 function RegisterDataInterfaceFile {
@@ -47,7 +26,48 @@ function RegisterDataInterfaceFile {
         [string] $filePath,
         [string] $registerCommand
     )
-    c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
+    #Get a list of all configuration settings for Blaise
+    $configurationSettings = ListOfConfigurationSettings
+    
+    if ($configurationSettings.contains($filePath))
+    {
+        Write-Host "$filePath is already registered"
+    }
+    else {
+        #register data interface
+        c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
+        Write-Host "$filePath registered"
+        exit 1
+    }
+}
+
+function RegisterDatainterfaceViaXML {
+    param (
+        [string] $filePath,
+        [string] $configFile,
+        [string] $interfaceFileName
+    )
+    $configFile = ""
+
+    $xml = [xml](Get-Content $configFile)
+
+    $txtFragment = @"
+    <add key="$interfaceFileName" value="$filePath"/>
+"@
+
+    if($xml.InnerXml.Contains($filePath)){
+        Write-Host "$filePath database is already set"
+    }
+    else
+    {
+        $xmlFragment = $xml.CreateDocumentFragment()
+        $xmlFragment.InnerXml = $txtFragment
+        $node = $xml.SelectSingleNode('//appSettings')
+        $node.AppendChild($value)
+
+        $xml.Save($configFile)
+        Write-Host "$filePath database has been set"
+    }
 }
 
 function ListOfConfigurationSettings {
