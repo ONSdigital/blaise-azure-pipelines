@@ -3,8 +3,8 @@ function Install_StackDriver_Logging() {
     sudo bash install-logging-agent.sh
 
     Write-Host "Sanity checking Stackdriver Logging has been installed..."
-    if (Check_Service StackdriverMonitoring) {
-        Write-Host "Stackdriver Monitoring Agent is running"
+    if (Check_Service StackdriverLogging) {
+        Write-Host "Stackdriver Logging Agent is running"
     }
 }
 
