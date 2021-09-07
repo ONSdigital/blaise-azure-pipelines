@@ -1,57 +1,39 @@
-param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
+function Install_StackDriver() {
+    Write-Host "This is a function to install StackDriver"
+}
 
-Write-Host "Target logging agent is: $($loggingagent)"
-Write-Host "Target monitoring agent is: $($monitoringagent)"
-Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
+function Uninstall_OpsAgent() {
+    Write-Host "Uninstalling Ops Agent"
+    googet -noconfirm remove google-cloud-ops-agent
+}
 
-Write-Host "Checking if target logging agent version has been installed already..."
-if (Test-Path C:\dev\data\$($loggingagent)) {
-    Write-Host "Version already installed, checking it has been started"
-    if (Get-Service "StackdriverLogging" | Where-Object {$_.Status -eq "Running"}) {
-        Write-Host "Already started, nothing to do..."
-    }
-    elseif (Get-Service "StackdriverLogging" | Where-Object {$_.Status -eq "Stopped"}) {
-        Write-Host "Starting service"
-        Start-Service -Name "StackdriverLogging"
+function Check_Service($Service_Name) {
+    if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
+        if (Get-Service $Service_Name | Where-Object {$_.Status -eq "Running"}) {
+            Write-Host "$Service_Name already started, nothing to do..."
+            return $TRUE
+        }
+        else {
+            Write-Host "Starting service $Service_Name"
+            Start-Service -Name $Service_Name
+            return $TRUE
+        }
     }
     else {
-        Write-Host "Error, service not found..."
-        exit 1
+        Write-Host "Service $Service_Name not found, continuing..."
+        return $FALSE
     }
 }
+
+if (Check_Service google-cloud-ops-agent) {
+    Write-Host "Google Cloud Ops Agent running, uninstalling and installing Ops Agent"
+    Uninstall_OpsAgent
+
+
 else {
-    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
-    gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
-
-    Write-Host "Installing Stackdriver logging agent..."
-    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
-    Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
+    Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
+    Install_StackDriver
 }
 
-Write-Host "Checking if target monitoring agent version has been installed already..."
-if (Test-Path C:\dev\data\$monitoringagent) {
-    Write-Host "Version already installed, skipping..."
-    if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
-        Write-Host "Already started, nothing to do..."
-    }
-    elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
-        Write-Host "Starting service"
-        Start-Service -Name "StackdriverMonitoring"
-    }
-    else {
-        Write-Host "Error, service not found..."
-        exit 1
-    }
-}
-else {
-    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
-    gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
-
-    Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
-    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
-}
-
-Write-Host "Agent Installation Completed"
 
 exit 0
