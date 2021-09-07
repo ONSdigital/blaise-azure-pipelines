@@ -47,8 +47,6 @@ function Check_Service($Service_Name) {
     }
 }
 
-param ([string]$LoggingAgent)
-
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops Agent running..."
     Uninstall_OpsAgent
