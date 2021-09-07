@@ -1,9 +1,9 @@
 function Install_StackDriver_Logging() {
-    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_Bucket'..."
-    gsutil cp gs://$GCP_BUCKET/$LoggingAgent "C:\dev\data\$($loggingagent)"
+    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
+    gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
     Write-Host "Installing Stackdriver logging agent..."
-    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
+    $logging_args = "/S /D='C:\dev\stackdriver\loggingagent'"
     Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
 
     if (Check_Service StackdriverLogging) {
@@ -35,8 +35,8 @@ function Check_Service($Service_Name) {
 }
 
 
-Write-Host "DEBUG: Target logging agent is: $($LoggingAgent)"
-Write-Host "DEBUG: Target monitoring agent is: $($MonitoringAgent)"
+Write-Host "DEBUG: Target logging agent is: $($loggingagent)"
+Write-Host "DEBUG: Target monitoring agent is: $($monitoringagent)"
 Write-Host "DEBUG: GCP artifact bucket is: $($GCP_BUCKET)"
 
 if (Check_Service google-cloud-ops-agent) {
