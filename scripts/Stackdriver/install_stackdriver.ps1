@@ -10,7 +10,7 @@ function Uninstall_OpsAgent() {
 function Check_Service($Service_Name) {
     if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
         if (Get-Service $Service_Name | Where-Object {$_.Status -eq "Running"}) {
-            Write-Host "$Service_Name already started, nothing to do..."
+            Write-Host "$Service_Name already started"
             return $TRUE
         }
         else {
@@ -20,15 +20,19 @@ function Check_Service($Service_Name) {
         }
     }
     else {
-        Write-Host "Service $Service_Name not found, continuing..."
+        Write-Host "Service $Service_Name not found"
         return $FALSE
     }
 }
 
 if (Check_Service google-cloud-ops-agent) {
-    Write-Host "Google Cloud Ops Agent running, uninstalling and installing Ops Agent"
+    Write-Host "Google Cloud Ops Agent running..."
     Uninstall_OpsAgent
-} else {
+    Install_StackDriver
+} elseif (Check_Service StackdriverMonitoring) {
+    Write-Host "Stackdriver Monitoring Agent is running"
+}
+else {
     Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
     Install_StackDriver
 }
