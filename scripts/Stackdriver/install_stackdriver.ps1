@@ -2,7 +2,7 @@ function Install_StackDriver_Logging() {
     curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
     sudo bash install-logging-agent.sh
 
-    Write-Host "Sanity checking Stackdriver Logging has been installed..."
+    Write-Host "Sanity checking Stackdriver Logging is a recognised service and has been installed..."
     if (Check_Service StackdriverLogging) {
         Write-Host "Stackdriver Logging Agent is running"
     }
