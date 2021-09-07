@@ -1,16 +1,16 @@
 function Install_StackDriver_Logging() {
     curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
     sudo bash install-logging-agent.sh
-}
-
-function Uninstall_OpsAgent() {
-    Write-Host "Uninstalling Ops Agent"
-    googet -noconfirm remove google-cloud-ops-agent
 
     Write-Host "Sanity checking Stackdriver Logging has been installed..."
     if (Check_Service StackdriverMonitoring) {
         Write-Host "Stackdriver Monitoring Agent is running"
     }
+}
+
+function Uninstall_OpsAgent() {
+    Write-Host "Uninstalling Ops Agent"
+    googet -noconfirm remove google-cloud-ops-agent
 }
 
 function Check_Service($Service_Name) {
