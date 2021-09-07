@@ -34,6 +34,7 @@ function Check_Service($Service_Name) {
     }
 }
 
+param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
 
 Write-Host "DEBUG: Target logging agent is: $($loggingagent)"
 Write-Host "DEBUG: Target monitoring agent is: $($monitoringagent)"
