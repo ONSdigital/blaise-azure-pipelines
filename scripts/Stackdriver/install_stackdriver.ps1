@@ -28,12 +28,9 @@ function Check_Service($Service_Name) {
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops Agent running, uninstalling and installing Ops Agent"
     Uninstall_OpsAgent
-
-
-else {
+} else {
     Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
     Install_StackDriver
 }
-
 
 exit 0
