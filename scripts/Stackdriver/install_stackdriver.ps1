@@ -34,11 +34,9 @@ function Check_Service($Service_Name) {
     }
 }
 
-param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
-
-Write-Host "DEBUG: Target logging agent is: $($loggingagent)"
-Write-Host "DEBUG: Target monitoring agent is: $($monitoringagent)"
-Write-Host "DEBUG: GCP artifact bucket is: $($GCP_BUCKET)"
+Write-Host "DEBUG: Target logging agent is: $loggingagent"
+Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
+Write-Host "DEBUG: GCP artifact bucket is: $GCP_BUCKET"
 
 if (Check_Service google-cloud-ops-agent) {
     Write-Host "Google Cloud Ops Agent running..."
