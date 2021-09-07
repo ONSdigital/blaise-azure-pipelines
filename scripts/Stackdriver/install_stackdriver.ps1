@@ -1,5 +1,11 @@
 function Install_StackDriver_Logging() {
-    Write-Host "Sanity checking Stackdriver Logging is a recognised service..."
+    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
+    gsutil cp gs://$GCP_BUCKET/$LoggingAgent "C:\dev\data\$($loggingagent)"
+
+    Write-Host "Installing Stackdriver logging agent..."
+    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
+    Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
+
     if (Check_Service StackdriverLogging) {
         Write-Host "Stackdriver Logging Agent is running"
     }
