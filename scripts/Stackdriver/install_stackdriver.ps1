@@ -34,11 +34,9 @@ function Check_Service($Service_Name) {
     }
 }
 
-if (([string]::IsNullOrEmpty($loggingagent)))
-{
-    Write-Host "DEBUG: Apparently loggingagent is null...maybe?"
-    $request += "/" + $loggingagent
-}
+$loggingagent = "StackdriverLogging-v1-15.exe"
+$monitoringagent = "StackdriverMonitoring-GCM-46.exe"
+$GCP_Bucket = "ons-blaise-v2-dev-el-03-winvm-data"
 
 Write-Host "DEBUG: Target logging agent is: $loggingagent"
 Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
