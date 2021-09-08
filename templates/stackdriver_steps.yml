@@ -7,8 +7,15 @@ parameters:
     displayName: Name of the bucket where agents are downloaded from
 
 steps:
+  - task: LogVars
+    displaName: Log the variables
+    inputs:
+      filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/log_vars.ps1'
+      arguments: '-loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}} -GCP_BUCKET ${{parameters.GCP_Bucket}}'
+
   - task: PowerShell@2
     displayName: Install Stackdriver Agents
     inputs:
       filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
       arguments: '-loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}} -GCP_BUCKET ${{parameters.GCP_Bucket}}'
+
