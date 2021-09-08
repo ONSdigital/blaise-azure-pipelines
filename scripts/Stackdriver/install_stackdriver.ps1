@@ -14,8 +14,10 @@ function Install_StackDriver_Logging() {
 }
 
 function Uninstall_OpsAgent() {
-    Write-Host "Uninstalling Ops Agent"
+    Write-Host "Uninstalling Ops Agent..."
     googet -noconfirm remove google-cloud-ops-agent
+    Write-Host "Successfully uninstalled Ops Agent"
+
 }
 
 function Check_Service($Service_Name) {
@@ -41,19 +43,20 @@ Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
 Write-Host "DEBUG: GCP artifact bucket is: $GCP_BUCKET"
 
 if (Check_Service google-cloud-ops-agent) {
-    Write-Host "Google Cloud Ops Agent running..."
-    Uninstall_OpsAgent
-    Install_StackDriver_Logging
+    Write-Host "Google Cloud Ops agent is running. Attempting to uninstall it and install Stackdriver agents..."
 }
-elseif (Check_Service StackdriverMonitoring) {
-    Write-Host "Stackdriver Monitoring Agent is running"
+elseif (Check_Service StackdriverMonitoring) -and (Check_Service StackdriverLogging) {
+    Write-Host "Stackdriver Logging and Monitoring agents are running. There's nothing more to see here"
+
 }
-elseif (Check_Service StackdriverLogging) {
-    Write-Host "Stackdriver Logging Agent is running"
+elseif -not (Check_Service StackdriverLogging) {
+    Write-Host "Stackdriver Logging Agent is not running, attempting to install it..."
+}
+elseif -not (Check_Service StackdriverMonitoring) {
+    Write-Host "Stackdriver Monitoring Agent is not running, attempting to install it..."
 }
 else {
     Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
-    Install_StackDriver_Logging
 }
 
 exit 0
