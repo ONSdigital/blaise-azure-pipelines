@@ -34,6 +34,12 @@ function Check_Service($Service_Name) {
     }
 }
 
+if (-not ([string]::IsNullOrEmpty($loggingagent)))
+{
+    Write-Host "DEBUG: Apparently loggingagent is not an empty string...maybe?"
+    $request += "/" + $loggingagent
+}
+
 Write-Host "DEBUG: Target logging agent is: $loggingagent"
 Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
 Write-Host "DEBUG: GCP artifact bucket is: $GCP_BUCKET"
