@@ -8,7 +8,7 @@ parameters:
 
 steps:
   - task: LogVars
-    displaName: Log the variables
+    displayName: Log the variables
     inputs:
       filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/log_vars.ps1'
       arguments: '-loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}} -GCP_BUCKET ${{parameters.GCP_Bucket}}'
