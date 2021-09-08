@@ -8,7 +8,7 @@ parameters:
 
 steps:
   - task: PowerShell@2
-    displayName: Install Stackdriver Agents ${{parameters.LoggingAgent}} ${{parameters.MonitoringAgent}} ${{parameters.GCP_Bucket}}
+    displayName: Install Stackdriver Agents
     inputs:
       filePath: '$(Agent.BuildDirectory)/s/scripts/Stackdriver/install_stackdriver.ps1'
       arguments: '-loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}} -GCP_BUCKET ${{parameters.GCP_Bucket}}'

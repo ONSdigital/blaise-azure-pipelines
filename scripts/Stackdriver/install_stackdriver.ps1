@@ -1,3 +1,5 @@
+param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
+
 function Install_StackDriver_Logging() {
     Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
@@ -33,10 +35,6 @@ function Check_Service($Service_Name) {
         return $FALSE
     }
 }
-
-$loggingagent = "StackdriverLogging-v1-15.exe"
-$monitoringagent = "StackdriverMonitoring-GCM-46.exe"
-$GCP_Bucket = "ons-blaise-v2-dev-el-03-winvm-data"
 
 Write-Host "DEBUG: Target logging agent is: $loggingagent"
 Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
