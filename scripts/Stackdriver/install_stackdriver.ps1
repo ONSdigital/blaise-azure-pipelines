@@ -48,6 +48,9 @@ if (Check_Service google-cloud-ops-agent) {
 elseif (Check_Service StackdriverMonitoring) {
     Write-Host "Stackdriver Monitoring Agent is running"
 }
+elseif (Check_Service StackdriverLogging) {
+    Write-Host "Stackdriver Logging Agent is running"
+}
 else {
     Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
     Install_StackDriver_Logging
