@@ -13,6 +13,15 @@ function Install_StackDriver_Logging() {
     }
 }
 
+function Install_StackDriver_Monitoring() {
+    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
+    gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
+
+    Write-Host "Installing Stackdriver monitoring agent..."
+    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
+}
+
 function Uninstall_OpsAgent() {
     Write-Host "Uninstalling Ops Agent"
     googet -noconfirm remove google-cloud-ops-agent
@@ -41,19 +50,21 @@ Write-Host "DEBUG: Target monitoring agent is: $monitoringagent"
 Write-Host "DEBUG: GCP artifact bucket is: $GCP_BUCKET"
 
 if (Check_Service google-cloud-ops-agent) {
-    Write-Host "Google Cloud Ops agent is running..."
+    Write-Host "Attempting to uninstall Ops Agent..."
     Uninstall_OpsAgent
 }
-elseif (Check_Service StackdriverMonitoring) {
-    Write-Host "Stackdriver Monitoring agent is running..."
-
+elseif (-Not Check_Service StackdriverMonitoring) {
+    Write-Host "Attempting to install Stackdriver Monitoring agent..."
+    Install_StackDriver_Monitoring
 }
-elseif (Check_Service StackdriverLogging) {
-    Write-Host "Stackdriver Logging Agent is running..."
+elseif (-Not Check_Service StackdriverLogging) {
+    Write-Host "Attempting to install Stackdriver Logging agent..."
+    Install_StackDriver_Logging
 }
 else {
     Write-Host "No evidence of agents found, installing Stackdriver Logging and Monitoring"
-
+    Install_StackDriver_Logging
+    Install_StackDriver_Monitoring
 }
 
 exit 0
