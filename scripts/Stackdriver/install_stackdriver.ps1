@@ -34,9 +34,9 @@ function Check_Service($Service_Name) {
     }
 }
 
-if (-not ([string]::IsNullOrEmpty($loggingagent)))
+if (([string]::IsNullOrEmpty($loggingagent)))
 {
-    Write-Host "DEBUG: Apparently loggingagent is not an empty string...maybe?"
+    Write-Host "DEBUG: Apparently loggingagent is null...maybe?"
     $request += "/" + $loggingagent
 }
 
