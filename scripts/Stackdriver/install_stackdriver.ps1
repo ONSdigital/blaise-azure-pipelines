@@ -81,6 +81,15 @@ if (Check_Service google-cloud-ops-agent) {
     Write-Host "Attempting to uninstall Ops Agent..."
     googet -noconfirm remove google-cloud-ops-agent
 }
+elseif (Check_Service StackdriverMonitoring) {
+    Write-Host "StackdriverMonitoring checked"
+}
+elseif (Check_Service StackdriverLogging) {
+    Write-Host "StackdriverLogging checked"
+}
+else {
+    Write-Host "No evidence of agents found, installing Stackdriver agents"
+}
 
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
