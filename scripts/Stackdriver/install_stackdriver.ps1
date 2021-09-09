@@ -45,21 +45,10 @@ function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
 }
 
 function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
-    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
-    gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
-
-    Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
-    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
-}
-
-
-function Install_StackDriver_Monitoring2($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
         if (Get-Service "StackdriverMonitoring" -ErrorAction SilentlyContinue) {
-
             if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
                 Write-Host "Stackdriver Monitoring already started, nothing to do..."
             }
@@ -91,15 +80,6 @@ if (Check_Service google-cloud-ops-agent) {
     Write-Host "Attempting to uninstall Ops Agent..."
     googet -noconfirm remove google-cloud-ops-agent
 }
-elseif (Check_Service StackdriverMonitoring) {
-    Write-Host "StackdriverMonitoring checked"
-}
-elseif (Check_Service StackdriverLogging) {
-    Write-Host "StackdriverLogging checked"
-}
-else {
-    Write-Host "No evidence of agents found, installing Stackdriver agents"
-}
 
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
@@ -108,13 +88,28 @@ Write-Host "Agent installation completed"
 try {
     Write-Host "Attempting to start Stackdriver Logging..."
     Start-Service StackdriverLogging
-    Write-Host "Stackdriver Logging started successfully. Attempting to start Stackdriver Monitoring"
+    Write-Host "Stackdriver Logging started successfully"
+
+    Write-Host "Attempting to start Stackdriver Monitoring..."
     Start-Service StackdriverMonitoring
     Write-Host "Stackdriver Monitoring started successfully"
     exit 0
 }
 catch {
-    Write-Host "Failed to start, this is typically caused by the legacy agents still existing!"
+    Write-Host "Failed to start, checking if any of the legacy agents still exist"
+    if (Check_Service google-cloud-ops-agent) {
+        Write-Host "Ops Agent still exists"
+    }
+    elseif (Check_Service StackdriverLogging) {
+        Write-Host "StackdriverLogging still exists"
+    }
+    elseif (Check_Service StackdriverMonitoring) {
+        Write-Host "StackdriverMonitoring still exists"
+    }
+    else {
+        Write-Host "Couldn't find any evidence of any legacy agents existing. I have no idea what's wrong, sorry!"
+    }
+
     exit 1
 }
 
