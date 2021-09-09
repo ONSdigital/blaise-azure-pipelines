@@ -18,7 +18,7 @@ function Check_Service($Service_Name) {
     }
 }
 
-function Install_StackDriver($loggingagent, $monitoringagent, $GCP_BUCKET) {
+function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
     Write-Host "Checking if target logging agent version has been installed already..."
     if (Test-Path C:\dev\data\$($loggingagent)) {
         Write-Host "'$($loggingagent)' already installed, checking it has been started"
@@ -42,7 +42,9 @@ function Install_StackDriver($loggingagent, $monitoringagent, $GCP_BUCKET) {
         $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
         Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
     }
+}
 
+function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
@@ -77,11 +79,10 @@ if (Check_Service google-cloud-ops-agent) {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
-Install_StackDriver $loggingagent $monitoringagent $GCP_BUCKET
+Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 
 Write-Host "Agent installation completed attempting to start it"
 try {
-    Start-Service StackdriverLogging
     Start-Service StackdriverMonitoring
     Write-Host "Started Successfully"
     exit 0
@@ -90,5 +91,6 @@ catch {
     Write-Host "Failed to start, this is typically caused by the legacy agents still existing!"
     exit 1
 }
+
 
 exit 0
