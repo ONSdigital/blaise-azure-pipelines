@@ -48,25 +48,19 @@ function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
-        try {
-            Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}
-        }
-        catch {
-            Check_Service StackdriverMonitoring
-        }
+        if (Get-Service "StackdriverMonitoring" -ErrorAction SilentlyContinue) {
 
-        Write-Host "DEBUG: Break-point"
-
-        if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
-            Write-Host "Stackdriver Monitoring already started, nothing to do..."
-        }
-        elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
-            Write-Host "Starting service"
-            Start-Service -Name "StackdriverMonitoring"
-        }
-        else {
-            Write-Host "Error, Stackdriver Monitoring service not found..."
-            exit 1
+            if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
+                Write-Host "Stackdriver Monitoring already started, nothing to do..."
+            }
+            elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
+                Write-Host "Starting service"
+                Start-Service -Name "StackdriverMonitoring"
+            }
+            else {
+                Write-Host "Error, Stackdriver Monitoring service not found..."
+                exit 1
+            }
         }
     }
     else {
