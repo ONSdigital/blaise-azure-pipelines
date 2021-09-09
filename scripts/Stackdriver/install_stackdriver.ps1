@@ -48,6 +48,15 @@ function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
+        try {
+            Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}
+        }
+        catch {
+            Check_Service StackdriverMonitoring
+        }
+
+        Write-Host "DEBUG: Break-point"
+
         if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
             Write-Host "Stackdriver Monitoring already started, nothing to do..."
         }
@@ -79,10 +88,12 @@ if (Check_Service google-cloud-ops-agent) {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
+Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 
 Write-Host "Agent installation completed attempting to start it"
 try {
+    Start-Service StackdriverLogging
     Start-Service StackdriverMonitoring
     Write-Host "Started Successfully"
     exit 0
