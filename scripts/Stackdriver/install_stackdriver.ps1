@@ -53,6 +53,10 @@ if (Check_Service google-cloud-ops-agent) {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
+if (Check_Service StackdriverMonitoring) {
+    Write-Host "DEBUG: What is going on with Stackdriver Monitoring!?"
+}
+
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 
 Write-Host "Agent installation completed attempting to start it"
