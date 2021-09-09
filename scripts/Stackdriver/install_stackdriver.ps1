@@ -64,5 +64,5 @@ if (Check_Service_Exists StackdriverMonitoring) {
     Uninstall_StackDriver_Monitoring
 }
 
-Install_StackDriver_Logging $loggingagent, $GCP_BUCKET
+Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
