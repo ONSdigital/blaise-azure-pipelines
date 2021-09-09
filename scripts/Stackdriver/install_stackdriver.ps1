@@ -48,10 +48,10 @@ function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
-        if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
+        if (Get-Service -Name StackdriverMonitoring | Where-Object {$_.Status -eq "Running"}) {
             Write-Host "Stackdriver Monitoring already started, nothing to do..."
         }
-        elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
+        elseif (Get-Service -Name StackdriverMonitoring | Where-Object {$_.Status -eq "Stopped"}) {
             Write-Host "Starting service"
             Start-Service -Name "StackdriverMonitoring"
         }
