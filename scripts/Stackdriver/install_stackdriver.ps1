@@ -44,6 +44,32 @@ function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
     }
 }
 
+function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
+    Write-Host "Checking if target monitoring agent version has been installed already..."
+    if (Test-Path C:\dev\data\$monitoringagent) {
+        Write-Host "'$($monitoringagent)' already installed, skipping..."
+        if (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Running"}) {
+            Write-Host "Stackdriver Monitoring already started, nothing to do..."
+        }
+        elseif (Get-Service "StackdriverMonitoring" | Where-Object {$_.Status -eq "Stopped"}) {
+            Write-Host "Starting service"
+            Start-Service -Name "StackdriverMonitoring"
+        }
+        else {
+            Write-Host "Error, Stackdriver Monitoring service not found..."
+            exit 1
+        }
+    }
+    else {
+        Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
+        gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
+
+        Write-Host "Installing Stackdriver monitoring agent..."
+        $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+        Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
+    }
+}
+
 Write-Host "Target logging agent is: $($loggingagent)"
 Write-Host "Target monitoring agent is: $($monitoringagent)"
 Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
@@ -53,18 +79,13 @@ if (Check_Service google-cloud-ops-agent) {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
-if (Check_Service StackdriverMonitoring) {
-    Write-Host "DEBUG: What is going on with Stackdriver Monitoring!?"
-}
-else {
-    Write-Host "DEBUG: StackdriverMonitoring service not found but it didn't fall over..."
-}
-
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
+Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 
 Write-Host "Agent installation completed attempting to start it"
 try {
     Start-Service StackdriverLogging
+    Start-Service StackdriverMonitoring
     Write-Host "Started Successfully"
     exit 0
 }
