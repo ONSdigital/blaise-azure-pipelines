@@ -56,6 +56,9 @@ if (Check_Service google-cloud-ops-agent) {
 if (Check_Service StackdriverMonitoring) {
     Write-Host "DEBUG: What is going on with Stackdriver Monitoring!?"
 }
+else {
+    Write-Host "DEBUG: StackdriverMonitoring service not found but it didn't fall over..."
+}
 
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 
