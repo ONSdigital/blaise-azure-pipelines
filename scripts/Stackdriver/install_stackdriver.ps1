@@ -45,6 +45,16 @@ function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
 }
 
 function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
+    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
+    gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
+
+    Write-Host "Installing Stackdriver monitoring agent..."
+    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
+}
+
+
+function Install_StackDriver_Monitoring2($monitoringagent, $GCP_BUCKET) {
     Write-Host "Checking if target monitoring agent version has been installed already..."
     if (Test-Path C:\dev\data\$monitoringagent) {
         Write-Host "'$($monitoringagent)' already installed, skipping..."
@@ -94,11 +104,13 @@ else {
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 
-Write-Host "Agent installation completed attempting to start it"
+Write-Host "Agent installation completed"
 try {
+    Write-Host "Attempting to start Stackdriver Logging..."
     Start-Service StackdriverLogging
+    Write-Host "Stackdriver Logging started successfully. Attempting to start Stackdriver Monitoring"
     Start-Service StackdriverMonitoring
-    Write-Host "Started Successfully"
+    Write-Host "Stackdriver Monitoring started successfully"
     exit 0
 }
 catch {
