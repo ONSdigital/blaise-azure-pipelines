@@ -21,7 +21,23 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise, data-delivery
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/stackdriver_steps.yml
+                parameters:
+                  LoggingAgent: "StackdriverLogging-v1-15.exe"
+                  MonitoringAgent: "StackdriverMonitoring-GCM-46.exe"
+                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: InstallStackDriver
+        displayName: Install Stackdriver
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-delivery
         strategy:
           runOnce:
             deploy:
