@@ -14,7 +14,9 @@ function Uninstall_Ops_Agent() {
 
 function Uninstall_StackDriver_Logging() {
     Write-Host "Uninstalling Stackdriver Logging Agent"
-    $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
+#     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
+    $packageUninstall = Get-ItemPropertyValue 'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\GoogleStackdriverLoggingAgent' -Name UninstallString
+    Write-Host "Uninstall string: '$packageUninstall'"
     if ($packageUninstall) {
       & $packageUninstall /S
       Start-Sleep -s 5
