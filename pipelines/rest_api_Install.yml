@@ -52,8 +52,8 @@ stages:
               - template: /templates/stackdriver_steps.yml
                 parameters:
                   LoggingAgent: "StackdriverLogging-v1-15.exe"
-                    MonitoringAgent: "StackdriverMonitoring-GCM-46.exe"
-                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                  MonitoringAgent: "StackdriverMonitoring-GCM-46.exe"
+                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
               - template: /templates/blaise_reg_settings.yml
 
