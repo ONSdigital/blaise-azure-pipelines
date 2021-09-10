@@ -16,12 +16,24 @@ stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
-      - deployment: InstallStackDriver
-        displayName: Install Stackdriver
+      - deployment: InstallStackDriverMgmt
+        displayName: Install Stackdriver Mgmt
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise, data-delivery, restapi
+          tags: blaise
+      - deployment: InstallStackDriverDataDelivery
+        displayName: Install Stackdriver Data Delivery
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-delivery
+      - deployment: InstallStackDriverRestApi
+        displayName: Install Stackdriver Rest Api
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: restapi
         strategy:
           runOnce:
             deploy:
