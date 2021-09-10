@@ -21,7 +21,7 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise,data-delivery,restapi
+          tags: blaise, data-delivery
         strategy:
           runOnce:
             deploy:
