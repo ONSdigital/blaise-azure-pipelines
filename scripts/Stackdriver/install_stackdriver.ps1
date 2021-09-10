@@ -15,7 +15,7 @@ function Uninstall_Ops_Agent() {
 function Uninstall_StackDriver_Logging() {
     Write-Host "Uninstalling Stackdriver Logging Agent"
 
-    $currentPath = (gl).Path  /*
+    $currentPath = Get-Location
     Write-Host "DEBUG: pwd: $currentPath"
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
