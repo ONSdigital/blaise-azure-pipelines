@@ -18,6 +18,8 @@ function Uninstall_StackDriver_Logging() {
     $currentPath = Get-Location
     Write-Host "DEBUG: pwd: $currentPath"
 
+    Stop-Service -Name StackdriverLogging
+
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
     Write-Host "DEBUG: Uninstall string: '$packageUninstall'"
     if ($packageUninstall) {
@@ -28,6 +30,9 @@ function Uninstall_StackDriver_Logging() {
 
 function Uninstall_StackDriver_Monitoring() {
     Write-Host "Uninstalling Stackdriver Monitoring Agent"
+
+    Stop-Service -Name StackdriverMonitoring
+
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
     if ($packageUninstall) {
       & $packageUninstall /S
