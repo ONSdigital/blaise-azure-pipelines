@@ -12,32 +12,33 @@ function Uninstall_Ops_Agent() {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
-function Uninstall_Package($package) {
-    if ($package) {
-        Write-Host "Attempting to uninstall: '$package'"
-      & $package /S
+function Uninstall_Package($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Attempting to uninstall: '$packageUninstall'"
+      & $packageUninstall /S
       Start-Sleep -s 5
       return
     }
 
-    Write-Host "Package not found: '$package'"
+    Write-Host "Package not found: '$packageUninstall'"
 }
 
 function Uninstall_StackDriver_Logging() {
-    Write-Host "Uninstalling Stackdriver Logging Agent"
-
     if (Check_Service_Exists StackdriverLogging) {
+        Write-Host "Stopping StackdriverLogging service"
         Stop-Service -Name StackdriverLogging
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Logging from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\LoggingAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Logging from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
@@ -47,17 +48,20 @@ function Uninstall_StackDriver_Monitoring() {
     Write-Host "Uninstalling Stackdriver Monitoring Agent"
 
     if (Check_Service_Exists StackdriverMonitoring) {
+        Write-Host "Stopping StackdriverMonitoring service"
         Stop-Service -Name StackdriverMonitoring
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Monitoring from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\monitoringAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Monitoring from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
@@ -68,7 +72,7 @@ function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
     Write-Host "Installing Stackdriver logging agent..."
-    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
+    $logging_args = "/S /D='C:\Program Files (x86)\stackdriver\loggingAgent'"
     Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
 }
 
@@ -77,7 +81,7 @@ function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+    $monitoring_args = "/S /D='C:\Program Files (x86)\stackdriver\monitoringAgent'"
     Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
 }
 
