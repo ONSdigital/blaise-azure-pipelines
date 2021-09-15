@@ -32,13 +32,13 @@ function Uninstall_StackDriver_Logging() {
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
     if ($packageUninstall) {
-        Uninstall_Package(packageUninstall)
+        Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\LoggingAgent\uninstall.exe"
     if ($packageUninstall) {
-        Uninstall_Package(packageUninstall)
+        Uninstall_Package($packageUninstall)
         return
     }
 }
@@ -52,13 +52,13 @@ function Uninstall_StackDriver_Monitoring() {
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
     if ($packageUninstall) {
-        Uninstall_Package(packageUninstall)
+        Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\monitoringAgent\uninstall.exe"
     if ($packageUninstall) {
-        Uninstall_Package(packageUninstall)
+        Uninstall_Package($packageUninstall)
         return
     }
 }
