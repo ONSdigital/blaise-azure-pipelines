@@ -1,5 +1,7 @@
 param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
 
+
+
 function Check_Service_Exists($Service_Name) {
     if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
         return $TRUE
@@ -24,20 +26,21 @@ function Uninstall_Package($packageUninstall) {
 }
 
 function Uninstall_StackDriver_Logging() {
-    Write-Host "Uninstalling Stackdriver Logging Agent"
-
     if (Check_Service_Exists StackdriverLogging) {
+        Write-Host "Stopping StackdriverLogging service"
         Stop-Service -Name StackdriverLogging
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
     if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Logging from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\LoggingAgent\uninstall.exe"
     if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Logging from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
@@ -47,17 +50,20 @@ function Uninstall_StackDriver_Monitoring() {
     Write-Host "Uninstalling Stackdriver Monitoring Agent"
 
     if (Check_Service_Exists StackdriverMonitoring) {
+        Write-Host "Stopping StackdriverMonitoring service"
         Stop-Service -Name StackdriverMonitoring
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
     if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Monitoring from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\monitoringAgent\uninstall.exe"
     if (Test-Path $packageUninstall) {
+        Write-Host "Uninstalling Stackdriver Monitoring from $packageUninstall"
         Uninstall_Package($packageUninstall)
         return
     }
