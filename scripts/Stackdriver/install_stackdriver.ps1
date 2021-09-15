@@ -68,7 +68,7 @@ function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
     Write-Host "Installing Stackdriver logging agent..."
-    $logging_args = "/S /D='C:\dev\stackdriver\loggingAgent'"
+    $logging_args = "/S /D='C:\Program Files (x86)\stackdriver\loggingAgent'"
     Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
 }
 
@@ -77,7 +77,7 @@ function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
     gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
 
     Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_args = "/S /D='C:\dev\stackdriver\monitoringAgent'"
+    $monitoring_args = "/S /D='C:\Program Files (x86)\stackdriver\monitoringAgent'"
     Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
 }
 
