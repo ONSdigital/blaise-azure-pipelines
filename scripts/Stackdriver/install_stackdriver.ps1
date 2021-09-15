@@ -1,7 +1,5 @@
 param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
 
-
-
 function Check_Service_Exists($Service_Name) {
     if (Get-Service $Service_Name -ErrorAction SilentlyContinue) {
         return $TRUE
