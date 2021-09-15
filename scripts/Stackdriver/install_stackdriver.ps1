@@ -12,31 +12,54 @@ function Uninstall_Ops_Agent() {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
+function Uninstall_Package($package) {
+    if ($package) {
+        Write-Host "Attempting to uninstall: '$package'"
+      & $package /S
+      Start-Sleep -s 5
+      return
+    }
+
+    Write-Host "Package not found: '$package'"
+}
+
 function Uninstall_StackDriver_Logging() {
     Write-Host "Uninstalling Stackdriver Logging Agent"
 
-    $currentPath = Get-Location
-    Write-Host "DEBUG: pwd: $currentPath"
-
-    Stop-Service -Name StackdriverLogging
+    if (Check_Service_Exists StackdriverLogging) {
+        Stop-Service -Name StackdriverLogging
+    }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
-    Write-Host "DEBUG: Uninstall string: '$packageUninstall'"
     if ($packageUninstall) {
-      & $packageUninstall /S
-      Start-Sleep -s 5
+        Uninstall_Package(packageUninstall)
+        return
+    }
+
+    $packageUninstall = "C:\dev\stackdriver\LoggingAgent\uninstall.exe"
+    if ($packageUninstall) {
+        Uninstall_Package(packageUninstall)
+        return
     }
 }
 
 function Uninstall_StackDriver_Monitoring() {
     Write-Host "Uninstalling Stackdriver Monitoring Agent"
 
-    Stop-Service -Name StackdriverMonitoring
+    if (Check_Service_Exists StackdriverMonitoring) {
+        Stop-Service -Name StackdriverMonitoring
+    }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
     if ($packageUninstall) {
-      & $packageUninstall /S
-      Start-Sleep -s 5
+        Uninstall_Package(packageUninstall)
+        return
+    }
+
+    $packageUninstall = "C:\dev\stackdriver\monitoringAgent\uninstall.exe"
+    if ($packageUninstall) {
+        Uninstall_Package(packageUninstall)
+        return
     }
 }
 
@@ -66,13 +89,8 @@ if (Check_Service_Exists google-cloud-ops-agent) {
     Uninstall_Ops_Agent
 }
 
-if (Check_Service_Exists StackdriverLogging) {
-    Uninstall_StackDriver_Logging
-}
-
-if (Check_Service_Exists StackdriverMonitoring) {
-    Uninstall_StackDriver_Monitoring
-}
-
+Uninstall_StackDriver_Logging
 Install_StackDriver_Logging $loggingagent $GCP_BUCKET
+
+Uninstall_StackDriver_Monitoring
 Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
