@@ -12,15 +12,15 @@ function Uninstall_Ops_Agent() {
     googet -noconfirm remove google-cloud-ops-agent
 }
 
-function Uninstall_Package($package) {
-    if ($package) {
-        Write-Host "Attempting to uninstall: '$package'"
-      & $package /S
+function Uninstall_Package($packageUninstall) {
+    if (Test-Path $packageUninstall) {
+        Write-Host "Attempting to uninstall: '$packageUninstall'"
+      & $packageUninstall /S
       Start-Sleep -s 5
       return
     }
 
-    Write-Host "Package not found: '$package'"
+    Write-Host "Package not found: '$packageUninstall'"
 }
 
 function Uninstall_StackDriver_Logging() {
@@ -31,13 +31,13 @@ function Uninstall_StackDriver_Logging() {
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\LoggingAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\LoggingAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
         Uninstall_Package($packageUninstall)
         return
     }
@@ -51,13 +51,13 @@ function Uninstall_StackDriver_Monitoring() {
     }
 
     $packageUninstall = "C:\Program Files (x86)\Stackdriver\MonitoringAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
         Uninstall_Package($packageUninstall)
         return
     }
 
     $packageUninstall = "C:\dev\stackdriver\monitoringAgent\uninstall.exe"
-    if ($packageUninstall) {
+    if (Test-Path $packageUninstall) {
         Uninstall_Package($packageUninstall)
         return
     }
