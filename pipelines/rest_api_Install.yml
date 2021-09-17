@@ -49,7 +49,11 @@ stages:
                   OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                   InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
 
-              - template: /templates/opsagent_steps.yml
+              - template: /templates/stackdriver_steps.yml
+                parameters:
+                  LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                  MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
               - template: /templates/blaise_reg_settings.yml
 
