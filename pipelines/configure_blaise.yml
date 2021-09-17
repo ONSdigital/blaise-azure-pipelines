@@ -16,8 +16,8 @@ stages:
   - stage: BlaiseInstall_${{parameters.Environment }}
     displayName: ${{parameters.Environment }} Installation Of Blaise
     jobs:
-      - deployment: InstallOpsAgent
-        displayName: Install Ops Agent
+      - deployment: InstallStackDriver
+        displayName: Install Stackdriver
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -27,7 +27,11 @@ stages:
             deploy:
               steps:
               - checkout: self
-              - template: /templates/opsagent_steps.yml
+              - template: /templates/stackdriver_steps.yml
+                parameters:
+                  LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                  MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
 
       - deployment: InstallMySQLConnector
         displayName: Install MySQL .Net Connector
