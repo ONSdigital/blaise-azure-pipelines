@@ -1,5 +1,0 @@
-steps:
-- task: PowerShell@2
-  displayName: Install Ops Agent
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/OpsAgent/install_opsagent.ps1'
