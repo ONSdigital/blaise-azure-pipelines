@@ -3,8 +3,8 @@ param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
 function Start_Service_If_Not_Running($ServiceName) {
     $service = Get-Service -Name $ServiceName
 
-    if ($ServiceName.Status -ne 'Running')) {
-        Start-Service $ServiceName
+    if ($service.Status -ne 'Running') {
+        Start-Service $service
     }
 }
 
@@ -26,6 +26,7 @@ function Uninstall_StackDriver_Logging() {
         Write-Host "Stopping StackdriverLogging service"
         Stop-Service -Name StackdriverLogging
     }
+}
 
 function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
     Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
@@ -57,7 +58,7 @@ if (!Check_Service_Exists $loggingagent) {
     Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 }
 
-if (!Check_Service_Exists $loggingagent) {
+if (!Check_Service_Exists $monitoringagent) {
     Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 }
 
