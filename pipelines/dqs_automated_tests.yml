@@ -28,7 +28,7 @@ stages:
       pool: 
         vmImage: 'windows-latest'
       steps:
-      - template: /templates/blaise_reg_settings.yml
+      - template: /templates/blaise_azure_vm_registry_update.yml
 
       - template: /templates/download_test_instrument.yml
 
