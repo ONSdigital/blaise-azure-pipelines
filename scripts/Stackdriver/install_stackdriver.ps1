@@ -54,11 +54,11 @@ if (Check_Service_Exists google-cloud-ops-agent) {
     Uninstall_Ops_Agent
 }
 
-if (!Check_Service_Exists $loggingagent) {
+if (!Check_Service_Exists StackdriverLogging) {
     Install_StackDriver_Logging $loggingagent $GCP_BUCKET
 }
 
-if (!Check_Service_Exists $monitoringagent) {
+if (!Check_Service_Exists StackdriverMonitoring) {
     Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
 }
 
