@@ -24,6 +24,6 @@ if ($activationInfo.ActivationCode -eq $BLAISE_ACTIVATIONCODE)
 else
 {
     Write-Host "Activation code is out of date"
-    Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $BLAISE_ACTIVATIONCODE
+    Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $BLAISE_ACTIVATIONCODE
     Write-Host "Activation code updated to: $($BLAISE_ACTIVATIONCODE)"
 }
