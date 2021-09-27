@@ -1,4 +1,4 @@
-"$PSScriptRoot\..\helpers\update_environment_variables.ps1"
+. "$PSScriptRoot\..\helpers\update_environment_variables.ps1"
 
 $metadataVariables = GetMetadataVariables
 CreateVariables($metadataVariables)
