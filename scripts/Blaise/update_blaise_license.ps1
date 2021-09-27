@@ -1,30 +1,29 @@
-. "$PSScriptRoot\..\helpers\update_environment_variables.ps1"
 
 function SetBlaiseLicenseViaRegistry {
     if (Test-Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0') {
         $licenseInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey'
         $activationInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode'
 
-        if ($licenseInfo.LicenseKey -eq $BLAISE_SERIALNUMBER)
+        if ($licenseInfo.LicenseKey -eq $env:ENV_BLAISE_LICENSE_KEY)
         {
-            Write-Host "Serial number is correct: $($BLAISE_SERIALNUMBER)"
+            Write-Host "Serial number is correct: $($env:ENV_BLAISE_LICENSE_KEY)"
         }
         else
         {
             Write-Host "Serial number is out of date"
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $BLAISE_SERIALNUMBER
-            Write-Host "Serial number updated to: $($BLAISE_SERIALNUMBER)"
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $env:ENV_BLAISE_LICENSE_KEY
+            Write-Host "Serial number updated to: $($env:ENV_BLAISE_LICENSE_KEY)"
         }
 
-        if ($activationInfo.ActivationCode -eq $BLAISE_ACTIVATIONCODE)
+        if ($activationInfo.ActivationCode -eq $env:ENV_BLAISE_ACTIVATION_CODE)
         {
-            Write-Host "Activation code is correct: $($BLAISE_ACTIVATIONCODE)"
+            Write-Host "Activation code is correct: $($env:ENV_BLAISE_ACTIVATION_CODE)"
         }
         else
         {
             Write-Host "Activation code is out of date"
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $BLAISE_ACTIVATIONCODE
-            Write-Host "Activation code updated to: $($BLAISE_ACTIVATIONCODE)"
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $env:ENV_BLAISE_ACTIVATION_CODE
+            Write-Host "Activation code updated to: $($env:ENV_BLAISE_ACTIVATION_CODE)"
         }
     }
     else 
@@ -33,8 +32,6 @@ function SetBlaiseLicenseViaRegistry {
     }
 }
 
-$metadataVariables = GetMetadataVariables
-CreateVariables($metadataVariables)
 SetBlaiseLicenseViaRegistry
 
 
