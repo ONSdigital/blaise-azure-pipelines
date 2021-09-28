@@ -1,8 +1,6 @@
 parameters:
-  - name: BlaiseLicenseKey
-    displayName: License key for Blaise
-  - name: BlaiseActivationKey
-    displayName: Activation key for Blaise
+  BlaiseLicenseKey: ''
+  BlaiseActivationKey: ''
 
 steps: 
 - task: PowerShell@2
