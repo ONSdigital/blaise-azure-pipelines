@@ -9,4 +9,6 @@ steps:
   displayName: Register Blaise via registry
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_registry_hack.ps1'
-    arguments: '-BlaiseLicenseKey ${{parameters.BlaiseLicenseKey}} -BlaiseActivationCode ${{parameters.BlaiseActivationKey}}'
+  env: 
+    BlaiseLicenseKey: $(BlaiseLicenseKey) 
+    BlaiseActivationCode: $(BlaiseActivationKey)
