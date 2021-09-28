@@ -1,29 +1,37 @@
-
+param (
+    $BlaiseLicenseKey,
+    $BlaiseActivationCode
+    )
+    
 function SetBlaiseLicenseViaRegistry {
+    param (
+    [string] $Blaise_License_Key = $BlaiseLicenseKey,
+    [string] $Blaise_Activation_Code = $BlaiseActivationCode
+    )
     if (Test-Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0') {
         $licenseInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey'
         $activationInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode'
 
-        if ($licenseInfo.LicenseKey -eq $env:ENV_BLAISE_LICENSE_KEY)
+        if ($licenseInfo.LicenseKey -eq $Blaise_License_Key)
         {
-            Write-Host "Serial number is correct: $($env:ENV_BLAISE_LICENSE_KEY)"
+            Write-Host "Serial number is correct: $($Blaise_License_Key)"
         }
         else
         {
             Write-Host "Serial number is out of date"
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $env:ENV_BLAISE_LICENSE_KEY
-            Write-Host "Serial number updated to: $($env:ENV_BLAISE_LICENSE_KEY)"
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $Blaise_License_Key
+            Write-Host "Serial number updated to: $($Blaise_License_Key)"
         }
 
-        if ($activationInfo.ActivationCode -eq $env:ENV_BLAISE_ACTIVATION_CODE)
+        if ($activationInfo.ActivationCode -eq $Blaise_Activation_Code)
         {
-            Write-Host "Activation code is correct: $($env:ENV_BLAISE_ACTIVATION_CODE)"
+            Write-Host "Activation code is correct: $($Blaise_Activation_Code)"
         }
         else
         {
             Write-Host "Activation code is out of date"
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $env:ENV_BLAISE_ACTIVATION_CODE
-            Write-Host "Activation code updated to: $($env:ENV_BLAISE_ACTIVATION_CODE)"
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $Blaise_Activation_Code
+            Write-Host "Activation code updated to: $($Blaise_Activation_Code)"
         }
     }
     else 
@@ -33,5 +41,3 @@ function SetBlaiseLicenseViaRegistry {
 }
 
 SetBlaiseLicenseViaRegistry
-
-

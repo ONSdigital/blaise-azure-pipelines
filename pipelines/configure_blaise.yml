@@ -60,6 +60,9 @@ stages:
               steps:
               - checkout: self
               - template: /templates/configure_blaise_steps.yml
+                parameters:
+                  BlaiseLicenseKey: $env:ENV_BLAISE_LICENSE_KEY
+                  BlaiseActivationKey: $env:ENV_BLAISE_ACTIVATION_CODE
               - template: /templates/configure_node_roles_steps.yml
               - template: /templates/firewall_rule_steps.yml
                 parameters:

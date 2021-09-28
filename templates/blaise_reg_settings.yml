@@ -1,5 +1,12 @@
+parameters:
+  - name: BlaiseLicenseKey
+    displayName: License key for Blaise
+  - name: BlaiseActivationKey
+    displayName: Activation key for Blaise
+
 steps: 
 - task: PowerShell@2
   displayName: Register Blaise via registry
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_registry_hack.ps1'
+    arguments: '-BlaiseLicenseKey ${{parameters.BlaiseLicenseKey}} -BlaiseActivationCode ${{parameters.BlaiseActivationKey}}'
