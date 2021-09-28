@@ -2,8 +2,8 @@
 . "$PSScriptRoot\update_blaise_license.ps1"
 
 param (
-    $BlaiseLicenseKey,
-    $BlaiseActivationCode
+    [string] $BlaiseLicenseKey,
+    [string] $BlaiseActivationCode
     )
 
 if (Test-Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0') {
