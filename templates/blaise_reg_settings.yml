@@ -10,5 +10,5 @@ steps:
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_registry_hack.ps1'
   env: 
-    Blaise_License_Key: $(BlaiseLicenseKey) 
-    Blaise_Activation_Code: $(BlaiseActivationKey)
+    Blaise_License_Key: ${{parameters.BlaiseLicenseKey}}
+    Blaise_Activation_Code: ${{parameters.BlaiseActivationKey}}
