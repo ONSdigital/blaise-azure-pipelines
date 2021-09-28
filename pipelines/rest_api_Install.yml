@@ -58,7 +58,7 @@ stages:
               - template: /templates/blaise_reg_settings.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $($env:ENV_BLAISE_ACTIVATION_CODE)
+                  BlaiseActivationKey: $($env:ENV_BLAISE_GCP_BUCKET)
 
               - template: /templates/download_artifact_steps.yml
                 parameters:
