@@ -1,4 +1,4 @@
-param ([string]$BLAISE_LICENSE_KEY, [string]$BLAISE_ACTIVATION_CODE)
+param ([string]$BLAISE_LICENSE_KEY = 'notset', [string]$BLAISE_ACTIVATION_CODE = 'notset')
 function SetBlaiseLicenseViaRegistry {
     param(
         [string] $Blaise_License_Key,
