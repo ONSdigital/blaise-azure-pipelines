@@ -1,5 +1,4 @@
 param ([string]$BLAISE_LICENSE_KEY, [string]$BLAISE_ACTIVATION_CODE)
-. "$PSScriptRoot\..\helpers\update_environment_variables.ps1"
 . "$PSScriptRoot\..\helpers\set_blaise_license_key.ps1"
 
 
