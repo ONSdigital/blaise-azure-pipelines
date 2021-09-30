@@ -62,9 +62,10 @@ stages:
               
               - powershell: |
                   Write-Host "first attempt key: $env:secret_blk"
-                  Write-Host "second attempt key: $env:secret_blk2"
+                  Write-Host "second attempt key: $($env:secret_blk2)"
                   Write-Host "second attempt CODE: $env:secret_bgb"
-                  Write-Host "second attempt CODE: $env:secret_bgb2"
+                  Write-Host "second attempt CODE: $($env:secret_bgb2)"
+                  Write-Host "second attempt CODE: $(ENV_BLAISE_ACTIVATION_CODE)"
                 env:
                   secret_blk: $(ENV_BLAISE_LICENSE_KEY)
                   secret_blk2: $($env:ENV_BLAISE_LICENSE_KEY)
