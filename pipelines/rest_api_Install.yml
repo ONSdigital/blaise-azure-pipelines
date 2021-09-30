@@ -68,8 +68,8 @@ stages:
                 env:
                   secret_blk: $(ENV_BLAISE_LICENSE_KEY)
                   secret_blk2: $($env:ENV_BLAISE_LICENSE_KEY)
-                  secret_bgb: $(ENV_BLAISE_GCP_BUCKET)
-                  secret_bgb2: $($env:ENV_BLAISE_GCP_BUCKET)                 
+                  secret_bgb: $(ENV_BLAISE_ACTIVATION_CODE)
+                  secret_bgb2: $($env:ENV_BLAISE_ACTIVATION_CODE)                 
 
               - template: /templates/download_artifact_steps.yml
                 parameters:
