@@ -1,8 +1,8 @@
 param ([string]$BLAISE_LICENSE_KEY, [string]$BLAISE_ACTIVATION_CODE)
 function SetBlaiseLicenseViaRegistry {
     param(
-        [string] $BLAISE_LICENSE_KEY,
-        [string] $BLAISE_ACTIVATION_CODE
+        [string] $Blaise_License_Key,
+        [string] $Blaise_Activation_Code
     )
     if (Test-Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0') {
         $licenseInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey'
@@ -36,4 +36,4 @@ function SetBlaiseLicenseViaRegistry {
     }
 }
 
-SetBlaiseLicenseViaRegistry -BLAISE_LICENSE_KEY $BLAISE_LICENSE_KEY -BLAISE_ACTIVATION_CODE $BLAISE_ACTIVATION_CODE
+SetBlaiseLicenseViaRegistry -Blaise_License_Key $BLAISE_LICENSE_KEY -Blaise_Activation_Code $BLAISE_ACTIVATION_CODE
