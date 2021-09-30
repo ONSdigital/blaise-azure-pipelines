@@ -61,16 +61,16 @@ stages:
                   BlaiseActivationKey: $($env:ENV_BLAISE_ACTIVATION_CODE)
               
               - powershell: |
-                  Write-Host "first attempt key: $env:secret_blk"
-                  Write-Host "second attempt key: $($env:secret_blk2)"
-                  Write-Host "second attempt CODE: $($env:secret_bgb)"
-                  Write-Host "second attempt CODE: $($env:secret_bgb2)"
+                  Write-Host "first attempt key: $env:SECRET_BLK"
+                  Write-Host "second attempt key: $($env:SECRET_BLK2)"
+                  Write-Host "second attempt CODE: $($env:SECRET_BGB)"
+                  Write-Host "second attempt CODE: $($env:SECRET_BGB2)"
                   Write-Host "second attempt CODE: $(ENV_BLAISE_ACTIVATION_CODE)"
                 env:
-                  secret_blk: $(ENV_BLAISE_LICENSE_KEY)
-                  secret_blk2: $($env:ENV_BLAISE_LICENSE_KEY)
-                  secret_bgb: $(ENV_BLAISE_ACTIVATION_CODE)
-                  secret_bgb2: $($env:ENV_BLAISE_ACTIVATION_CODE)                 
+                  SECRET_BLK: $(ENV_BLAISE_LICENSE_KEY)
+                  SECRET_BLK2: $($env:ENV_BLAISE_LICENSE_KEY)
+                  SECRET_BGB: $(ENV_BLAISE_ACTIVATION_CODE)
+                  SECRET_BGB2: $($env:ENV_BLAISE_ACTIVATION_CODE)                 
 
               - template: /templates/download_artifact_steps.yml
                 parameters:
