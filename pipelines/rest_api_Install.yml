@@ -60,7 +60,7 @@ stages:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
                   BlaiseActivationKey: $($env:ENV_BLAISE_ACTIVATION_CODE)
               
-              - powerShell: |
+              - powershell: |
                   Write-Host "first attempt key: $env:secret_blk"
                   Write-Host "second attempt key: $env:secret_blk2"
                   Write-Host "second attempt CODE: $env:secret_bgb"
