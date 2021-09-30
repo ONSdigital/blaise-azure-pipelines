@@ -4,7 +4,7 @@ param ([string]$BLAISE_LICENSE_KEY, [string]$BLAISE_ACTIVATION_CODE)
 
 
 if (Test-Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0') {
-    SetBlaiseLicenseViaRegistry
+    SetBlaiseLicenseViaRegistry -Blaise_License_Key $BLAISE_LICENSE_KEY -Blaise_Activation_Code $BLAISE_ACTIVATION_CODE
 }
 else {
     New-Item -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Force
