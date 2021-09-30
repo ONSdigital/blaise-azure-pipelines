@@ -14,5 +14,5 @@ steps:
   displayName: Update Blaise License
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/update_blaise_license.ps1'
-    arguments: '-BlaiseLicenseKey ${{parameters.BlaiseLicenseKey}} -BlaiseActivationCode ${{parameters.BlaiseActivationKey}}'
+    arguments: '-BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}} -BLAISE_ACTIVATION_CODE ${{parameters.BlaiseActivationKey}}'
 
