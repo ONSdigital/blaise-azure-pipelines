@@ -66,6 +66,7 @@ stages:
                   Write-Host "second attempt CODE: $($env:SECRET_BGB)"
                   Write-Host "second attempt CODE: $($env:SECRET_BGB2)"
                   Write-Host "second attempt CODE: $(ENV_BLAISE_ACTIVATION_CODE)"
+                  Write-Host $(ENV_BLAISE_LICENSE_KEY)
                 env:
                   SECRET_BLK: $(ENV_BLAISE_LICENSE_KEY)
                   SECRET_BLK2: $($env:ENV_BLAISE_LICENSE_KEY)
