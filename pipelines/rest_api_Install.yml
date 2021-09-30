@@ -58,7 +58,18 @@ stages:
               - template: /templates/blaise_reg_settings.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $($env:ENV_BLAISE_GCP_BUCKET)
+                  BlaiseActivationKey: $($env:ENV_BLAISE_ACTIVATION_CODE)
+              
+              - powerShell: |
+                  Write-Host "first attempt key: $env:secret_blk"
+                  Write-Host "second attempt key: $env:secret_blk2"
+                  Write-Host "second attempt CODE: $env:secret_bgb"
+                  Write-Host "second attempt CODE: $env:secret_bgb2"
+                env:
+                  secret_blk: $(ENV_BLAISE_LICENSE_KEY)
+                  secret_blk2: $($env:ENV_BLAISE_LICENSE_KEY)
+                  secret_bgb: $(ENV_BLAISE_GCP_BUCKET)
+                  secret_bgb2: $($env:ENV_BLAISE_GCP_BUCKET)                 
 
               - template: /templates/download_artifact_steps.yml
                 parameters:
