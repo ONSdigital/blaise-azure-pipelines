@@ -58,11 +58,7 @@ stages:
               - template: /templates/blaise_reg_settings.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $($env:ENV_BLAISE_ACTIVATION_CODE)
-              
-              - powershell: |
-                  Write-Host "second attempt CODE: $(ENV_BLAISE_ACTIVATION_CODE)"
-                  Write-Host "does this work then: $(ENV_BLAISE_LICENSE_KEY)"              
+                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)         
 
               - template: /templates/download_artifact_steps.yml
                 parameters:
