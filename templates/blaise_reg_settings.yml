@@ -1,10 +1,10 @@
-steps: 
-- task: DownloadSecureFile@1
-  displayName: 'Download blaise registry file'
-  name: BlaiseRegistrySettings
-  inputs:
-    secureFile: blaise.reg
+parameters:
+  BlaiseLicenseKey: ''
+  BlaiseActivationKey: ''
 
-- powershell: |
-    regedit /i /s $(BlaiseRegistrySettings.secureFilePath)	
-  displayName: 'Register Blaise License'
+steps: 
+- task: PowerShell@2
+  displayName: Register Blaise via registry
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_registry_hack.ps1'
+    arguments: '-BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}} -BLAISE_ACTIVATION_CODE ${{parameters.BlaiseActivationKey}}'
