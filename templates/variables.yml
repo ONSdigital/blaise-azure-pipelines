@@ -1,7 +1,7 @@
 variables:
     InstrumentPath: c:\survey
     ServerParkName: gusty
-    InstrumentName: DST2106Z
+    InstrumentName: DST2111Z
     TEMP_PATH : c:\blaise\temp
     PACKAGE_EXTENSION : bpkg
     Blaise_TimeZone: "GMT Standard Time"
