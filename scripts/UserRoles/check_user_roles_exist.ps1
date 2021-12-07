@@ -13,7 +13,7 @@ foreach ($userRole in $userRoles)
         LogInfo("User role '$($userRole.name)' does not exist. Creating user role")  
         CreateUserRole -userRole $userRole   
         LogInfo("User role '$($userRole.name)' has been created")   
-        exit
+        continue
     }
 
     $getUserRoleResponse = GetUserRole -userRoleName $userRole.name
@@ -25,7 +25,7 @@ foreach ($userRole in $userRoles)
         LogInfo("User role permissions do not match for the role '$($userRole.name)'")    
         UpdateUserRole -userRole $userRole     
         LogInfo("User role permissions have been updated for the role '$($userRole.name)'")   
-        exit
+        continue
     }
 
     LogInfo("User role '$($userRole.name)' already exists")   
