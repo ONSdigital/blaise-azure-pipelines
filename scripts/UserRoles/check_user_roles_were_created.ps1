@@ -1,4 +1,3 @@
-. "$PSScriptRoot\..\functions\LoggingFunctions.ps1"
 . "$PSScriptRoot\..\functions\UserRoleFunctions.ps1"
 
 $rolesJsonFile = "scripts/UserRoles/userroles.json"
