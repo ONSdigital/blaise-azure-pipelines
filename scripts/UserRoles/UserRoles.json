@@ -420,10 +420,9 @@
 },
 {
    "name":"Welsh Speaker",
-   "description":"Role for Welsh Speakers",
+   "description":"Role for Welsh speakers",
    "permissions":[
       "CATI.selectfromcaseinfo"
    ]
 }
 ]
-
