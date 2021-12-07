@@ -12,7 +12,7 @@ foreach ($userRole in $userRoles)
     If ($exists -ne $true) {
         LogInfo("User role '$($userRole.name)' does not exist. Creating user role")  
         CreateUserRole -userRole $userRole   
-        LogInfo("User role has been created")   
+        LogInfo("User role '$($userRole.name)' has been created")   
         exit
     }
 
@@ -22,9 +22,9 @@ foreach ($userRole in $userRoles)
                  ($userRole.permissions | ConvertTo-Json -Compress)
 
     If ($roleEqual -ne $true) {
-        LogInfo("User role permissions do not match. Updating user role permissons")    
+        LogInfo("User role permissions do not match for the role '$($userRole.name)'")    
         UpdateUserRole -userRole $userRole     
-        LogInfo("User role permissions have been updated")   
+        LogInfo("User role permissions have been updated for the role '$($userRole.name)'")   
         exit
     }
 
