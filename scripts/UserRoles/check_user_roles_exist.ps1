@@ -1,28 +1,34 @@
-$userRolesUri = "$env:ENV_RESTAPI_URL/api/v1/userroles"
+. "$PSScriptRoot\..\functions\LoggingFunctions.ps1"
+. "$PSScriptRoot\..\functions\UserRoleFunctions.ps1"
+
 $rolesJsonFile = "scripts/UserRoles/userroles.json"
-$currentPath = Get-Location
 
 $userRoles = Get-Content -Raw -Path $rolesJsonFile | ConvertFrom-Json 
 
 foreach ($userRole in $userRoles)
 {   
-    $exists =  Invoke-RestMethod -UseBasicParsing "$($userRolesUri)/$($userRole.name)/exists" -ContentType "application/json" -Method GET
-    
+    $exists = CheckUserRoleExists -userRoleName $userRole.name
+        
     If ($exists -ne $true) {
-        Write-Host "User roles does not exist. Creating user roles"
-        Invoke-Expression "$currentPath\scripts\UserRoles\create_user_roles.ps1"
-        exit
+        LogInfo("User role '$($userRole.name)' does not exist. Creating user role")  
+        CreateUserRole -userRole $userRole   
+        LogInfo("User role '$($userRole.name)' has been created")   
+        continue
     }
 
-    $response = Invoke-RestMethod -UseBasicParsing "$($userRolesUri)/$($userRole.name)" -ContentType "application/json" -Method GET
+    $getUserRoleResponse = GetUserRole -userRoleName $userRole.name
     
-    $roleEqual = ($response | ConvertTo-Json -Compress) -eq 
-                 ($userRole | ConvertTo-Json -Compress)
+    $roleEqual = ($getUserRoleResponse.permissions | ConvertTo-Json -Compress) -eq 
+                 ($userRole.permissions | ConvertTo-Json -Compress)
 
     If ($roleEqual -ne $true) {
-        Write-Host "User role permissions do not exist. Creating user role permissons"
-        Invoke-Expression "$currentPath\scripts\UserRoles\create_user_roles.ps1"
-        exit
+        LogInfo("User role permissions do not match for the role '$($userRole.name)'")    
+        UpdateUserRole -userRole $userRole     
+        LogInfo("User role permissions have been updated for the role '$($userRole.name)'")   
+        continue
     }
+
+    LogInfo("User role '$($userRole.name)' already exists")   
 }
-Write-Host "User roles already exist"
+
+
