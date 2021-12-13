@@ -1,19 +1,20 @@
-$userRolesUri = "$env:ENV_RESTAPI_URL/api/v1/userroles"
+. "$PSScriptRoot\..\functions\UserRoleFunctions.ps1"
+
 $rolesJsonFile = "scripts/UserRoles/userroles.json"
 
 $userRoles = Get-Content -Raw -Path $rolesJsonFile | ConvertFrom-Json 
 
 foreach ($userRole in $userRoles)
 {   
-    $exists =  Invoke-RestMethod -UseBasicParsing "$($userRolesUri)/$($userRole.name)/exists" -ContentType "application/json" -Method GET
+    $exists = CheckUserRoleExists -userRoleName $userRole.name
     
     If ($exists -ne $true) {
         throw [System.Exception] "$The user role '$($userRole.name)' was not found"
     }
 
-    $response = Invoke-RestMethod -UseBasicParsing "$($userRolesUri)/$($userRole.name)" -ContentType "application/json" -Method GET
+    $getUserRoleResponse = GetUserRole -userRoleName $userRole.name
     
-    $roleEqual = ($response | ConvertTo-Json -Compress) -eq 
+    $roleEqual = ($getUserRoleResponse | ConvertTo-Json -Compress) -eq 
                  ($userRole | ConvertTo-Json -Compress)
 
     If ($roleEqual -ne $true) {
