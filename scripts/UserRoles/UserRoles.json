@@ -417,5 +417,12 @@
       "CATI.selectfromevents",
       "CATI.modifyclock"
    ]
+},
+{
+   "name":"Welsh Speaker",
+   "description":"Role for Welsh speakers",
+   "permissions":[
+      "CATI.selectfromcaseinfo"
+   ]
 }
 ]
