@@ -1,6 +1,6 @@
 # Blaise-Azure-Pipelines
 
-## usage 
+## usage
 Azure devops pipelines are task monkeys for Concourse, each pipeline uses Parameters to target a different environment.
 
 Requires:
@@ -12,7 +12,7 @@ Virual Machines (VMs) are labelled with tags via the start up script when the ag
 Tags are used to target specific VMs via the yaml, the following snippet shows how to deploy to all VMs with the tag *data-entry*
 
 ```
- environment:  
+ environment:
         name: ${{parameters.Environment}}
         resourceType: virtualMachine
         tags: data-entry
@@ -20,11 +20,11 @@ Tags are used to target specific VMs via the yaml, the following snippet shows h
 
 ### Azure hosted environemnt deployments
 
-We use pre built environments to run automated tests, these are spun up as deployment is run and torn down once the deployment has finished. 
+We use pre built environments to run automated tests, these are spun up as deployment is run and torn down once the deployment has finished.
 
 ```
-    pool: 
-        vmImage: 'windows-latest'
+    pool:
+        vmImage: 'windows-2019'
 ```
 
 
@@ -47,7 +47,7 @@ To use a template within a yaml file:
         Additional parameters: which are needed
 ```
 
-## Setting up a new pipeline 
+## Setting up a new pipeline
 
 ### Via Azure CLI
 
