@@ -23,20 +23,20 @@ stages:
       variables:
         ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
         ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
-      pool: 
-        vmImage: 'windows-latest'
+      pool:
+        vmImage: 'windows-2019'
       steps:
       - template: /templates/blaise_reg_settings.yml
         parameters:
           BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-          BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE) 
+          BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
 
       - template: /templates/download_test_instrument.yml
 
       - template: /templates/setup_region_and_culture.yml
 
       - template: /templates/download_artifact_steps.yml
-        parameters: 
+        parameters:
           GitBranch: ${{parameters.AutomatedTestsBranch}}
           ArtifactName: _AutomatedTests
           DownloadPath: $(System.ArtifactsDirectory)
@@ -45,13 +45,13 @@ stages:
 
       - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
         - template: /templates/automated_test_with_category_steps.yml
-          parameters: 
+          parameters:
             BehaviourSolutionName: Blaise.TOBI.Tests.Behaviour
             TestName: TOBI Smoke Tests
             TestCategory: Smoke
 
       - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
         - template: /templates/automated_test_steps.yml
-          parameters: 
+          parameters:
             BehaviourSolutionName: Blaise.TOBI.tests.Behaviour
             TestName: TOBI Full Regression tests
