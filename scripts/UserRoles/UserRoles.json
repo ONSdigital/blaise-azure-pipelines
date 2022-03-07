@@ -423,6 +423,7 @@
    "description":"Role for Welsh speakers",
    "permissions":[
       "CATI",
+      "CATI.viewappointments",
       "CATI.selectfromcaseinfo"
    ]
 }
