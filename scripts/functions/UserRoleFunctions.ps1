@@ -1,4 +1,4 @@
-$userRolesBaseUri = "$env:ENV_RESTAPI_URL/api/v1/userroles"
+$userRolesBaseUri = "$env:ENV_RESTAPI_URL/api/v2/userroles"
 
 function CheckUserRoleExists {
     param (
