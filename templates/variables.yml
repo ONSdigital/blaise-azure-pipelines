@@ -1,4 +1,5 @@
 variables:
+    UninstallSurveyTimeOutInSeconds: 5
     InstrumentPath: c:\survey
     ServerParkName: gusty
     InstrumentName: DST2111Z
