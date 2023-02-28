@@ -12,6 +12,7 @@ function CreateDataInterfaceFile {
         else {
             #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
+
             Write-Host "Created $applicationType Data Interface File"
         }
     }
@@ -37,6 +38,7 @@ function RegisterDataInterfaceFile {
         else {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
+
             Write-Host "$filePath registered"
         }
     }
