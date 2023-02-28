@@ -67,3 +67,7 @@ Navigate to https://dev.azure.com and login with your ONS email
 5. Select *Existing Azure Pipelines YAML File*
 6. Select your yaml file in *Path* - If you are working from a branch change the Branch to point at that (by default Azure will always look at main, so you will not need to redo this when you merge)
 7. Save the pipeline
+
+
+### TODO: Add information about migration of databases
+
