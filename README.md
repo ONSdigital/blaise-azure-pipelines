@@ -64,11 +64,11 @@ az pipelines create --name "A name for your pipeline" --yml-path pipelines/pipel
 
 ### Via Azure DevOps web UI
 
-# Navigate to https://dev.azure.com and login with your ONS email
-# Go to *pipelines*
-# Click *New pipeline*
-# Select *Github (YAML)*
-# Select *ONSDigital/Blaise-Azure-Pipelines* repo
-# Select *Existing Azure Pipelines YAML File*
-# Select your yaml file in *Path* - If you are working from a branch change the Branch to point at that (by default Azure will always look at main, so you will not need to redo this when you merge)
-# Save the pipeline
+1. Navigate to https://dev.azure.com and login with your ONS email
+1. Go to *pipelines*
+1. Click *New pipeline*
+1. Select *Github (YAML)*
+1. Select *ONSDigital/Blaise-Azure-Pipelines* repo
+1. Select *Existing Azure Pipelines YAML File*
+1. Select your yaml file in *Path* - If you are working from a branch change the Branch to point at that (by default Azure will always look at main, so you will not need to redo this when you merge)
+1. Save the pipeline
