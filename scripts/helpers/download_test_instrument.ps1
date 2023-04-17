@@ -5,4 +5,4 @@ Write-Host "Downloading instrument"
 gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.$env:PACKAGE_EXTENSION $env:InstrumentPath\$env:InstrumentName.bpkg
 
 Write-Host "GCP Login with compute service account"
-gcloud auth login $env:ENV_VM_SERVICEACCOUNT
+gcloud config set account $env:ENV_VM_SERVICEACCOUNT
