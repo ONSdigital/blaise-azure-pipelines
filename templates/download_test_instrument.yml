@@ -16,3 +16,6 @@ steps:
 
       Write-Host "Downloading instrument"
       gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.bpkg c:\survey\$env:InstrumentName.bpkg
+
+      Write-Host "GCP Login with compute service account"
+      gcloud config set account $env:ENV_VM_SERVICEACCOUNT
