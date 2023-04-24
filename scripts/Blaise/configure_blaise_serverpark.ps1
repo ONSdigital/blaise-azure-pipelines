@@ -1,6 +1,5 @@
-function RegisterNode{
+function ConfigureServerpark{
     param(
-        [string] $CurrentNode = $(hostname),
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
         [string] $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
         [string] $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
@@ -28,17 +27,17 @@ function RegisterNode{
         throw [System.IO.ArgumentException] "No Blaise username argument provided"
     }
 
-    Write-Host "Registering $currentNode on management node $managementNode"
+    Write-Host "Configuring server park to run in disconnected mode"
 
-    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -server:$managementNode -binding:http -port:$connectionPort
+    c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:disconnected -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
-    Write-Host "$currentNode registered"
+    Write-Host "Configured server park to run in disconnected mode"
 }
 
 try{
-    RegisterNode
+    ConfigureServerpark
 }
 catch{
-    Write-Host "Nodes have not been registered: $($_.ScriptStackTrace)"
+    Write-Host "Configuring server park to run in disconnected mode failed: $($_.ScriptStackTrace)"
     exit 1
 }
