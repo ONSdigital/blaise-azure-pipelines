@@ -1,6 +1,8 @@
 function NodeHasTheCorrectRoles {
     $requiredRoles = RolesNodeShouldHave
+    Write-Host"Required roles: $requiredRoles"
     $currentRoles = ParseCurrentNodeRoles
+    Write-Host"Current roles: $currentRoles"
     return CheckNodeHasCorrectRoles -CurrentNodeRoles $currentRoles -RolesNodeShouldHave $requiredRoles
 }
 function RolesNodeShouldHave {
