@@ -15,10 +15,7 @@ function CurrentNodeRoles {
     return C:\Blaise5\Bin\ServerManager -lsr | Out-String
 }
 
-function ParseCurrentNodeRoles {
-    param (
-        [string] $CurrentRoles
-    )
+function ParseCurrentNodeRoles([Parameter(Mandatory=$False)]$CurrentRoles='') {
     if ([string]::IsNullOrEmpty($CurrentRoles))
     {
         $CurrentRoles = CurrentNodeRoles
