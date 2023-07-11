@@ -7,7 +7,7 @@ function NodeHasTheCorrectRoles {
 }
 function RolesNodeShouldHave {
     $role_server_should_Have = [Environment]::GetEnvironmentVariable('ENV_BLAISE_ROLES', 'Machine')
-    $rolesItShouldHave = $role_server_should_Have.Trim().Split(',') | Sort-Object
+    $rolesItShouldHave = $role_server_should_Have.Split(',').Trim() | Sort-Object
     Write-Host "Node should have these roles after sorting: $rolesItShouldHave"
     return $rolesItShouldHave -join ','
 }
@@ -39,7 +39,7 @@ function ParseCurrentNodeRoles {
         'DASHBOARD' { $roles += 'dashboard' }
     }
 
-    $roles = $roles.Trim().Split(',') | Sort-Object
+    $roles = $roles.Split(',').Trim() | Sort-Object
     Write-Host "Node currently has these roles after sorting: $roles"
     return $roles -join ','
 }
