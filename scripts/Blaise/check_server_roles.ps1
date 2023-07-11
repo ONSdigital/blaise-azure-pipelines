@@ -31,7 +31,7 @@ function ParseCurrentNodeRoles {
         'AUDITTRAIL' { $roles += 'audittrail,' }
         'WEB' { $roles += 'web,' }
         'SESSION' { $roles += 'session,' }
-        '\bDATAb' { $roles += 'data,' }
+        '\bDATA\b' { $roles += 'data,' }
         'RESOURCE' { $roles += 'resource,' }
         'DATAENTRY' { $roles += 'dataentry,' }
         'DASHBOARD' { $roles += 'dashboard' }
