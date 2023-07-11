@@ -24,7 +24,6 @@ function ParseCurrentNodeRoles {
         $CurrentRoles = CurrentNodeRoles
     }
     $Roles = @()
-
     $CurrentRoles.Split('|').ForEach({
         $Role = $_.Trim()
         switch -regex ($Role)
