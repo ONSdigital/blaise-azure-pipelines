@@ -8,7 +8,7 @@ function NodeHasTheCorrectRoles {
 function RolesNodeShouldHave {
     $role_server_should_Have = [Environment]::GetEnvironmentVariable('ENV_BLAISE_ROLES', 'Machine')
     $rolesItShouldHave = $role_server_should_Have.Split(',').Trim() | Sort-Object
-    return $rolesItShouldHave -join
+    return $rolesItShouldHave -join ','
 }
 
 function CurrentNodeRoles {
@@ -38,6 +38,7 @@ function ParseCurrentNodeRoles {
             '\bSESSION\b' { $Roles += 'session' }
             '\bWEB\b' { $Roles += 'web' }
         }
+    })
     $Roles = $Roles | Sort-Object
     return $Roles -join ','
 }
