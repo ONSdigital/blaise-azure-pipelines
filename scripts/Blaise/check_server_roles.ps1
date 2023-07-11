@@ -8,7 +8,6 @@ function NodeHasTheCorrectRoles {
 function RolesNodeShouldHave {
     $role_server_should_Have = [Environment]::GetEnvironmentVariable('ENV_BLAISE_ROLES', 'Machine')
     $rolesItShouldHave = $role_server_should_Have.Split(',').Trim() | Sort-Object
-    Write-Host "Node should have these roles after sorting: $rolesItShouldHave"
     return $rolesItShouldHave -join
 }
 
@@ -24,24 +23,24 @@ function ParseCurrentNodeRoles {
     {
         $CurrentRoles = CurrentNodeRoles
     }
-    $roles = ""
+    $Roles = @()
 
-    Switch -regex ($CurrentRoles)
-    {
-        'ADMIN' { $roles += 'admin,' }
-        'CATI' { $roles += 'cati,' }
-        'AUDITTRAIL' { $roles += 'audittrail,' }
-        'WEB' { $roles += 'web,' }
-        'SESSION' { $roles += 'session,' }
-        '\bDATA\b' { $roles += 'data,' }
-        'RESOURCE' { $roles += 'resource,' }
-        'DATAENTRY' { $roles += 'dataentry,' }
-        'DASHBOARD' { $roles += 'dashboard' }
-    }
-
-    $roles = $roles.Split(',').Trim() | Sort-Object
-    Write-Host "Node currently has these roles after sorting: $roles"
-    return $roles -join
+    $CurrentRoles.Split('|').ForEach({
+        $Role = $_.Trim()
+        switch -regex ($Role)
+        {
+            '\bADMIN\b' { $Roles += 'admin' }
+            '\bAUDITTRAIL\b' { $Roles += 'audittrail' }
+            '\bCATI\b' { $Roles += 'cati' }
+            '\bDATA\b' { $Roles += 'data' }
+            '\bDATAENTRY\b' { $Roles += 'dataentry' }
+            '\bDASHBOARD\b' { $Roles += 'dashboard' }
+            '\bRESOURCE\b' { $Roles += 'resource' }
+            '\bSESSION\b' { $Roles += 'session' }
+            '\bWEB\b' { $Roles += 'web' }
+        }
+    $Roles = $Roles | Sort-Object
+    return $Roles -join ','
 }
 
 function CheckNodeHasCorrectRoles {
