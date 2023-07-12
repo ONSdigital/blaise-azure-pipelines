@@ -39,20 +39,20 @@ Describe 'Parse current node roles' {
         $result | Should -Be $expected_output
     }
 
-    It 'does not change case of unexpected roles' {
+    It 'does not return unexpected roles' {
         $CurrentRoles =  @"
 -----------------------------
 |        Server Roles         |
 -----------------------------
 | Name       | Port | Binding |
 -----------------------------
-| ADMIM      | 8031 | http    |
+| ADMIN      | 8031 | http    |
 | AUDITTRAIL | 8031 | http    |
 | CROISSANT  | 8033 | http    |
 | BAGEL      | 8033 | http    |
 -----------------------------
 "@
-        $expected_output = "admin,audittrail,CROISSANT,BAGEL"
+        $expected_output = "admin,audittrail"
         $result = ParseCurrentNodeRoles($CurrentRoles)
         $result | Should -Be $expected_output
     }
