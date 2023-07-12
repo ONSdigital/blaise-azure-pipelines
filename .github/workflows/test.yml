@@ -16,4 +16,4 @@ jobs:
       - name: Perform Pester tests
         shell: pwsh
         run: |
-          Invoke-Pester .\scripts\Blaise\* -Passthru
+          Invoke-Pester -Path .\scripts\Blaise\* -Passthru

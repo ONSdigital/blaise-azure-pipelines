@@ -1,7 +1,7 @@
 BeforeAll {. "$PSScriptRoot\check_server_roles.ps1"}
 
 Describe 'Parse current node roles' {
-    
+
     It 'returns a correctly ordered comma separated list of roles' {
         $CurrentRoles =  @"
 -----------------------------
@@ -39,7 +39,7 @@ Describe 'Parse current node roles' {
         $result | Should -Be $expected_output
     }
 
-    It 'does not return unexpected roles' {
+    It 'does not change case of unexpected roles' {
         $CurrentRoles =  @"
 -----------------------------
 |        Server Roles         |
@@ -52,7 +52,7 @@ Describe 'Parse current node roles' {
 | BAGEL      | 8033 | http    |
 -----------------------------
 "@
-        $expected_output = "admin,audittrail"
+        $expected_output = "admin,audittrail,CROISSANT,BAGEL"
         $result = ParseCurrentNodeRoles($CurrentRoles)
         $result | Should -Be $expected_output
     }
