@@ -13,10 +13,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      # - name: Perform a Pester test from the command-line
-      #   shell: pwsh
-      #   run: Test-Path resultsfile.log | Should -Be $true
-      - name: Perform a Pester test from the check server roles Tests.ps1 file
+      - name: Perform Pester tests
         shell: pwsh
         run: |
           Invoke-Pester .\scripts\Blaise\check_server_roles.Tests.ps1 -Passthru
