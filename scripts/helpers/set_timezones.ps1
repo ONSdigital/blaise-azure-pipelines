@@ -4,10 +4,10 @@ $currentTimeZone = Get-TimeZone
 
 if ($currentTimeZone.Id -eq $env:Blaise_TimeZone)
 {
-    Write-Host "Time Zone is set correct to $($currentTimeZone.Id)"
+    Write-Output "Time Zone is set correct to $($currentTimeZone.Id)"
 }
 else {
-    Write-Host "Time zone is not correct $($currentTimeZone.Id)"
+    Write-Output "Time zone is not correct $($currentTimeZone.Id)"
 
     Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
 
@@ -18,14 +18,14 @@ else {
         foreach($appPool in $allAppPools.name)
         {
             Restart-WebAppPool -Name $appPool
-            Write-Host "Restarted: $($appPool)"
+            Write-Output "Restarted: $($appPool)"
         }
     }
     else {
-        Write-Host "IIS is not on this box"
+        Write-Output "IIS is not on this box"
     }
 
     $newTimeZone = Get-TimeZone
 
-    Write-Host "Timezone set to $($newTimeZone)"
+    Write-Output "Timezone set to $($newTimeZone)"
 }
