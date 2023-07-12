@@ -1,6 +1,7 @@
 BeforeAll {. "$PSScriptRoot\check_server_roles.ps1"}
 
-Describe 'Parse current Node roles' {
+Describe 'Parse current node roles' {
+    
     It 'returns a correctly ordered comma separated list of roles' {
         $CurrentRoles =  @"
 -----------------------------
@@ -8,30 +9,52 @@ Describe 'Parse current Node roles' {
 -----------------------------
 | Name       | Port | Binding |
 -----------------------------
-| ADMIN      | 8031 | http    |
-| AUDITTRAIL | 8033 | http    |
+| DATA       | 8031 | http    |
+| AUDITTRAIL | 8031 | http    |
 | CATI       | 8033 | http    |
+| ADMIN      | 8033 | http    |
 -----------------------------
 "@
-        $expected_output = "admin,audittrail,cati"
+        $expected_output = "admin,audittrail,cati,data"
         $result = ParseCurrentNodeRoles($CurrentRoles)
         $result | Should -Be $expected_output
     }
 
-    It 'returns a correctly ordered comma separated list of roles in the correct order' {
+    It 'returns DATA and DATAENTRY roles correctly' {
         $CurrentRoles =  @"
 -----------------------------
 |        Server Roles         |
 -----------------------------
 | Name       | Port | Binding |
 -----------------------------
-| AUDITTRAIL | 8033 | http    |
-| ADMIN      | 8031 | http    |
+| DATA       | 8031 | http    |
+| AUDITTRAIL | 8031 | http    |
 | CATI       | 8033 | http    |
+| ADMIN      | 8033 | http    |
+| DATAENTRY  | 8031 | http    |
 -----------------------------
 "@
-        $expected_output = "admin,audittrail,cati"
+        $expected_output = "admin,audittrail,cati,data,dataentry"
         $result = ParseCurrentNodeRoles($CurrentRoles)
         $result | Should -Be $expected_output
     }
+
+    It 'does not return unexpected roles' {
+        $CurrentRoles =  @"
+-----------------------------
+|        Server Roles         |
+-----------------------------
+| Name       | Port | Binding |
+-----------------------------
+| ADMIM      | 8031 | http    |
+| AUDITTRAIL | 8031 | http    |
+| CROISSANT  | 8033 | http    |
+| BAGEL      | 8033 | http    |
+-----------------------------
+"@
+        $expected_output = "admin,audittrail"
+        $result = ParseCurrentNodeRoles($CurrentRoles)
+        $result | Should -Be $expected_output
+    }
+
 }
