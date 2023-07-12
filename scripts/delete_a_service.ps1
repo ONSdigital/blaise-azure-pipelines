@@ -1,6 +1,6 @@
     # Service Name paramater
     param($ServiceName)
-    
+
     if (Get-Service $ServiceName -ErrorAction SilentlyContinue)
     {
 
@@ -9,48 +9,48 @@
 
         if ($serviceStatus -eq "Running")
         {
-	    Write-Host "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
-		 
+	    Write-Output "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
+
             Stop-Service $ServiceName
-            Write-Host "Stopping " $ServiceName " service..."
+            Write-Output "Stopping " $ServiceName " service..."
             " ---------------------- "
-            sleep 10
+            Start-Sleep 10
 
             $arrService_current = Get-Service -Name $ServiceName
 
             if ($arrService_current.Status -eq "Running")
             {
-                Write-Host "Stopping " $ServiceName " service failed, kill the proces task"
-                taskkill /f /pid (get-wmiobject win32_service | where { $_.name -eq $ServiceName}).processID
-            }		
-			
-            Write-Host "Service $ServiceName has been stopped"
+                Write-Output "Stopping " $ServiceName " service failed, kill the proces task"
+                taskkill /f /pid (get-cimobject win32_service | Where-Object { $_.name -eq $ServiceName}).processID
+            }
+
+            Write-Output "Service $ServiceName has been stopped"
             sc.exe delete $ServiceName
 
-            return 
+            return
         }
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "StartPending"))
         {
-		       Write-Host "Service $arrService is in the state $serviceStatus, will attempt to stop process and delete service"
-			
+		       Write-Output "Service $arrService is in the state $serviceStatus, will attempt to stop process and delete service"
+
                Stop-Process -Name $ServiceName -Force
                sc.exe delete $ServiceName
 
-               return 
+               return
         }
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "Stopped"))
         {
-		    Write-Host "Service $arrService is in the state $serviceStatus, will attempt to delete service"
-		
+		    Write-Output "Service $arrService is in the state $serviceStatus, will attempt to delete service"
+
              sc.exe delete $ServiceName
 
-             return 
+             return
         }
 
         }
-    else 
+    else
     {
-        Write-Host "Service doesn't exist"
+        Write-Output "Service doesn't exist"
     }

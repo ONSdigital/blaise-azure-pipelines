@@ -7,17 +7,17 @@ function CreateDataInterfaceFile {
         #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
         if (Test-Path $filePath)
         {
-            Write-Host "$filePath already exists"  
+            Write-Output "$filePath already exists"
         }
         else {
             #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
 
-            Write-Host "Created $applicationType Data Interface File"
+            Write-Output "Created $applicationType Data Interface File"
         }
     }
     catch {
-        Write-Host "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Output "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -30,20 +30,20 @@ function RegisterDataInterfaceFile {
     try {
         #Get a list of all configuration settings for Blaise
         $configurationSettings = ListOfConfigurationSettings
-    
+
         if ($configurationSettings.contains($filePath))
         {
-            Write-Host "$filePath is already registered"
+            Write-Output "$filePath is already registered"
         }
         else {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
 
-            Write-Host "$filePath registered"
+            Write-Output "$filePath registered"
         }
     }
     catch {
-        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Output "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -60,9 +60,9 @@ function RegisterDatainterfaceViaXML {
         $txtFragment = @"
         <add key="$interfaceFileName" value="$filePath"/>
 "@
-    
+
         if($xml.InnerXml.Contains($filePath)){
-            Write-Host "$filePath database is already set"
+            Write-Output "$filePath database is already set"
         }
         else
         {
@@ -70,16 +70,16 @@ function RegisterDatainterfaceViaXML {
             $xmlFragment.InnerXml = $txtFragment
             $node = $xml.SelectSingleNode('//appSettings')
             $node.AppendChild($xmlFragment)
-    
+
             $xml.Save($configFile)
-            Write-Host "$filePath database has been set"
+            Write-Output "$filePath database has been set"
         }
     }
     catch{
-        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Output "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
-    
+
 }
 
 function ListOfConfigurationSettings {
