@@ -16,17 +16,17 @@ function CreateVariables($variableList)
         {
             New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3') -Force
 
-            Write-Host $varName '=' ($varValue -replace $pattern, '$3')
+            Write-Output $varName '=' ($varValue -replace $pattern, '$3')
         }
 
         if ($variable.Name -Like "ENV_*")
         {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue -replace $pattern, '$3'), [System.EnvironmentVariableTarget]::Machine)
-                Write-Host "Env Var   : $varName = $( $varValue -replace $pattern, '$3' )"
+                Write-Output "Env Var   : $varName = $( $varValue -replace $pattern, '$3' )"
         }
     }
 }
 
-Write-Host "Setting up script and system variables..."
+Write-Output "Setting up script and system variables..."
     $metadataVariables = GetMetadataVariables
     CreateVariables($metadataVariables)

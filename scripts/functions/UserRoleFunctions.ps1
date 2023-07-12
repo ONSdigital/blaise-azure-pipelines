@@ -16,7 +16,7 @@ function GetUserRole {
         [string] $restApiUrl = $userRolesBaseUri,
         [string] $userRoleName
     )
-    
+
     $restApiUri = "$restApiUrl/$userRoleName"
 
     return Invoke-RestMethod -UseBasicParsing $restApiUri -ContentType "application/json" -Method GET
@@ -27,9 +27,9 @@ function CreateUserRole {
         [string] $restApiUrl = $userRolesBaseUri,
         [System.Object] $userRole
     )
-    
-    $body = $userRole | ConvertTo-Json 
-    
+
+    $body = $userRole | ConvertTo-Json
+
     Invoke-RestMethod -UseBasicParsing $restApiUrl -ContentType "application/json" -Method POST -Body $body
 }
 
@@ -38,7 +38,7 @@ function UpdateUserRole {
         [string] $restApiUrl = $userRolesBaseUri,
         [System.Object] $userRole
     )
-    
+
     $body = ConvertTo-Json @($userRole.permissions)
 
     $restApiUri = "$restApiUrl/$($userRole.name)/permissions"
