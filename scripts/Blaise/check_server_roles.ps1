@@ -1,12 +1,13 @@
 function NodeHasTheCorrectRoles {
     $requiredRoles = RolesNodeShouldHave
+    Write-Host "Required roles: $requiredRoles"
     $currentRoles = ParseCurrentNodeRoles
+    Write-Host "Current roles: $currentRoles"
     return CheckNodeHasCorrectRoles -CurrentNodeRoles $currentRoles -RolesNodeShouldHave $requiredRoles
 }
 function RolesNodeShouldHave {
     $role_server_should_Have = [Environment]::GetEnvironmentVariable('ENV_BLAISE_ROLES', 'Machine')
-    Write-Host "I have these roles now: $role_server_should_Have"
-    $rolesItShouldHave = $role_server_should_Have.Trim().Split(',') | Sort-Object
+    $rolesItShouldHave = $role_server_should_Have.Split(',').Trim() | Sort-Object
     return $rolesItShouldHave -join ','
 }
 
@@ -14,31 +15,29 @@ function CurrentNodeRoles {
     return C:\Blaise5\Bin\ServerManager -lsr | Out-String
 }
 
-function ParseCurrentNodeRoles {
-    param (
-        [string] $CurrentRoles
-    )
+function ParseCurrentNodeRoles([Parameter(Mandatory=$False)]$CurrentRoles='') {
     if ([string]::IsNullOrEmpty($CurrentRoles))
     {
         $CurrentRoles = CurrentNodeRoles
     }
-    $roles = ""
-
-    Switch -regex ($CurrentRoles)
-    {
-        'ADMIN' { $roles += 'admin,' }
-        'CATI' { $roles += 'cati,' }
-        'AUDITTRAIL' { $roles += 'audittrail,' }
-        'WEB' { $roles += 'web,' }
-        'SESSION' { $roles += 'session,' }
-        'DATA' { $roles += 'data,' }
-        'RESOURCE' { $roles += 'resource,' }
-        'DATAENTRY' { $roles += 'dataentry,' }
-        'DASHBOARD' { $roles += 'dashboard' }
-    }
-
-    $roles = $roles.Trim().Split(',') | Sort-Object
-    return $roles -join ','
+    $Roles = @()
+    $CurrentRoles.Split('|').ForEach({
+        $Role = $_.Trim()
+        switch -regex ($Role)
+        {
+            '\bADMIN\b' { $Roles += 'admin' }
+            '\bAUDITTRAIL\b' { $Roles += 'audittrail' }
+            '\bCATI\b' { $Roles += 'cati' }
+            '\bDATA\b' { $Roles += 'data' }
+            '\bDATAENTRY\b' { $Roles += 'dataentry' }
+            '\bDASHBOARD\b' { $Roles += 'dashboard' }
+            '\bRESOURCE\b' { $Roles += 'resource' }
+            '\bSESSION\b' { $Roles += 'session' }
+            '\bWEB\b' { $Roles += 'web' }
+        }
+    })
+    $Roles = $Roles | Sort-Object
+    return $Roles -join ','
 }
 
 function CheckNodeHasCorrectRoles {
