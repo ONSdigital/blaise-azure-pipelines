@@ -12,7 +12,7 @@
 	    Write-Output "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
 
             Stop-Service $ServiceName
-            Write-Output "Stopping " $ServiceName " service..."
+            Write-Output "Stopping $ServiceName service..."
             " ---------------------- "
             Start-Sleep 10
 
@@ -20,7 +20,7 @@
 
             if ($arrService_current.Status -eq "Running")
             {
-                Write-Output "Stopping " $ServiceName " service failed, kill the proces task"
+                Write-Output "Stopping $ServiceName service failed, kill the proces task"
                 taskkill /f /pid (get-cimobject win32_service | Where-Object { $_.name -eq $ServiceName}).processID
             }
 
