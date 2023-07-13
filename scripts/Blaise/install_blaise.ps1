@@ -19,6 +19,7 @@ function CreateVariables1($variableList)
 
         $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
 
+         
          New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3')
 
          Write-Output $varName '=' ($varValue -replace $pattern, '$3')
