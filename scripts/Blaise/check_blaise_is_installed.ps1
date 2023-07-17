@@ -1,17 +1,17 @@
 $CurrentPath = Get-Location
 $Blaise = Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"| Where-Object { $_.DisplayName -match 'blaise' } |Select-Object DisplayName, DisplayVersion, InstallDate, Version
 if (!$Blaise) {
-    Write-Output "Blaise is not installed"
+    Write-Information "Blaise is not installed"
     . "$CurrentPath\scripts\blaise\install_blaise.ps1"
 }
 else {
     $BlaiseVersion = $Blaise.DisplayVersion
-    Write-Output "Blaise version $BlaiseVersion is installed"
+    Write-Information "Blaise version $BlaiseVersion is installed"
     if ($Blaise.DisplayVersion -eq $env:ENV_BLAISE_CURRENT_VERSION) {
         "Blaise is already on the correct version"
     }
     else {
-        Write-Output "Blaise version needs to be changed"
+        Write-Information "Blaise version needs to be changed"
         . "$CurrentPath\scripts\blaise\upgrade_blaise.ps1"
     }
 }

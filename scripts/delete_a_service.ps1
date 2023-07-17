@@ -9,10 +9,10 @@
 
         if ($serviceStatus -eq "Running")
         {
-	    Write-Output "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
+	    Write-Information "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
 
             Stop-Service $ServiceName
-            Write-Output "Stopping $ServiceName service..."
+            Write-Information "Stopping $ServiceName service..."
             " ---------------------- "
             Start-Sleep 10
 
@@ -20,11 +20,11 @@
 
             if ($arrService_current.Status -eq "Running")
             {
-                Write-Output "Stopping $ServiceName service failed, kill the proces task"
+                Write-Information "Stopping $ServiceName service failed, kill the proces task"
                 taskkill /f /pid (get-cimobject win32_service | Where-Object { $_.name -eq $ServiceName}).processID
             }
 
-            Write-Output "Service $ServiceName has been stopped"
+            Write-Information "Service $ServiceName has been stopped"
             sc.exe delete $ServiceName
 
             return
@@ -32,7 +32,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "StartPending"))
         {
-		       Write-Output "Service $arrService is in the state $serviceStatus, will attempt to stop process and delete service"
+		       Write-Information "Service $arrService is in the state $serviceStatus, will attempt to stop process and delete service"
 
                Stop-Process -Name $ServiceName -Force
                sc.exe delete $ServiceName
@@ -42,7 +42,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "Stopped"))
         {
-		    Write-Output "Service $arrService is in the state $serviceStatus, will attempt to delete service"
+		    Write-Information "Service $arrService is in the state $serviceStatus, will attempt to delete service"
 
              sc.exe delete $ServiceName
 
@@ -52,5 +52,5 @@
         }
     else
     {
-        Write-Output "Service doesn't exist"
+        Write-Information "Service doesn't exist"
     }

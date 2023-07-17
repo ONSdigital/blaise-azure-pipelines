@@ -19,7 +19,7 @@ function CreateVariables1($variableList)
       $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
       $varValue = ($varDefinition -replace $pattern, '$3')
       New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-      Write-Output "Script Env Var - $varName = $varValue"
+      Write-Information "Script Env Var - $varName = $varValue"
     }
   }
 }
@@ -28,7 +28,7 @@ function CreateVariables1($variableList)
 # RUNTIME ARGS
 ###############
 
-Write-Output "Setting up script environment variables..."
+Write-Information "Setting up script environment variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
 [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
@@ -37,25 +37,25 @@ CreateVariables1($metadataVariables)
 # INSTALL BLAISE
 #################
 
-Write-Output "Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION"
+Write-Information "Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION"
 
-Write-Output "LICENSEE: $BLAISE_LICENSEE"
-Write-Output "INSTALLDIR: $BLAISE_INSTALLDIR"
-Write-Output "DEPLOYFOLDER: $BLAISE_DEPLOYFOLDER"
-Write-Output "SERVERPARK: $BLAISE_SERVERPARK"
-Write-Output "GCP_BUCKET: $BLAISE_GCP_BUCKET"
+Write-Information "LICENSEE: $BLAISE_LICENSEE"
+Write-Information "INSTALLDIR: $BLAISE_INSTALLDIR"
+Write-Information "DEPLOYFOLDER: $BLAISE_DEPLOYFOLDER"
+Write-Information "SERVERPARK: $BLAISE_SERVERPARK"
+Write-Information "GCP_BUCKET: $BLAISE_GCP_BUCKET"
 
-Write-Output "Download Blaise redistributables from '$BLAISE_GCP_BUCKET'"
+Write-Information "Download Blaise redistributables from '$BLAISE_GCP_BUCKET'"
 gsutil cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
 # unzip blaise installer
 $folderPath = "c:\dev\data\Blaise"
-Write-Output "Expanding archive to 'Blaise' dir"
+Write-Information "Expanding archive to 'Blaise' dir"
 Remove-Item $folderPath -Recurse -ErrorAction Ignore
 mkdir $folderPath
 Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 
-Write-Output "Setting Blaise install args"
+Write-Information "Setting Blaise install args"
 $blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise5-install.log","/i C:\dev\data\Blaise\Blaise5.msi"
 $blaise_args += "FORCEINSTALL=1"
 $blaise_args += "USERNAME=`"ONS-USER`""
@@ -85,9 +85,9 @@ $blaise_args += "SESSIONSERVER=$BLAISE_SESSIONSERVER"
 $blaise_args += "AUDITTRAILSERVER=$BLAISE_AUDITTRAILSERVER"
 $blaise_args += "CATISERVER=$BLAISE_CATISERVER"
 
-Write-Output "blaise_args: $blaise_args"
+Write-Information "blaise_args: $blaise_args"
 
-Write-Output "Running msiexec"
+Write-Information "Running msiexec"
 Start-Process -Wait "msiexec" -ArgumentList $blaise_args
 
-Write-Output "Blaise installation complete"
+Write-Information "Blaise installation complete"

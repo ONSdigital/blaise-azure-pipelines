@@ -7,17 +7,17 @@ function CreateDataInterfaceFile {
         #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
         if (Test-Path $filePath)
         {
-            Write-Output "$filePath already exists"
+            Write-Information "$filePath already exists"
         }
         else {
             #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
 
-            Write-Output "Created $applicationType Data Interface File"
+            Write-Information "Created $applicationType Data Interface File"
         }
     }
     catch {
-        Write-Output "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Information "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -33,17 +33,17 @@ function RegisterDataInterfaceFile {
 
         if ($configurationSettings.contains($filePath))
         {
-            Write-Output "$filePath is already registered"
+            Write-Information "$filePath is already registered"
         }
         else {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
 
-            Write-Output "$filePath registered"
+            Write-Information "$filePath registered"
         }
     }
     catch {
-        Write-Output "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Information "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -62,7 +62,7 @@ function RegisterDatainterfaceViaXML {
 "@
 
         if($xml.InnerXml.Contains($filePath)){
-            Write-Output "$filePath database is already set"
+            Write-Information "$filePath database is already set"
         }
         else
         {
@@ -72,11 +72,11 @@ function RegisterDatainterfaceViaXML {
             $node.AppendChild($xmlFragment)
 
             $xml.Save($configFile)
-            Write-Output "$filePath database has been set"
+            Write-Information "$filePath database has been set"
         }
     }
     catch{
-        Write-Output "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Information "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 

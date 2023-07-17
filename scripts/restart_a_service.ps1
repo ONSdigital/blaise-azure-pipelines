@@ -2,11 +2,11 @@ param ($ServiceName)
 
 try{
     restart-service $ServiceName
-    Write-Output "Restarted $ServiceName Service"
+    Write-Information "Restarted $ServiceName Service"
 }
 
 catch{
-    Write-Output "Could Not Restart $ServiceName Service"
-    Write-Output $_.ScriptStackTrace
+    Write-Information "Could Not Restart $ServiceName Service"
+    Write-Information $_.ScriptStackTrace
     exit 1
 }
