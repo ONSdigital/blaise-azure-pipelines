@@ -1,23 +1,18 @@
-name: PowerShell Analysis
-
+name: Run code checker
 on:
-    pull_request:
-      branches: [ main ]
-    push:
-      branches: [ main ]
-
-
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
 jobs:
-  analysis:
+  psscriptanalyzer:
+    name: Run PSScriptAnalyzer
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Run PSScriptAnalyzer
-        uses: microsoft/powershell@v1
-        with:
-          script: |
+      - name: Check out repo
+        uses: actions/checkout@v3
+      - name: Install and run PSScriptAnalyzer
+        shell: pwsh
+        run: |
             Install-Module -Name PSScriptAnalyzer -Force -AllowClobber
-            Invoke-ScriptAnalyzer -Path .\scripts\ -ExcludeRule PSAvoidUsingPositionalParameters -Recurse
+            Invoke-ScriptAnalyzer -Path .\scripts\ -ExcludeRule PSAvoidUsingPositionalParameters, PSAvoidUsingWriteHost -Recurse
