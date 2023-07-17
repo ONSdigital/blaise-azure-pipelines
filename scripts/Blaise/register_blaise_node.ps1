@@ -28,17 +28,17 @@ function RegisterNode{
         throw [System.IO.ArgumentException] "No Blaise username argument provided"
     }
 
-    Write-Information "Registering $currentNode on management node $managementNode"
+    Write-Host "Registering $currentNode on management node $managementNode"
 
     c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -server:$managementNode -binding:http -port:$connectionPort
 
-    Write-Information "$currentNode registered"
+    Write-Host "$currentNode registered"
 }
 
 try{
     RegisterNode
 }
 catch{
-    Write-Information "Nodes have not been registered: $($_.ScriptStackTrace)"
+    Write-Host "Nodes have not been registered: $($_.ScriptStackTrace)"
     exit 1
 }
