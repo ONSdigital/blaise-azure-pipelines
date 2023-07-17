@@ -1,6 +1,6 @@
 function NodeHasTheCorrectRoles {
     $requiredRoles = RolesNodeShouldHave
-    Write-Output "Required gitroles: $requiredRoles"
+    Write-Output "Required roles: $requiredRoles"
     $currentRoles = ParseCurrentNodeRoles
     Write-Output "Current roles: $currentRoles"
     return CheckNodeHasCorrectRoles -CurrentNodeRoles $currentRoles -RolesNodeShouldHave $requiredRoles
