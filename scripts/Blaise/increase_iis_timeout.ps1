@@ -1,32 +1,32 @@
 try{
-    Write-Output "Setting session state time-out"
+    Write-Information "Setting session state time-out"
     Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
-    Write-Output "Session time-out set"
+    Write-Information "Session time-out set"
 }
 catch{
-    Write-Output "Could not set session state time-out"
-    Write-Output $_.ScriptStackTrace
+    Write-Information "Could not set session state time-out"
+    Write-Information $_.ScriptStackTrace
     exit 1
 }
 
 try{
-    Write-Output "Setting ISS idle time-out"
+    Write-Information "Setting ISS idle time-out"
     Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value ( [TimeSpan]::FromMinutes(480))
-    Write-Output "ISS idle set"
+    Write-Information "ISS idle set"
 }
 catch{
-    Write-Output "Could not set ISS idle time-out"
-    Write-Output $_.ScriptStackTrace
+    Write-Information "Could not set ISS idle time-out"
+    Write-Information $_.ScriptStackTrace
     exit 1
 }
 
 try
 {
-    Write-Output "Restarting BlaiseAppPool"
+    Write-Information "Restarting BlaiseAppPool"
     Restart-WebAppPool BlaiseAppPool
-    Write-Output "BlaiseAppPool has been restarted"
+    Write-Information "BlaiseAppPool has been restarted"
 }
 catch{
-    Write-Output "Unable to restart BlaiseAppPool"
+    Write-Information "Unable to restart BlaiseAppPool"
     exit 1
 }

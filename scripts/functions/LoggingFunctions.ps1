@@ -6,7 +6,7 @@ function LogInfo {
     )
 
     CreateSourceIfNotExists($source)
-    Write-Output "Information: $message"
+    Write-Information "Information: $message"
     Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Information -Message "$($source): $message"
 }
 
@@ -16,7 +16,7 @@ function LogWarning {
     )
 
     CreateSourceIfNotExists($source)
-    Write-Output "Warning: $message"
+    Write-Information "Warning: $message"
     Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Warning -Message "$($source): $message"
 }
 
@@ -26,7 +26,7 @@ function LogError {
     )
 
     CreateSourceIfNotExists($source)
-    Write-Output "Error: $message"
+    Write-Information "Error: $message"
     Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Error -Message "$($source): $message"
 }
 
