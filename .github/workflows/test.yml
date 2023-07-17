@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
-      - name: Run Pester
+      - name: Run Pester command
         shell: pwsh
         run: |
           Invoke-Pester .\scripts\* -Passthru
