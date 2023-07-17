@@ -8,10 +8,10 @@ param ($instancegroup, $zone)
         if ($instances.Contains($hostname))
         {
             gcloud compute instance-groups unmanaged remove-instances $instancegroup --instances=$hostname --zone $zone
-            Write-Information "removed $hostname from $instancegroup group"
+            Write-Host "removed $hostname from $instancegroup group"
         }
     }
     catch {
-        Write-Information "Unable to remove $hostname from the instance group"
+        Write-Host "Unable to remove $hostname from the instance group"
         exit 1
     }

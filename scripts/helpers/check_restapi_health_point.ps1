@@ -4,15 +4,15 @@ try {
 
     if ($response.StatusCode -eq 200)
     {
-        Write-Information "$hostname responded with status code 200"
+        Write-Host "$hostname responded with status code 200"
     }
     else
     {
-        Write-Information "$hostname has issues: $($response.StatusCode)"
+        Write-Host "$hostname has issues: $($response.StatusCode)"
         exit 1
     }
 }
 catch {
-    Write-Information "Rest Api has responded with an OK status, error: $($_.Exception.Message)"
+    Write-Host "Rest Api has responded with an OK status, error: $($_.Exception.Message)"
     exit 1
 }

@@ -16,39 +16,39 @@ function Check_Service_Exists($ServiceName) {
 }
 
 function Uninstall_Ops_Agent() {
-    Write-Information "Attempting to uninstall Ops Agent..."
+    Write-Host "Attempting to uninstall Ops Agent..."
     googet -noconfirm remove google-cloud-ops-agent
 }
 
 
 function Uninstall_StackDriver_Logging() {
     if (Check_Service_Exists StackdriverLogging) {
-        Write-Information "Stopping StackdriverLogging service"
+        Write-Host "Stopping StackdriverLogging service"
         Stop-Service -Name StackdriverLogging
     }
 }
 
 function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
-    Write-Information "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
+    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
     gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
 
-    Write-Information "Installing Stackdriver logging agent..."
+    Write-Host "Installing Stackdriver logging agent..."
     $logging_args = "/S /D='C:\Program Files (x86)\stackdriver\loggingAgent'"
     Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
 }
 
 function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
-    Write-Information "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
+    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
     gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
 
-    Write-Information "Installing Stackdriver monitoring agent..."
+    Write-Host "Installing Stackdriver monitoring agent..."
     $monitoring_args = "/S /D='C:\Program Files (x86)\stackdriver\monitoringAgent'"
     Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
 }
 
-Write-Information "Target logging agent is: $($loggingagent)"
-Write-Information "Target monitoring agent is: $($monitoringagent)"
-Write-Information "GCP artifact bucket is: $($GCP_BUCKET)"
+Write-Host "Target logging agent is: $($loggingagent)"
+Write-Host "Target monitoring agent is: $($monitoringagent)"
+Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
 
 if (Check_Service_Exists google-cloud-ops-agent) {
     Uninstall_Ops_Agent
