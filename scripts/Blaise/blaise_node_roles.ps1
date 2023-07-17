@@ -4,7 +4,7 @@ try {
     Write-Output "Running NodeHasTheCorrectRoles"
     $applyRules = NodeHasTheCorrectRoles
     Write-Output "applyRules - $applyRules"
-    if (-not $applyRules)
+    if (-Not $applyRules)
     {
         $roles = RolesNodeShouldHave
 
