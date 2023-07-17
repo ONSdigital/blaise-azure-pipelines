@@ -15,4 +15,3 @@ param ($instancegroup, $zone)
         Write-Output "Unable to remove $hostname from the instance group"
         exit 1
     }
-

@@ -1,6 +1,7 @@
 ############
 # functions
 ############
+
 function GetMetadataVariables1
 {
   $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
@@ -9,21 +10,17 @@ function GetMetadataVariables1
 
 function CreateVariables1($variableList)
 {
-
   foreach ($variable in $variableList)
   {
-      if ($variable.Name -Like "BLAISE_*")
-      {
-        $varName = $variable.Name
-        $varValue = $variable.Definition
-
-        $pattern = "^(.*?)$([regex]::Escape($varName) )(.?=)(.*)"
-
-         
-         New-Variable -Scope script -Name ($varName) -Value ($varValue -replace $pattern, '$3')
-
-         Write-Output $varName '=' ($varValue -replace $pattern, '$3')
-        }
+    if ($variable.Name -Like "BLAISE_*")
+    {
+      $varName = $variable.Name
+      $varDefinition = $variable.Definition
+      $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
+      $varValue = ($varDefinition -replace $pattern, '$3')
+      New-Variable -Scope script -Name ($varName) -Value $varValue -Force
+      Write-Output "Script Env Var - $varName = $varValue"
+    }
   }
 }
 
@@ -31,7 +28,7 @@ function CreateVariables1($variableList)
 # RUNTIME ARGS
 ###############
 
-Write-Output "Setting up script and system variables..."
+Write-Output "Setting up script environment variables..."
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
 [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
@@ -39,6 +36,7 @@ CreateVariables1($metadataVariables)
 #################
 # INSTALL BLAISE
 #################
+
 Write-Output "Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION"
 
 Write-Output "LICENSEE: $BLAISE_LICENSEE"

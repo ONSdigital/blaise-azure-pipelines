@@ -16,4 +16,4 @@ jobs:
       - name: Perform Pester tests
         shell: pwsh
         run: |
-          Invoke-Pester .\scripts\Blaise\check_server_roles.Tests.ps1 -Passthru
+          Invoke-Pester .\scripts\* -Passthru
