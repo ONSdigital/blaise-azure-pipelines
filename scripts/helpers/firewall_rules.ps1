@@ -27,9 +27,10 @@ function PortsMatch {
         [string] $Direction,
         [string] $PortType
     )
+    $portsString = [string]$Ports
+    $portTypeString = [string]$PortType
     Get-NetFirewallRule -DisplayName $RuleName | Where-Object -Property Direction -EQ $Direction | Get-NetFirewallPortFilter | ForEach-Object{
-
-        if ([string]$_.$PortType -eq [string]$Ports)
+        if ([string]$_.$portTypeString -eq [string]$portsString)
         {
             return $true
         }
