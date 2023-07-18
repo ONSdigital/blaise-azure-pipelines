@@ -14,7 +14,7 @@ function LogWarning {
     param (
         $message
     )
-    
+
     CreateSourceIfNotExists($source)
     Write-Host "Warning: $message"
     Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Warning -Message "$($source): $message"
