@@ -5,7 +5,6 @@ steps:
     filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/update_environment_variables.ps1'
 
 - task: PowerShell@2
-  condition: eq(variables.ENV_MULTI_NODE, true)
   displayName: Configure Blaise node roles
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/blaise_node_roles.ps1'

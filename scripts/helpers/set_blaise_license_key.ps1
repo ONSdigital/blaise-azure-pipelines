@@ -29,7 +29,7 @@ function SetBlaiseLicenseViaRegistry {
             Write-Host "Activation code updated to: $($Blaise_Activation_Code)"
         }
     }
-    else 
+    else
     {
         Write-Host "No registry key found for Blaise"
     }
