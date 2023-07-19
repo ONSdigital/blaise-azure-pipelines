@@ -7,7 +7,7 @@ function CreateDataInterfaceFile {
         #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
         if (Test-Path $filePath)
         {
-            Write-Host "$filePath already exists"  
+            Write-Host "$filePath already exists"
         }
         else {
             #Create data interface
@@ -30,7 +30,7 @@ function RegisterDataInterfaceFile {
     try {
         #Get a list of all configuration settings for Blaise
         $configurationSettings = ListOfConfigurationSettings
-    
+
         if ($configurationSettings.contains($filePath))
         {
             Write-Host "$filePath is already registered"
@@ -60,7 +60,7 @@ function RegisterDatainterfaceViaXML {
         $txtFragment = @"
         <add key="$interfaceFileName" value="$filePath"/>
 "@
-    
+
         if($xml.InnerXml.Contains($filePath)){
             Write-Host "$filePath database is already set"
         }
@@ -70,7 +70,7 @@ function RegisterDatainterfaceViaXML {
             $xmlFragment.InnerXml = $txtFragment
             $node = $xml.SelectSingleNode('//appSettings')
             $node.AppendChild($xmlFragment)
-    
+
             $xml.Save($configFile)
             Write-Host "$filePath database has been set"
         }
@@ -79,7 +79,7 @@ function RegisterDatainterfaceViaXML {
         Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
-    
+
 }
 
 function ListOfConfigurationSettings {

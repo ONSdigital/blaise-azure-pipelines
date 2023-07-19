@@ -2,7 +2,7 @@
 
 try {
     $applyRules = NodeHasTheCorrectRoles
-    if (-not $applyRules)
+    if (-Not $applyRules)
     {
         $roles = RolesNodeShouldHave
 
@@ -10,12 +10,12 @@ try {
         $output = C:\Blaise5\Bin\ServerManager -role:$roles | Out-String
         Write-Host "Node roles updated $output"
 
-        Write-Host "Restarting Blaise services"
-        restart-service blaiseservices5 
-        Write-Host "Blaise has been restarted"
+        Write-Host "Restarting Blaise service"
+        restart-service blaiseservices5
+        Write-Host "Blaise service has been restarted"
     }
     else {
-        Write-Host "Node has the correct roles"
+        Write-Host "Node already has the correct roles"
     }
 }
 catch {
