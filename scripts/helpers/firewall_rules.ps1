@@ -3,8 +3,8 @@ param ([string]$RuleName, [string[]]$Inbound_Ports, [string[]]$Outbound_Ports)
 function SetFirewallRules
 {
     param (
-        [string]$RuleName, 
-        [string[]] $Ports, 
+        [string]$RuleName,
+        [string[]] $Ports,
         [string] $Direction,
         [string] $PortType
     )
@@ -27,9 +27,10 @@ function PortsMatch {
         [string] $Direction,
         [string] $PortType
     )
+    $portsString = [string]$Ports
+    $portTypeString = [string]$PortType
     Get-NetFirewallRule -DisplayName $RuleName | Where-Object -Property Direction -EQ $Direction | Get-NetFirewallPortFilter | ForEach-Object{
-            
-        if ([string]$_.$PortType -eq [string]$Ports)
+        if ([string]$_.$portTypeString -eq [string]$portsString)
         {
             return $true
         }
@@ -44,11 +45,11 @@ try {
     {
         $LocalPortExists = PortsMatch -RuleName:"$RuleName" -Ports:$Inbound_Ports -Direction:"Inbound" -PortType:"LocalPort"
         $RemotePortExists = PortsMatch -RuleName:"$RuleName" -Ports:$Outbound_Ports -Direction:"Outbound" -PortType:"RemotePort"
-            
+
         if (-Not $RemotePortExists -or -Not $LocalPortExists)
         {
             Remove-NetFirewallRule -DisplayName "$RuleName"
-            SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"   
+            SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"
             SetFirewallRules -RuleName:"$RuleName" -Direction:"Outbound" -Ports:$Outbound_Ports -PortType:"RemotePort"
         }
         else
@@ -56,7 +57,7 @@ try {
             Write-Host "Firewall rules already exist"
         }
     }
-    else 
+    else
     {
         Write-Host "No Firewall rule exists, Creating them"
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"
