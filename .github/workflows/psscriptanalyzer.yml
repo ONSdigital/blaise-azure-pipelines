@@ -1,0 +1,17 @@
+name: Run code checker
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+jobs:
+  psscriptanalyzer:
+    name: Run PSScriptAnalyzer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+      - name: Run PSScriptAnalyzer command
+        shell: pwsh
+        run: |
+            Invoke-ScriptAnalyzer -Path .\scripts\ -ExcludeRule PSAvoidUsingPositionalParameters, PSAvoidUsingWriteHost -Recurse
