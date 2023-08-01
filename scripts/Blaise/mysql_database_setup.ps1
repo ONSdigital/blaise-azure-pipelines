@@ -7,11 +7,11 @@ function RestartBlaiseRequired {
     $configurationSettings = ListOfConfigurationSettings
 
     if ($configurationSettings.contains($filePath)) {
-        Write-Host "No configuration changes detected in $filePath. Blaise restart not required."   
+        Write-Host "No changes detected in $filePath. Blaise restart not required."   
         return $false
     
     }
-    Write-Host "Configuration changes detected in $filePath. Blaise restart is required."
+    Write-Host "Changes detected in $filePath. Blaise restart is required."
     return $true
 }
 
@@ -46,10 +46,10 @@ function RestartBlaiseRequired {
 "@
 
     if(-Not $xml.InnerXml.Contains($config_db_file_path)){
-        Write-Host "No configuration changes detected in $config_db_file_path. Blaise restart not required."   
+        Write-Host "Changes detected in $config_db_file_path. Blaise restart is required."   
         $restartBlaise += $true
     } else {
-        Write-Host "No configuration changes detected in $config_db_file_path. Blaise restart not required."
+        Write-Host "No changes detected in $config_db_file_path. Blaise restart not required."
     }
 
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration
