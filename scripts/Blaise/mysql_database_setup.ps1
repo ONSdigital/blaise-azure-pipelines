@@ -25,3 +25,5 @@
     #$credentials_db_file_path = "D:\Blaise5\Settings\credentials.budi"
     #CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
     #RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
+
+    restart-service blaiseservices5
