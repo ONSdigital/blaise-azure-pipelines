@@ -38,7 +38,8 @@ function RegisterDataInterfaceFile {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
 
-            Write-Host "$filePath registered"
+            Write-Host "$filePath registered. Restarting Blaise..."
+            restart-service blaiseservices5
         }
     }
     catch {
@@ -71,7 +72,8 @@ function RegisterDatainterfaceViaXML {
             $node.AppendChild($xmlFragment)
 
             $xml.Save($configFile)
-            Write-Host "$filePath database has been set"
+            Write-Host "$filePath database has been set. Restarting Blaise..."
+            restart-service blaiseservices5
         }
     }
     catch{
