@@ -37,15 +37,20 @@ function RestartBlaiseRequired {
 
     #Config
     $config_db_file_path = "D:\Blaise5\Settings\configurationdb.bidi"
-    $xml = [xml](Get-Content $configFile)
+    $config_file = "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config"
+    
+    $xml = [xml](Get-Content $config_file)
 
-    if (-Not $xml.InnerXml.Contains($config_db_file_path))
-    {
+    $txtFragment = @"
+    <add key="$interfaceFileName" value="$config_db_file_path"/>
+"@
+
+    if(-Not $xml.InnerXml.Contains($config_db_file_path)){
         $restartBlaise += $true
     }
 
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration
-    RegisterDatainterfaceViaXML -filePath $config_db_file_path -configFile "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config" -interfaceFileName "ConfigurationDataInterfaceFile"
+    RegisterDatainterfaceViaXML -filePath $config_db_file_path -configFile $config_file -interfaceFileName "ConfigurationDataInterfaceFile"
 
     #Credentials
     #Commenting out calling MySQL data interface creation for creds until upgrade to Blaise 5.13
