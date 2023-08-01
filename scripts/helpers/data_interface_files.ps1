@@ -33,7 +33,6 @@ function RegisterDataInterfaceFile {
         if ($configurationSettings.contains($filePath))
         {
             Write-Host "$filePath is already registered"
-            Write-Host "DEBUG: No restart necessary"
         }
         else {
             #register data interface
@@ -64,7 +63,6 @@ function RegisterDatainterfaceViaXML {
 
         if($xml.InnerXml.Contains($filePath)){
             Write-Host "$filePath database is already set"
-            Write-Host "DEBUG: No restart necessary"
         }
         else
         {
