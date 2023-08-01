@@ -4,7 +4,6 @@ function CreateDataInterfaceFile {
         [string] $applicationType
     )
     try {
-        #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
         if (Test-Path $filePath)
         {
             Write-Host "$filePath already exists"
