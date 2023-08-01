@@ -60,7 +60,7 @@ function RestartBlaiseRequired {
     #RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
 
     if ($restartBlaise.Contains($true)) {
-        Write-Host "Configuration changes have been detected. Restarting Blaise..."
+        Write-Host "Changes have been detected. Restarting Blaise..."
         restart-service blaiseservices5
     } else {
         Write-Host "DEBUG: Blaise was not restarted :tada:"
