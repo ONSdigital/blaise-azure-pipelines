@@ -46,8 +46,9 @@ function RestartBlaiseRequired {
 "@
 
     if(-Not $xml.InnerXml.Contains($config_db_file_path)){
-        $restartBlaise += $true
+        Write-Host "DEBUG: Hello? I don't know why this isn't printing?!"
         Write-Host "No configuration changes detected in $config_db_file_path. Blaise restart not required."   
+        $restartBlaise += $true
     }
 
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration
