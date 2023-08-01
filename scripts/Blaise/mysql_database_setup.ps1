@@ -39,7 +39,7 @@ function RestartBlaiseRequired {
     $config_db_file_path = "D:\Blaise5\Settings\configurationdb.bidi"
     $xml = [xml](Get-Content $configFile)
 
-    if (-Not $xml.InnerXml.Contains($filePath))
+    if (-Not $xml.InnerXml.Contains($config_db_file_path))
     {
         $restartBlaise += $true
     }
