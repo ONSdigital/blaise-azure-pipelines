@@ -5,7 +5,6 @@ function RestartBlaiseRequired {
         [string] $filePath
     )
     $configurationSettings = ListOfConfigurationSettings
-    Write-Host "DEBUG: configurationSettings: $configurationSettings"
 
     if ($configurationSettings.contains($filePath)) {
         Write-Host "No configuration changes detected in $filePath. Blaise restart not required."   
