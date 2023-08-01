@@ -2,7 +2,7 @@
 
 function RestartBlaiseRequired {
     param (
-        [string] $filePath,
+        [string] $filePath
     )
     $configurationSettings = ListOfConfigurationSettings
     Write-Host "DEBUG: configurationSettings: $configurationSettings"
