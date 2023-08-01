@@ -9,14 +9,14 @@ function RestartBlaiseRequired {
 
     if ($configurationSettings.contains($filePath)) {
         Write-Host "No configuration changes detected in $filePath. Blaise restart not required."   
-        return false
+        return $false
     
     }
     Write-Host "Configuration changes detected in $filePath. Blaise restart is required."
-    return true
+    return $true
 }
 
-    $restartBlaise = ,false
+    $restartBlaise = ,$false
 
     #audit
     $audit_db_file_path = "D:\Blaise5\Settings\audittraildb.badi"
@@ -42,7 +42,7 @@ function RestartBlaiseRequired {
 
     if (-Not $xml.InnerXml.Contains($filePath))
     {
-        $restartBlaise += true
+        $restartBlaise += $true
     }
 
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration
@@ -54,7 +54,7 @@ function RestartBlaiseRequired {
     #CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
     #RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
 
-    if ($restartBlaise.Contains(true)) {
+    if ($restartBlaise.Contains($true)) {
         Write-Host "Configuration changes have been detected. Restarting Blaise..."
         restart-service blaiseservices5
     }
