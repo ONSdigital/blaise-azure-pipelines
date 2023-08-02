@@ -2,7 +2,7 @@ function currentTimeoutValues {
     $currentSessionStateTimeout = Get-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout"
     $currentSessionString = $currentSessionStateTimeout.ToString()
     Write-Host "Session timeout is currently: $currentSessionString"
-    $currentIdleTimeout = Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout
+    $currentIdleTimeout = Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool") | Select-Object -ExpandProperty processModel.idleTimeout
     $currentIdleString = $currentIdleTimeout.ToString()
     Write-Host "Current idle timeout: $currentIdleString"
 }
