@@ -28,13 +28,16 @@
     #$credentials_db_file_path = "D:\Blaise5\Settings\credentials.budi"
     #CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
     #RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
-    
+
     #Restart Blaise if required
     $newConfiguration = ListOfConfigurationSettings
     $newXmlConfiguration = [xml](Get-Content "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config")
 
     $configurationChangesDetected = $originalConfiguration -ne $newConfiguration
+    Write-Host "Changes detected in config: $configurationChangesDetected"
+
     $xmlConfigurationChangesDetected = $originalXmlConfiguration.InnerXml -ne $newXmlConfiguration.InnerXml
+    Write-Host "Changes detected in xml config: $xmlConfigurationChangesDetected"
 
     if ($configurationChangesDetected -or $xmlConfigurationChangesDetected) {
         Write-Host "Changes have been detected. Restarting Blaise..."
