@@ -1,4 +1,13 @@
+function currentTimeoutValues {
+    $currentSessionStateTimeout = Get-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout"
+    Write-Host "Session timeout is currently: $currentSessionStateTimeout"
+    $currentIdleTimeout = Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout
+    Write-Host "Current idle timeout: $currentIdleTimeout"
+}
+
 try{
+    Write-Host "Getting current timeouts"
+    currentTimeoutValues
     Write-Host "Setting session state time-out"
     Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
     Write-Host "Session time-out set"
