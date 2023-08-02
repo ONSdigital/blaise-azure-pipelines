@@ -1,13 +1,3 @@
-function CreateAndRegisterDataInterfaceFile {
-    param (
-        [string] $DatabaseFilePath,
-        [string] $ApplicationType,
-        [string] $RegisterCommand
-    )
-    CreateDataInterfaceFile -filePath $DatabaseFilePath -applicationType $ApplicationType
-    RegisterDataInterfaceFile -filePath $DatabaseFilePath -registerCommand $RegisterCommand
-}
-
 function CreateDataInterfaceFile {
     param (
         [string] $filePath,
