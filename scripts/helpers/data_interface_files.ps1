@@ -83,6 +83,9 @@ function RegisterDatainterfaceViaXML {
 
 function ListOfConfigurationSettings {
     $configurationSettings = c:\blaise5\bin\servermanager -listconfigurationsettings | Out-String
+
+    $printDis = $configurationSettings -is [string]
+    Write-Host "The configurationSettings is a string: $printDis"
     return $configurationSettings
 }
 
