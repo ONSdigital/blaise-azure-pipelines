@@ -35,7 +35,7 @@ function XMLConfigurationChangesDetected {
     #audit
     $audit_db_file_path = "D:\Blaise5\Settings\audittraildb.badi"
     $restartBlaise += ConfigurationChangesDetected -DatabaseFilePath $audit_db_file_path
-    CreateDataInterfaceFile -DbFilePath $audit_db_file_path -applicationType audittrail
+    CreateDataInterfaceFile -filePath $audit_db_file_path -applicationType audittrail
     RegisterDataInterfaceFile -filePath $audit_db_file_path -registerCommand audittraildatainterface
 
     #Session
