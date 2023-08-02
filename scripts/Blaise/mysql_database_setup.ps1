@@ -1,25 +1,8 @@
 . "$PSScriptRoot\..\helpers\data_interface_files.ps1"
 
-# function XMLConfigurationChangesDetected {
-#     param (
-#         [string] $DatabaseFilePath,
-#         [string] $ConfigFilePath
-#     )
-#     $xml = [xml](Get-Content $ConfigFilePath)
-
-#     if($xml.InnerXml.Contains($DatabaseFilePath)){
-#         Write-Host "No changes detected in $DatabaseFilePath. Blaise restart not required."   
-#         return $false
-#     }
-#     Write-Host "Changes detected in $DatabaseFilePath. Blaise restart is required."
-#     return $true
-# }
     $originalConfiguration = ListOfConfigurationSettings
     $originalXmlConfiguration = [xml](Get-Content "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config")
     
-    $printDis = $originalXmlConfiguration.InnerXml
-    Write-Host "DEBUG: originalXmlConfiguration: $printDis"
-
     #audit
     $audit_db_file_path = "D:\Blaise5\Settings\audittraildb.badi"
     CreateDataInterfaceFile -filePath $audit_db_file_path -applicationType audittrail
@@ -44,17 +27,14 @@
     #Restart Blaise if required
     $newConfiguration = ListOfConfigurationSettings
     $newXmlConfiguration = [xml](Get-Content "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config")
-    if ($originalConfiguration -ne $newConfiguration) {
-        Write-Host "Changes have been detected. Restarting Blaise..."
+
+    $configurationChangesDetected = $originalConfiguration -eq $newConfiguration
+    $xmlConfigurationChangesDetected = $originalXmlConfiguration.InnerXml -eq $newXmlConfiguration.InnerXml
+
+    if ($configurationChangesDetected -or $xmlConfigurationChangesDetected) {
+        # Write-Host "Changes have been detected. Restarting Blaise..."
+        Write-Host "DEBUG: Restarting Blaise even though there are no changes..."
         restart-service blaiseservices5
     } else {
-        Write-Host "DEBUG 3: Blaise was not restarted :tada:"
+        Write-Host "DEBUG: Blaise was not restarted :sob:"
     }
-
-    if($originalXmlConfiguration.InnerXml -ne $newXmlConfiguration.InnerXml) {
-        Write-Host "Changes have been detected. Restarting Blaise..."
-        restart-service blaiseservices5
-    } else {
-        Write-Host "DEBUG 4: Blaise was not restarted :tada:"
-    }
-
