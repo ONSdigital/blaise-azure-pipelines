@@ -28,13 +28,10 @@
     $newConfiguration = ListOfConfigurationSettings
     $newXmlConfiguration = [xml](Get-Content "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config")
 
-    $configurationChangesDetected = $originalConfiguration -eq $newConfiguration
-    $xmlConfigurationChangesDetected = $originalXmlConfiguration.InnerXml -eq $newXmlConfiguration.InnerXml
+    $configurationChangesDetected = $originalConfiguration -ne $newConfiguration
+    $xmlConfigurationChangesDetected = $originalXmlConfiguration.InnerXml -ne $newXmlConfiguration.InnerXml
 
     if ($configurationChangesDetected -or $xmlConfigurationChangesDetected) {
-        # Write-Host "Changes have been detected. Restarting Blaise..."
-        Write-Host "DEBUG: Restarting Blaise even though there are no changes..."
+        Write-Host "Changes have been detected. Restarting Blaise..."
         restart-service blaiseservices5
-    } else {
-        Write-Host "DEBUG: Blaise was not restarted :sob:"
     }
