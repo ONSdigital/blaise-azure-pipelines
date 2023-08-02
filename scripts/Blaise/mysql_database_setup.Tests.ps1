@@ -1,5 +1,5 @@
 BeforeAll {
-    . "$PSScriptRoot\mysql_database_setup.ps1",
+    . "$PSScriptRoot\mysql_database_setup.ps1"
     . "$PSScriptRoot\..\helpers\data_interface_files.ps1"
 }
 
