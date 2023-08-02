@@ -1,6 +1,6 @@
 . "$PSScriptRoot\..\helpers\data_interface_files.ps1"
 
-function RestartBlaiseRequired {
+function ConfigurationChangesDetected {
     param (
         [string] $filePath
     )
@@ -19,19 +19,22 @@ function RestartBlaiseRequired {
 
     #audit
     $audit_db_file_path = "D:\Blaise5\Settings\audittraildb.badi"
-    $restartBlaise += RestartBlaiseRequired -filePath $audit_db_file_path
+    $restartBlaise += ConfigurationChangesDetected
+ -filePath $audit_db_file_path
     CreateDataInterfaceFile -filePath $audit_db_file_path -applicationType audittrail
     RegisterDataInterfaceFile -filePath $audit_db_file_path -registerCommand audittraildatainterface
 
     #Session
     $session_db_file_path = "D:\Blaise5\Settings\sessiondb.bsdi"
-    $restartBlaise += RestartBlaiseRequired -filePath $session_db_file_path
+    $restartBlaise += ConfigurationChangesDetected
+ -filePath $session_db_file_path
     CreateDataInterfaceFile -filePath $session_db_file_path -applicationType session
     RegisterDataInterfaceFile -filePath $session_db_file_path -registerCommand sessiondatainterface
 
     #Cati
     $cati_db_file_path = "D:\Blaise5\Settings\catidb.bcdi"
-    $restartBlaise += RestartBlaiseRequired -filePath $cati_db_file_path
+    $restartBlaise += ConfigurationChangesDetected
+ -filePath $cati_db_file_path
     CreateDataInterfaceFile -filePath $cati_db_file_path -applicationType cati
     RegisterDataInterfaceFile -filePath $cati_db_file_path -registerCommand catidatainterface
 
