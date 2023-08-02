@@ -55,12 +55,6 @@ function RestartBlaiseRequired {
     CreateDataInterfaceFile -filePath $config_db_file_path -applicationType configuration
     RegisterDatainterfaceViaXML -filePath $config_db_file_path -configFile $config_file -interfaceFileName "ConfigurationDataInterfaceFile"
 
-    #Credentials
-    #Commenting out calling MySQL data interface creation for creds until upgrade to Blaise 5.13
-    #$credentials_db_file_path = "D:\Blaise5\Settings\credentials.budi"
-    #CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
-    #RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
-
     Write-Host "DEBUG: restartBlaise: $restartBlaise"
 
     if ($restartBlaise.Contains($true)) {
