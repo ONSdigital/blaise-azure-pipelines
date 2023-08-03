@@ -7,12 +7,13 @@ function CreateDataInterfaceFile {
         if (Test-Path $filePath)
         {
             Write-Host "$filePath already exists"
+            return $false
         }
         else {
             #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
-
             Write-Host "Created $applicationType Data Interface File"
+            return $true
         }
     }
     catch {
