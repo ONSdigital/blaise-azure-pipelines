@@ -17,23 +17,22 @@ function timeoutIsSetCorrectly {
 
 
 [bool] $restartNeeded = $false
+[string] $expectedTimeout = "08:00:00"
+Write-Host "Getting current timeouts"
+$currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
 
-try{
-    Write-Host "Getting current timeouts"
-    $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
-    Write-Host "Setting session state time-out"
-    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout "09:00:00"
+try{    
+    Write-Host "Checking session state time-out"
+    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout $expectedTimeout
     
     if (-Not $setTimeout){
-        Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
+        Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
         $restartNeeded = $true
         Write-Host "Session time-out set, Restart required"
     }
     else {
         Write-Host "Timeout already set, Restart not required"
-    }
-    
-    
+    }    
 }
 catch{
     Write-Host "Could not set session state time-out"
@@ -42,9 +41,16 @@ catch{
 }
 
 try{
-    Write-Host "Setting ISS idle time-out"
-    Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value ( [TimeSpan]::FromMinutes(480))
-    Write-Host "ISS idle set"
+    Write-Host "Checking ISS idle time-out"
+    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout $expectedTimeout
+    if (-Not $setTimeout){
+        Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value $expectedTimeout
+        $restartNeeded = $true
+        Write-Host "IIS idle time-out set, Restart required"
+    }
+    else {
+        Write-Host "Timeout already set, Restart not required"
+    }   
 }
 catch{
     Write-Host "Could not set ISS idle time-out"
@@ -54,9 +60,14 @@ catch{
 
 try
 {
-    Write-Host "Restarting BlaiseAppPool"
-    Restart-WebAppPool BlaiseAppPool
-    Write-Host "BlaiseAppPool has been restarted"
+    if ($restartNeeded){
+        Write-Host "Restarting BlaiseAppPool"
+        Restart-WebAppPool BlaiseAppPool
+        Write-Host "BlaiseAppPool has been restarted"
+    }
+    else{
+        Write-Host "BlaiseAppPool does not need to be restarted"
+    }    
 }
 catch{
     Write-Host "Unable to restart BlaiseAppPool"
