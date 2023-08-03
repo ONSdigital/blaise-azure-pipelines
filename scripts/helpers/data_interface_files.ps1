@@ -34,12 +34,13 @@ function RegisterDataInterfaceFile {
         if ($configurationSettings.contains($filePath))
         {
             Write-Host "$filePath is already registered"
+            return $false
         }
         else {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
-
             Write-Host "$filePath registered"
+            return $true
         }
     }
     catch {
@@ -63,6 +64,7 @@ function RegisterDatainterfaceViaXML {
 
         if($xml.InnerXml.Contains($filePath)){
             Write-Host "$filePath database is already set"
+            return $false
         }
         else
         {
@@ -73,6 +75,7 @@ function RegisterDatainterfaceViaXML {
 
             $xml.Save($configFile)
             Write-Host "$filePath database has been set"
+            return $true
         }
     }
     catch{
