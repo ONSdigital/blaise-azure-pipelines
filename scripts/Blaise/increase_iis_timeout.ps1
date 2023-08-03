@@ -10,7 +10,7 @@ function timeoutIsSetCorrectly {
         [string] $currentTimeout,
         [string] $expectedTimeout
     )
-    return $CurrentNodeRoles -eq $RolesNodeShouldHave
+    return $currentTimeout -eq $expectedTimeout
 }
 
 
