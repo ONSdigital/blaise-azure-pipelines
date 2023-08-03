@@ -1,18 +1,5 @@
 . "$PSScriptRoot\..\helpers\data_interface_files.ps1"
 
-
-function BlaiseRestartRequired{
-    param (
-        [array] $NewDataInterfaceCreated,
-        [array] $NewDataInterfaceRegistered
-    )
-    if ($NewDataInterfaceCreated.Contains($true) -or $NewDataInterfaceRegistered.Contains($true)) {
-        return $true
-    }
-    return $false
-}
-
-
     $newDataInterfaceCreated = ,$false
     $newDataInterfaceRegistered = ,$false
     
@@ -42,7 +29,7 @@ function BlaiseRestartRequired{
     # $newDataInterfaceCreated += CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
     # $newDataInterfaceRegistered += RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
 
-    if (BlaiseRestartRequired -NewDataInterfaceCreated $newDataInterfaceCreated -NewDataInterfaceRegistered $newDataInterfaceRegistered){
+    if ($NewDataInterfaceCreated.Contains($true) -or $NewDataInterfaceRegistered.Contains($true)){
         Write-Host "Changes have been detected. Restarting Blaise..."
         restart-service blaiseservices5
     }
