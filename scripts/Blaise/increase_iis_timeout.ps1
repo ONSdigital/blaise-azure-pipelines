@@ -22,7 +22,7 @@ try{
     Write-Host "Getting current timeouts"
     $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     Write-Host "Setting session state time-out"
-    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout "08:00:00"
+    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout "09:00:00"
     
     if (-Not $setTimeout){
         Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
