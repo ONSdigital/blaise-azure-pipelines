@@ -3,14 +3,35 @@ function currentTimeoutValues {
     Write-Host "Session timeout is currently: $currentSessionStateTimeout"
     $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
     Write-Host "Idle timeout is currently: $currentIdleTimeout"
+    return $currentSessionStateTimeout, $currentIdleTimeout
 }
+function timeoutIsSetCorrectly {
+    param (
+        [string] $currentTimeout,
+        [string] $expectedTimeout
+    )
+    return $CurrentNodeRoles -eq $RolesNodeShouldHave
+}
+
+
+[bool] $restartNeeded = $false
 
 try{
     Write-Host "Getting current timeouts"
-    currentTimeoutValues
+    $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     Write-Host "Setting session state time-out"
-    Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
-    Write-Host "Session time-out set"
+    $setTimeout = timeoutIsSetCorrectly -currentTimeout $currentSessionStateTimeout -expectedTimeout 
+    
+    if (-Not $setTimeout){
+        Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:08:00:00
+        $restartNeeded = $true
+        Write-Host "Session time-out set, Restart required"
+    }
+    else {
+        Write-Host "Timeout already set, Restart not required"
+    }
+    
+    
 }
 catch{
     Write-Host "Could not set session state time-out"
