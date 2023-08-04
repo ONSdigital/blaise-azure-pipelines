@@ -17,7 +17,7 @@ function timeoutIsSetCorrectly {
 
 
 [bool] $restartNeeded = $false
-[string] $expectedTimeout = "08:00:00"
+[string] $expectedTimeout = "09:00:00"
 Write-Host "Getting current timeouts"
 $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
 
@@ -57,6 +57,8 @@ catch{
     Write-Host $_.ScriptStackTrace
     exit 1
 }
+
+currentTimeoutValues
 
 try
 {
