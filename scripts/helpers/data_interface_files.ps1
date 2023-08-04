@@ -4,16 +4,16 @@ function CreateDataInterfaceFile {
         [string] $applicationType
     )
     try {
-        #$filePath = "D:\Blaise5\Settings\catidb.bcdi"
         if (Test-Path $filePath)
         {
             Write-Host "$filePath already exists"
+            return $false
         }
         else {
             #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
-
             Write-Host "Created $applicationType Data Interface File"
+            return $true
         }
     }
     catch {
@@ -34,12 +34,13 @@ function RegisterDataInterfaceFile {
         if ($configurationSettings.contains($filePath))
         {
             Write-Host "$filePath is already registered"
+            return $false
         }
         else {
             #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
-
             Write-Host "$filePath registered"
+            return $true
         }
     }
     catch {
@@ -63,6 +64,7 @@ function RegisterDatainterfaceViaXML {
 
         if($xml.InnerXml.Contains($filePath)){
             Write-Host "$filePath database is already set"
+            return $false
         }
         else
         {
@@ -73,6 +75,7 @@ function RegisterDatainterfaceViaXML {
 
             $xml.Save($configFile)
             Write-Host "$filePath database has been set"
+            return $true
         }
     }
     catch{
@@ -86,4 +89,3 @@ function ListOfConfigurationSettings {
     $configurationSettings = c:\blaise5\bin\servermanager -listconfigurationsettings | Out-String
     return $configurationSettings
 }
-
