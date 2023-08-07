@@ -29,14 +29,14 @@ describe "setTimeoutValues" {
         $currentIdleTimeout = "09:00:00"
         Mock currentTimeoutValues { return $currentSessionStateTimeout, $currentIdleTimeout}
         setTimeoutValues
-        Assert-MockCalled -CommandName Restart-WebAppPool -Exactly 1
+        Assert-MockCalled Restart-WebAppPool -Exactly 1
     }
     It "Doesn't restart the app pool when timeouts are already set correctly" {
         $currentSessionStateTimeout = "08:00:00"
         $currentIdleTimeout = "08:00:00"
         Mock currentTimeoutValues { return $currentSessionStateTimeout, $currentIdleTimeout}
         setTimeoutValues
-        Assert-MockCalled -CommandName Restart-WebAppPool -Exactly 0
+        Assert-MockCalled Restart-WebAppPool -Exactly 0
     }
 }
 
