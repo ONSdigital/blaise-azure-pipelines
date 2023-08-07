@@ -13,16 +13,9 @@ function timeoutIsSetCorrectly {
     ($currentSessionTimeout -eq $expectedTimeout) -and ($currentIdleTimeout -eq $expectedTimeout)
 }
 
-function restartBlaiseAppPool {
-    if ($restartNeeded -eq $true) {
-        Restart-WebAppPool BlaiseAppPool
-        Write-Host "BlaiseAppPool has been restarted"
-    }
-}
-
 function setTimeoutValues{
     [bool] $restartNeeded = $false
-    [string] $expectedTimeout = "09:00:00"
+    [string] $expectedTimeout = "08:00:00"
     $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
        
@@ -43,14 +36,14 @@ function setTimeoutValues{
                 Write-Host $_.ScriptStackTrace
                 exit 1
             }
-            $global:restartNeeded = $true
             Write-Host "Changes made to timeouts - Restart required"
+            Restart-WebAppPool BlaiseAppPool
+            Write-Host "BlaiseAppPool has been restarted"
         }
         else {
             $global:restartNeeded = $false
             Write-Host "No changes necessary to timeouts - Restart not required"
         }   
-    restartBlaiseAppPool
 }
 
 
