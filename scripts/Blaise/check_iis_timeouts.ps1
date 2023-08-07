@@ -22,7 +22,7 @@ function restartBlaiseAppPool {
 
 function setTimeoutValues{
     [bool] $restartNeeded = $false
-    [string] $expectedTimeout = "08:00:00"
+    [string] $expectedTimeout = "09:00:00"
     $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
        
