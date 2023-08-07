@@ -14,15 +14,13 @@ function timeoutIsSetCorrectly {
 }
 
 function setTimeoutValues{
-    [bool] $restartNeeded = $false
     [string] $expectedTimeout = "08:00:00"
     $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
-       
         if ($setTimeout -eq $false){
             try{
             Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
-            }   
+            }
             catch{
                 Write-Host "Could not set session state time-out"
                 Write-Host $_.ScriptStackTrace
@@ -41,9 +39,8 @@ function setTimeoutValues{
             Write-Host "BlaiseAppPool has been restarted"
         }
         else {
-            $global:restartNeeded = $false
             Write-Host "No changes necessary to timeouts - Restart not required"
-        }   
+        }
 }
 
 
