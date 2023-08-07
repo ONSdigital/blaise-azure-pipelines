@@ -20,22 +20,26 @@ describe "timeoutIsSetCorrectly" {
     }
 }
 describe "setTimeoutValues" {
-    It "Correctly sets timeouts and restarts when needed" {
-        $currentSessionStateTimeout = "00:15:00"
-        $currentIdleTimeout = "09:00:00"
-        
-        Mock currentTimeoutValues { return $currentSessionStateTimeout, $currentIdleTimeout}
-        setTimeoutValues 
-        $restartNeeded | Should -Be $true
+    BeforeEach{
+        Mock Restart-WebAppPool {
+            # This mock function will be called instead of the actual Restart-WebAppPool
+        }
     }
 
-    It "Doesn't restart when timeouts are already set correctly" {
-        $currentSessionStateTimeout = "08:00:00"
-        $currentIdleTimeout = "08:00:00"
-        
+    It "Restarts the app pool when timeouts have been set/changed" {
+        $currentSessionStateTimeout = "00:15:00"
+        $currentIdleTimeout = "09:00:00"
         Mock currentTimeoutValues { return $currentSessionStateTimeout, $currentIdleTimeout}
         setTimeoutValues 
-        $restartNeeded | Should -Be $false
+        Assert-MockCalled -CommandName Restart-WebAppPool -Exactly 1
+    }
+
+    It "Doesn't restart the app pool when timeouts are already set correctly" {
+        $currentSessionStateTimeout = "08:00:00"
+        $currentIdleTimeout = "08:00:00"
+        Mock currentTimeoutValues { return $currentSessionStateTimeout, $currentIdleTimeout}
+        setTimeoutValues 
+        Assert-MockCalled -CommandName Restart-WebAppPool -Exactly 0
     }
 }
 
