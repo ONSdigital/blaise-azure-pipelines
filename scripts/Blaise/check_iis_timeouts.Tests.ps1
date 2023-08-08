@@ -1,4 +1,4 @@
-BeforeAll {. "$PSScriptRoot\check_iis_timeouts.ps1" "$PSScriptRoot\increase_iis_timeouts.ps1"}
+BeforeAll {. "$PSScriptRoot\check_iis_timeouts.ps1" "$PSScriptRoot\increase_iis_timeout.ps1"}
 
 describe "timeoutIsSetCorrectly" {
     BeforeEach{
