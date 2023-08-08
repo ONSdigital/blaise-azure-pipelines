@@ -42,7 +42,3 @@ function setTimeoutValues{
             Write-Host "No changes necessary to timeouts - Restart not required"
         }
 }
-
-
-
-
