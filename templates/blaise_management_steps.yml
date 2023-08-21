@@ -8,3 +8,8 @@ steps:
   displayName: Increase session time-out
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/increase_iis_timeout.ps1'
+
+- task: PowerShell@2
+  displayName: Configure server park to run in disconnected mode
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/configure_blaise_serverpark.ps1'   
