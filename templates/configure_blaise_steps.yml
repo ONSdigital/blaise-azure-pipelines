@@ -21,9 +21,7 @@ steps:
     targetType: 'inline'
     script: |
       $serviceName = '$(Blaise_Service)'
-      Write-Host "Service Name: "+ $serviceName
       # Recovery options: restart service after 1st, 2nd, and 3rd failures
       $command = "sc.exe failure $serviceName reset=0 actions=restart/1000"
-      #Write-Host "Executing command: $command"
       Invoke-Expression $command
   enabled: true
