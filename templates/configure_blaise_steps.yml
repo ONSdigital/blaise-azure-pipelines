@@ -20,14 +20,10 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      #$serviceName = "BlaiseServices5"
-      #Write-Host "Service Name: "+ $serviceName
+      $serviceName = ${{parameters.BlaiseServices5}}
+      Write-Host "Service Name: "+ $serviceName
       # Recovery options: restart service after 1st, 2nd, and 3rd failures
-      $command = "sc.exe failure BlaiseServices5 reset=0 actions=restart/1000"
+      $command = "sc.exe failure $serviceName reset=0 actions=restart/1000"
       #Write-Host "Executing command: $command"
-      try {
-        Invoke-Expression $command
-          } catch {
-      Write-Host "Error: $_"
-      }
+      Invoke-Expression $command
   enabled: true
