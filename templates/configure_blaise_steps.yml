@@ -15,4 +15,13 @@ steps:
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/update_blaise_license.ps1'
     arguments: '-BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}} -BLAISE_ACTIVATION_CODE ${{parameters.BlaiseActivationKey}}'
-
+- task: PowerShell@2
+  displayName: Set Service Recovery Options
+  inputs:
+    targetType: 'inline'
+    script: |
+      $serviceName = '$(Blaise_Service)'
+      # Recovery options: restart service after 1st, 2nd, and 3rd failures
+      $command = "sc.exe failure $serviceName reset=0 actions=restart/1000"
+      Invoke-Expression $command
+  enabled: true
