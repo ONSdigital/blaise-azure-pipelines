@@ -13,6 +13,14 @@ try {
     }
 }
 catch {
+    Write-Host "****** Error Details ******"
+    Write-Host "Exception Type: $($_.Exception.GetType().FullName)"
+    Write-Host "Message: $($_.Exception.Message)"
+    Write-Host "Stack Trace: $($_.Exception.StackTrace)"
+    if ($_.Exception.InnerException) {
+        Write-Host "Inner Exception: $($_.Exception.InnerException.Message)"
+    }
+    Write-Host "****** End Error Details ******"
     Write-Host "Rest Api has responded with an OK status, error: $($_.Exception.Message)"
     exit 1
 }
