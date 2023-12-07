@@ -4,7 +4,7 @@ function ConfigureCmaServerpark{
         [string] $ManagementNode,
         [string] $ConnectionPort,
         [string] $BlaiseUserName,
-        [string] $BlaisePassword,
+        [string] $BlaisePassword
     )
 
     If ([string]::IsNullOrEmpty($ServerParkName)) {
