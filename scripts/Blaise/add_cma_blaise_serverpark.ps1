@@ -43,7 +43,7 @@ try{
     $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
 
     ConfigureCmaServerpark($BlaiseCmaServerPark, $ManagementNode, $ConnectionPort, $BlaiseUserName, $BlaisePassword)
-    ConfigureCmaServerpark("$($BlaiseCmaServerPark)_APP"), $ManagementNode, $ConnectionPort, $BlaiseUserName, $BlaisePassword)
+    ConfigureCmaServerpark("$($BlaiseCmaServerPark)_APP", $ManagementNode, $ConnectionPort, $BlaiseUserName, $BlaisePassword)
     ConfigureCmaServerpark("$($BlaiseCmaServerPark)_ADMIN", $ManagementNode, $ConnectionPort, $BlaiseUserName, $BlaisePassword)
 }
 catch{
