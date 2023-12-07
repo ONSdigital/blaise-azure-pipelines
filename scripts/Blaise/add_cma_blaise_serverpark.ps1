@@ -46,8 +46,8 @@ try{
     $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
 
     ConfigureCmaServerpark -ServerParkName:$BlaiseCmaServerPark -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword
-    ConfigureCmaServerpark -ServerParkName:"$($BlaiseCmaServerPark)_APP" -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword 
-    ConfigureCmaServerpark -ServerParkName:"$($BlaiseCmaServerPark)_ADMIN" -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword 
+    ConfigureCmaServerpark -ServerParkName:"$($BlaiseCmaServerPark)_app" -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword 
+    ConfigureCmaServerpark -ServerParkName:"$($BlaiseCmaServerPark)_admin" -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword 
 }
 catch{
     Write-Host "Adding and/or configuring CMA server parks failed: $($_.ScriptStackTrace)"
