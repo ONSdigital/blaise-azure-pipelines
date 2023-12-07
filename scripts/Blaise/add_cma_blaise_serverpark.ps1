@@ -29,6 +29,7 @@ function ConfigureCmaServerpark{
 
     Write-Host "Add and configure CMA server park to run in disconnected mode"
 
+    #if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$BlaiseCmaServerPark -runmode:disconnected -server:$managementNode -syncsurveyswhenconnected:true -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
     Write-Host "Configured CMA server park to run in disconnected mode"
