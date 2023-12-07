@@ -36,10 +36,10 @@ function ConfigureCmaServerpark{
 }
 
 try{
-    $BlaiseCmaServerPark = $env:ENV_BLAISE_CMA_SERVER_PARK_NAME,
-    $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
-    $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
-    $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
+    $BlaiseCmaServerPark = $env:ENV_BLAISE_CMA_SERVER_PARK_NAME
+    $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME
+    $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
+    $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
     $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
 
     ConfigureCmaServerpark($BlaiseCmaServerPark, $ManagementNode, $ConnectionPort, $BlaiseUserName, $BlaisePassword)
