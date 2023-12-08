@@ -29,7 +29,7 @@ function ConfigureServerpark{
 
     Write-Host "Configuring server park to run in disconnected mode"
 
-    c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:thinclient -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
+    c:\blaise5\bin\servermanager -addserverpark:$BlaiseServerPark -server:$managementNode -runmode:thinclient -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
     Write-Host "Configured server park to run in disconnected mode"
 }
