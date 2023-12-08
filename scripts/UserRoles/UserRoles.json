@@ -431,5 +431,15 @@
    "name":"TO Interviewer",
    "description":"Role for TO Interviewers",
    "permissions":[]
-}
+},
+{
+   "name":"TO Appointments",
+   "description":"Role for TO Appointments",
+   "permissions":[
+     "Root",
+     "CATI",
+     "CATI.viewappointments",
+     "CATI.selectfromcaseinfo"
+   ]
+ }
 ]
