@@ -7,6 +7,9 @@ $userRoles = Get-Content -Raw -Path $rolesJsonFile | ConvertFrom-Json
 
 foreach ($userRole in $userRoles)
 {
+
+    LogInfo("User role '$($userRole.name)'")
+
     $exists = CheckUserRoleExists -userRoleName $userRole.name
 
     If ($exists -ne $true) {
