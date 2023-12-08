@@ -426,5 +426,10 @@
       "CATI.viewappointments",
       "CATI.selectfromcaseinfo"
    ]
+},
+{
+   "name":"TO Interviewer",
+   "description":"Role for TO Interviewers",
+   "permissions":[]
 }
 ]
