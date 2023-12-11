@@ -428,7 +428,7 @@
    ]
 },
 {
-   "name":"Survey Enquiry Line",
+   "name":"SEL",
    "description":"Role for Survey Enquiry Line",
    "permissions":[
      "Root",
