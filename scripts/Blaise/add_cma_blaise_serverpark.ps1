@@ -27,7 +27,7 @@ function ConfigureCmaServerpark{
         throw [System.IO.ArgumentException] "No Blaise Admin Password argument provided"
     }
 
-    Write-Host "Add and/or configure server park '$ServerParkName'"
+    Write-Host "Add and/or configure server park '$ServerParkName' to run in disconnected mode with sync surveys set to true"
 
     #if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$ServerParkName -runmode:disconnected -server:$managementNode -syncsurveyswhenconnected:true -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword

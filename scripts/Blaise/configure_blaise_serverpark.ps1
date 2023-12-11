@@ -27,17 +27,17 @@ function ConfigureServerpark{
         throw [System.IO.ArgumentException] "No Blaise username argument provided"
     }
 
-    Write-Host "Configuring server park $BlaiseServerPark"
+    Write-Host "Configuring server park '$BlaiseServerPark' to run in disconnected mode"
 
-    c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:thinclient -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
+    c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:disconnected -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
-    Write-Host "Configured server park $BlaiseServerPark"
+    Write-Host "Configured server park '$BlaiseServerPark'"
 }
 
 try{
     ConfigureServerpark
 }
 catch{
-    Write-Host "Configuring server park $BlaiseServerPark failed: $($_.ScriptStackTrace)"
+    Write-Host "Configuring server park '$BlaiseServerPark' failed: $($_.ScriptStackTrace)"
     exit 1
 }
