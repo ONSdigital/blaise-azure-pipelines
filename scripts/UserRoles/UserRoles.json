@@ -428,6 +428,36 @@
    ]
 },
 {
+   "name":"SEL",
+   "description":"Role for Survey Enquiry Line",
+   "permissions":[
+     "Root",
+     "AppManagement",
+     "Apps.Appfeatures",
+     "Appfeatures.login",
+     "Appfeatures.getlistofinstruments",
+     "Appfeatures.installsurvey",
+     "Appfeatures.removesurvey",
+     "Appfeatures.startsurvey",
+     "Appfeatures.browsedata",
+     "Appfeatures.deletedata",
+     "Appfeatures.uploaddata",
+     "Appfeatures.downloadcases",
+     "Appfeatures.updatesettings",
+     "Appfeatures.viewsettings",
+     "Appfeatures.viewsurveydetails",
+     "CATI",
+     "CATI.makesuperappointment",
+     "CATI.adddaybatchrecord",
+     "CATI.updatedaybatchentry",
+     "CATI.setdialresult",
+     "CATI.viewappointments",
+     "CATI.selectfromcaseinfo",
+     "CATI.selectfromdialhistory",
+     "CATI.selectfromevents"
+   ]
+ },
+{
    "name":"TO Interviewer",
    "description":"Role for TO Interviewers",
    "permissions":[]
