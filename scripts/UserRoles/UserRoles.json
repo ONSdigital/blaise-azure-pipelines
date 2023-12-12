@@ -463,6 +463,16 @@
    "permissions":[]
 },
 {
+   "name":"TO Appointments",
+   "description":"Role for TO Appointments",
+   "permissions":[
+     "Root",
+     "CATI",
+     "CATI.viewappointments",
+     "CATI.selectfromcaseinfo"
+  ]
+},
+{
    "name": "TO Manager",
    "description": "Role for TO Managers",
    "permissions": [
