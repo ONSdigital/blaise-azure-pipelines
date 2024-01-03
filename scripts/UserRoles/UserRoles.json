@@ -431,7 +431,6 @@
    "name":"SEL",
    "description":"Role for Survey Enquiry Line",
    "permissions":[
-      "Root",
       "AppManagement",
       "Apps.Appfeatures",
       "Appfeatures.login",
@@ -466,7 +465,6 @@
    "name":"TO Appointments",
    "description":"Role for TO Appointments",
    "permissions":[
-      "Root",
       "CATI",
       "CATI.viewappointments",
       "CATI.selectfromcaseinfo"
@@ -476,7 +474,6 @@
    "name": "TO Manager",
    "description": "Role for TO Managers",
    "permissions": [
-      "Root",
       "Deployment",
       "Deployment.ServerParkManagement",
       "Deployment.InstrumentManagement",
