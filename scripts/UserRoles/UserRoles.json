@@ -467,7 +467,8 @@
    "permissions":[
       "CATI",
       "CATI.viewappointments",
-      "CATI.selectfromcaseinfo"
+      "CATI.selectfromcaseinfo",
+      "CATI.selectfromevents"
    ]
 },
 {
