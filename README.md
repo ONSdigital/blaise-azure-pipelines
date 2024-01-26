@@ -72,3 +72,19 @@ az pipelines create --name "A name for your pipeline" --yml-path pipelines/pipel
 1. Select *Existing Azure Pipelines YAML File*
 1. Select your yaml file in *Path* - If you are working from a branch change the Branch to point at that (by default Azure will always look at main, so you will not need to redo this when you merge)
 1. Save the pipeline
+
+### Create a new user role
+1. Add the permissions to the `UserRoles.json` file in the `UserRoles` folder
+2. Ensure that the new role does not contain `root` (see example below) as this will prevent it from propagating to CATI
+```angular2html
+{
+   "name":"TO Appointments",
+   "description":"Role for TO Appointments",
+   "permissions":[
+      "root",
+      "CATI",
+      "CATI.viewappointments",
+      "CATI.selectfromcaseinfo"
+   ]
+},
+```
