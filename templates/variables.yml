@@ -2,7 +2,7 @@ variables:
     UninstallSurveyTimeOutInSeconds: 5
     InstrumentPath: c:\survey
     ServerParkName: gusty
-    CmaServerParkName: "cma"
+    CmaServerParkName: cma
     InstrumentName: DST2304Z
     TEMP_PATH : c:\blaise\temp
     PACKAGE_EXTENSION : bpkg
