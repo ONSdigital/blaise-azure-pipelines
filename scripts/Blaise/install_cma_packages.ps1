@@ -41,8 +41,8 @@ function InstallPackageViaBlaiseCli{
 
     #CheckFileExists($filePath)
     try {
-        "Iinstalling the package $filePath into the serverpark $ServerParkName"
-        C:\BlaiseServices\BlaiseCli\blaise.cli -s $ServerParkName -f $filePath
+        Write-Host "Iinstalling the package $filePath into the serverpark $ServerParkName"
+        #C:\BlaiseServices\BlaiseCli\blaise.cli -s $ServerParkName -f $filePath
        
     }
     catch {
