@@ -75,13 +75,13 @@ try{
     $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
     $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
     $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER    
-    $CmaInstrumentPath = "c:\blaise\CMA"
+    $CmaInstrumentPath = "c:\CMA"
     $CmaMultiPackage = "CMA-MULTI.zip"
     $BlaiseCmaServerPark = $env:CmaServerParkName
 
     # Extract cma packages from multipackage file
     Write-Host "unzip cma multi package"
-    UnzipPackage -filePath $CmaInstrumentPath\$CmaMultiPackage -destinationPath $CmaInstrumentPath
+    UnzipPackage -filePath "$CmaInstrumentPath\$CmaMultiPackage" -destinationPath $CmaInstrumentPath
 
     # Install cma package via servermanager (as it does not contain a database)
     Write-Host "Install cma package via servermanager"
