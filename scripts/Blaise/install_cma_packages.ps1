@@ -12,6 +12,24 @@ function CheckFileExists {
     exit 1        
 }
 
+function UnzipPackage {
+    param(
+        [string] $filePath,
+        [string] $destinationPath
+    )  
+
+    CheckFileExists($filePath)
+
+    try {
+        "Exapnding zip file $filePath to $destinationPath"
+        Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath
+    }
+    catch {
+        Write-Host "There was an error exapnding zip file $filePath to $destinationPath"
+        exit 1  
+    }
+}
+
 function InstallPackageViaServerManager{
     param(
         [string] $ServerParkName,
@@ -41,7 +59,7 @@ function InstallPackageViaBlaiseCli{
 
     #CheckFileExists($filePath)
     try {
-        Write-Host "Iinstalling the package $filePath into the serverpark $ServerParkName"
+        Write-Host "Installing the package $filePath into the serverpark $ServerParkName"
         #C:\BlaiseServices\BlaiseCli\blaise.cli -s $ServerParkName -f $filePath
        
     }
@@ -49,24 +67,6 @@ function InstallPackageViaBlaiseCli{
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
         exit 1  
     }      
-}
-
-function UnzipPackage {
-    param(
-        [string] $filePath,
-        [string] $destinationPath
-    )  
-
-    CheckFileExists($filePath)
-
-    try {
-        "Exapnding zip file $filePath to $destinationPath"
-        Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath
-    }
-    catch {
-        Write-Host "There was an error exapnding zip file $filePath to $destinationPath"
-        exit 1  
-    }
 }
 
 try{
