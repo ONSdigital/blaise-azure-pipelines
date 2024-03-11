@@ -15,7 +15,10 @@ function CheckFileExists {
 function InstallPackageViaServerManager{
     param(
         [string] $ServerParkName,
-        [string] $filePath
+        [string] $filePath,
+        [string] $ConnectionPort,
+        [string] $BlaiseUserName,
+        [string] $BlaisePassword        
     )
 
     CheckFileExists($filePath)
@@ -33,7 +36,10 @@ function InstallPackageViaServerManager{
 function InstallPackageViaBlaiseCli{
     param(
         [string] $ServerParkName,
-        [string] $filePath
+        [string] $filePath,
+        [string] $ConnectionPort,
+        [string] $BlaiseUserName,
+        [string] $BlaisePassword        
     )
 
     CheckFileExists($filePath)
@@ -43,7 +49,6 @@ function UnzipPackage {
     param(
         [string] $filePath,
         [string] $destinationPath
-
     )  
 
     CheckFileExists($filePath)
@@ -61,6 +66,10 @@ function UnzipPackage {
 
 try{
     $cmaInstrumentPath = "$env:InstrumentPath\cma"
+    $BlaiseCmaServerPark = $env:CmaServerParkName
+    $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
+    $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
+    $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER    
 
     # Extract cma packages from multipackage file
     Write-Host "unzip cma multi package"
@@ -68,7 +77,7 @@ try{
 
     # Install cma package via servermanager (as it does not contain a database)
     Write-Host "Install cma package via servermanager"
-    InstallPackageViaServerManager -ServerParkName "cma" -filePath $cmaInstrumentPath\CMA.bpkg
+    InstallPackageViaServerManager -ServerParkName $BlaiseCmaServerPark -filePath $cmaInstrumentPath\CMA.bpkg -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword
 }
 catch{
     Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
