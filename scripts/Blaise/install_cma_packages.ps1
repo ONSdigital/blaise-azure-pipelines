@@ -40,24 +40,38 @@ function InstallPackageViaBlaiseCli{
 
 function UnzipPackage {
     param(
-        [string] $filePath
+        [string] $filePath,
+        [string] $destinationPath
+
     )  
 
     CheckFileExists($filePath)
 
     try {
-        Expand-Archive -Force $filePath
+        Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath
     }
     catch {
-        Write-Host "There was an error exapnding zip file $filePath"
+        Write-Host "There was an error exapnding zip file $filePath to $destinationPath"
         exit 1  
     }
 }
 
-# Extract cma packages from multipackage file
-Write-Host "unzip cma multi package"
-UnzipPackage -filePath $env:InstrumentPath\cma\CMA.zip
 
-# Install cma package via servermanager (as it does not contain a database)
-Write-Host "Install cma package via servermanager"
-InstallPackageViaServerManager -ServerParkName "cma" -filePath $env:InstrumentPath\cma\cma.bpkg
+try{
+    $cmaInstrumentPath = "$env:InstrumentPath\cma"
+
+    # Extract cma packages from multipackage file
+    Write-Host "unzip cma multi package"
+    UnzipPackage -filePath $env:InstrumentPath\CMA.zip -destinationPath $cmaInstrumentPath
+
+    # Install cma package via servermanager (as it does not contain a database)
+    Write-Host "Install cma package via servermanager"
+    InstallPackageViaServerManager -ServerParkName "cma" -filePath $cmaInstrumentPath\cma.bpkg
+}
+catch{
+    Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
+    exit 1
+}
+
+
+
