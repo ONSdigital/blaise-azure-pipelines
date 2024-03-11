@@ -68,7 +68,7 @@ try{
 
     # Install cma package via servermanager (as it does not contain a database)
     Write-Host "Install cma package via servermanager"
-    InstallPackageViaServerManager -ServerParkName "cma" -filePath $cmaInstrumentPath\cma.bpkg
+    InstallPackageViaServerManager -ServerParkName "cma" -filePath $cmaInstrumentPath\CMA.bpkg
 }
 catch{
     Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
