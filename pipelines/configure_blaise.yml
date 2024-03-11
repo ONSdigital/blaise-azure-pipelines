@@ -59,6 +59,7 @@ stages:
             deploy:
               steps:
               - checkout: self
+              - template: /templates/download_cma_packages.yml
               - template: /templates/configure_blaise_steps.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
