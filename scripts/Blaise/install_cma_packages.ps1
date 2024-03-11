@@ -25,7 +25,7 @@ function InstallPackageViaServerManager{
 
     try {
         "Iinstalling the package $filePath into the serverpark $ServerParkName"
-        c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:cma -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
+        c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:$ServerParkName -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
     }
     catch {
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
@@ -65,7 +65,7 @@ function UnzipPackage {
 
 
 try{
-    $cmaInstrumentPath = "$env:InstrumentPath\cma"
+    $cmaInstrumentPath = "$env:InstrumentPath\CMA"
     $BlaiseCmaServerPark = $env:CmaServerParkName
     $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
     $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
@@ -78,6 +78,11 @@ try{
     # Install cma package via servermanager (as it does not contain a database)
     Write-Host "Install cma package via servermanager"
     InstallPackageViaServerManager -ServerParkName $BlaiseCmaServerPark -filePath $cmaInstrumentPath\CMA.bpkg -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword
+
+
+    # Remove cma packages
+    Remove-Item -LiteralPath $env:InstrumentPath\CMA.zip
+    Remove-Item -LiteralPath $env:InstrumentPath\CMA\
 }
 catch{
     Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
