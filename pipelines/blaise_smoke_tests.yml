@@ -33,6 +33,8 @@ stages:
 
       - template: /templates/download_test_instrument.yml
 
+      - template: /templates/download_cma_packages.yml
+
       - template: /templates/download_artifact_steps.yml
         parameters:
           GitBranch: ${{parameters.AutomatedTestsBranch}}
