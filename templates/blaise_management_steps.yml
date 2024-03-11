@@ -28,4 +28,9 @@ steps:
       gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
 
       Write-Host "Downloading cma packages"
-      gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:CMA.mbpkg c:\survey\cma\$env:CMA.zip    
+      gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:CMA.mbpkg $env:InstrumentPath\cma\CMA.zip    
+
+- task: PowerShell@2
+  displayName: Install CMA packages
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/install_cma_packages.ps1'       
