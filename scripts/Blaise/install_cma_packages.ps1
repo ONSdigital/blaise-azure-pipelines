@@ -21,6 +21,7 @@ function InstallPackageViaServerManager{
     CheckFileExists($filePath)
 
     try {
+        "Iinstalling the package $filePath into the serverpark $ServerParkName"
         c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:cma -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
     }
     catch {
@@ -48,6 +49,7 @@ function UnzipPackage {
     CheckFileExists($filePath)
 
     try {
+        "Exapnding zip file $filePath to $destinationPath"
         Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath
     }
     catch {
