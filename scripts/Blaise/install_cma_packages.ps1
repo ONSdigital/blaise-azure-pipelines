@@ -94,7 +94,7 @@ try{
 
     # Remove cma packages
     Remove-Item -LiteralPath $env:InstrumentPath\CMA.zip
-    Remove-Item -LiteralPath $env:InstrumentPath\CMA\
+    Remove-Item -LiteralPath $env:InstrumentPath\CMA -Force -Recurse
 }
 catch{
     Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
