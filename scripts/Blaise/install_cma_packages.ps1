@@ -26,8 +26,7 @@ function InstallPackageViaServerManager{
     catch {
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
         exit 1  
-    }    
-  
+    }     
 }
 
 function InstallPackageViaBlaiseCli{
