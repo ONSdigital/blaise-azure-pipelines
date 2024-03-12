@@ -86,7 +86,7 @@ try{
         InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME -filePath $env:CmaInstrumentPath\$_ 
     }
 
-    # Remove cma packages
+    # Cleanup temporary cma packages folder
     Remove-Item -LiteralPath $env:CmaInstrumentPath -Force -Recurse
 }
 catch{
