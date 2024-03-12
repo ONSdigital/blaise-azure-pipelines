@@ -33,17 +33,14 @@ function UnzipPackage {
 function InstallPackageViaServerManager{
     param(
         [string] $ServerParkName,
-        [string] $filePath,
-        [string] $ConnectionPort,
-        [string] $BlaiseUserName,
-        [string] $BlaisePassword        
+        [string] $filePath     
     )
 
     CheckFileExists($filePath)
 
     try {
         "Iinstalling the package $filePath into the serverpark $ServerParkName"
-        c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:$ServerParkName -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
+        c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:$ServerParkName -binding:http -port:$env:ENV_BLAISE_CONNECTION_PORT -user:$env:ENV_BLAISE_ADMIN_PASSWORD -password:$env:ENV_BLAISE_ADMIN_USER   
     }
     catch {
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
@@ -70,31 +67,22 @@ function InstallPackageViaBlaiseCli{
 }
 
 try{
-    # Configure variables
-    $BlaiseServerPark = $env:ENV_BLAISE_SERVER_PARK_NAME,
-    $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
-    $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
-    $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER    
-    $CmaInstrumentPath = "c:\CMA"
-    $CmaMultiPackage = "CMA-MULTI.zip"
-    $BlaiseCmaServerPark = $env:CmaServerParkName
-
     # Extract cma packages from multipackage file
     Write-Host "unzip cma multi package"
-    UnzipPackage -filePath "$CmaInstrumentPath\$CmaMultiPackage" -destinationPath $CmaInstrumentPath
+    UnzipPackage -filePath "$env:CmaInstrumentPath\$env:CmaMultiPackage" -destinationPath $env:CmaInstrumentPath
 
     # Install cma package via servermanager (as it does not contain a database)
     Write-Host "Install cma package via servermanager"
-    InstallPackageViaServerManager -ServerParkName $BlaiseCmaServerPark -filePath $CmaInstrumentPath\CMA.bpkg -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword
+    InstallPackageViaServerManager -ServerParkName $env:CmaServerParkName -filePath $env:CmaInstrumentPath\CMA.bpkg
 
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
     $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
     $InstrumentPackageList | ForEach-Object {
-        InstallPackageViaBlaiseCli -ServerParkName $BlaiseServerPark -filePath $CmaInstrumentPath\$_ 
+        InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME -filePath $env:CmaInstrumentPath\$_ 
     }
 
     # Remove cma packages
-    Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
+    Remove-Item -LiteralPath $env:CmaInstrumentPath -Force -Recurse
 }
 catch{
     Write-Host "Installing cma packages failed: $($_.ScriptStackTrace)"
