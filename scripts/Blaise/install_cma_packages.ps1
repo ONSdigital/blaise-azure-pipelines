@@ -117,9 +117,9 @@ try{
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
     $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
     $InstrumentPackageList | ForEach-Object {
-        $InstrumentName = $_.Substring(0, $_.LastIndexOf('.'))
+        $InstrumentName = 
         InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
-                                   -InstrumentName $InstrumentName
+                                   -InstrumentName $InstrumentName `
                                    -filePath $env:CmaInstrumentPath\$_ 
     } 
 
