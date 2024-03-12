@@ -115,14 +115,14 @@ try{
     InstallPackageViaServerManager -ServerParkName $env:CmaServerParkName -filePath $env:CmaInstrumentPath\CMA.bpkg
 
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
-    InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME `
+    InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
     -InstrumentName "CMA_ContactInfo" `
     -filePath "$env:CmaInstrumentPath\CMA_ContactInfo.bpkg"
 
     <# $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
     $InstrumentPackageList | ForEach-Object {
         $InstrumentName = $_.Substring(0, $_.LastIndexOf('.'))
-        InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME `
+        InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
                                    -InstrumentName $InstrumentName
                                    -filePath $env:CmaInstrumentPath\$_ 
     } #>
