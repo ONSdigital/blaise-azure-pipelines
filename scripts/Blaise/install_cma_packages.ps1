@@ -75,14 +75,28 @@ function InstallPackageViaServerManager{
 
 function InstallPackageViaBlaiseCli{
     param(
-        [string] $ServerParkName,
+        [string] $ServerParkName,   
+        [string] $InstrumentName,                
         [string] $filePath
     )
 
-    #CheckFileExists($filePath)
+    If ([string]::IsNullOrEmpty($ServerParkName)) {
+        throw [System.IO.ArgumentException] "No server park name provided"
+    }
+
+    If ([string]::IsNullOrEmpty($InstrumentName)) {
+        throw [System.IO.ArgumentException] "No instrument name provided"
+    }    
+
+    If ([string]::IsNullOrEmpty($filePath)) {
+        throw [System.IO.ArgumentException] "No file path provided"
+    }
+
+    CheckFileExists($filePath)
+    
     try {
         Write-Host "Installing the package $filePath into the serverpark $ServerParkName"
-        #C:\BlaiseServices\BlaiseCli\blaise.cli -s $ServerParkName -f $filePath
+        C:\BlaiseServices\BlaiseCli\blaise.cli -s $ServerParkName -q $InstrumentName -f $filePath
        
     }
     catch {
@@ -101,10 +115,17 @@ try{
     InstallPackageViaServerManager -ServerParkName $env:CmaServerParkName -filePath $env:CmaInstrumentPath\CMA.bpkg
 
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
-    $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
+    InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME `
+    -InstrumentName "CMA_ContactInfo" `
+    -filePath "$env:CmaInstrumentPath\CMA_ContactInfo.bpkg"
+
+    <# $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
     $InstrumentPackageList | ForEach-Object {
-        InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME -filePath $env:CmaInstrumentPath\$_ 
-    }
+        $InstrumentName = $_.Substring(0, $_.LastIndexOf('.'))
+        InstallPackageViaBlaiseCli -ServerParkName $env:ENV_BLAISE_SERVER_PARK_NAME `
+                                   -InstrumentName $InstrumentName
+                                   -filePath $env:CmaInstrumentPath\$_ 
+    } #>
 
     # Cleanup temporary cma packages folder
     Remove-Item -LiteralPath $env:CmaInstrumentPath -Force -Recurse
