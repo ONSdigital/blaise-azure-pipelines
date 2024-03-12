@@ -83,10 +83,6 @@ function InstallPackageViaBlaiseCli{
         throw [System.IO.ArgumentException] "No server park name provided"
     }
 
-    If ([string]::IsNullOrEmpty($InstrumentName)) {
-        throw [System.IO.ArgumentException] "No instrument name provided"
-    }    
-
     If ([string]::IsNullOrEmpty($filePath)) {
         throw [System.IO.ArgumentException] "No file path provided"
     }
