@@ -40,7 +40,12 @@ function InstallPackageViaServerManager{
 
     try {
         "Iinstalling the package $filePath into the serverpark $ServerParkName"
-        c:\blaise5\bin\servermanager -installsurvey:$filePath -serverpark:$ServerParkName -binding:http -port:$env:ENV_BLAISE_CONNECTION_PORT -user:$env:ENV_BLAISE_ADMIN_PASSWORD -password:$env:ENV_BLAISE_ADMIN_USER   
+        c:\blaise5\bin\servermanager -installsurvey:$filePath `
+                                     -serverpark:$ServerParkName `
+                                     -binding:http `
+                                     -port:$env:ENV_BLAISE_CONNECTION_PORT `
+                                     -user:$env:ENV_BLAISE_ADMIN_PASSWORD `
+                                     -password:$env:ENV_BLAISE_ADMIN_USER   
     }
     catch {
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
