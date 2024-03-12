@@ -10,6 +10,11 @@ steps:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/increase_iis_timeout.ps1'
 
 - task: PowerShell@2
-  displayName: Configure server park to run in disconnected mode
+  displayName: Configure gusty server park to run in disconnected mode
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/configure_blaise_serverpark.ps1'   
+
+- task: PowerShell@2
+  displayName: Add CMA server park to run in disconnected mode
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/add_cma_blaise_serverpark.ps1' 
