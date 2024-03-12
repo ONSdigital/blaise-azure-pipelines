@@ -34,7 +34,7 @@ function UnzipPackage {
 
     try {
         "Exapnding zip file $filePath to $destinationPath"
-        Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath
+        Expand-Archive -LiteralPath $filePath -DestinationPath $destinationPath -Force
     }
     catch {
         Write-Host "There was an error exapnding zip file $filePath to $destinationPath"
