@@ -3,6 +3,10 @@ function CheckFileExists {
         [string] $filePath
     )
 
+    If ([string]::IsNullOrEmpty($filePath)) {
+        throw [System.IO.ArgumentException] "No file path provided"
+    }
+
     if (Test-Path $filePath)
         {
             return
@@ -17,6 +21,14 @@ function UnzipPackage {
         [string] $filePath,
         [string] $destinationPath
     )  
+
+    If ([string]::IsNullOrEmpty($filePath)) {
+        throw [System.IO.ArgumentException] "No file path provided"
+    }
+
+    If ([string]::IsNullOrEmpty($destinationPath)) {
+        throw [System.IO.ArgumentException] "No destination path provided"
+    }    
 
     CheckFileExists($filePath)
 
@@ -35,6 +47,14 @@ function InstallPackageViaServerManager{
         [string] $ServerParkName,
         [string] $filePath     
     )
+
+    If ([string]::IsNullOrEmpty($ServerParkName)) {
+        throw [System.IO.ArgumentException] "No server park name provided"
+    }
+
+    If ([string]::IsNullOrEmpty($filePath)) {
+        throw [System.IO.ArgumentException] "No file path provided"
+    }
 
     CheckFileExists($filePath)
 
