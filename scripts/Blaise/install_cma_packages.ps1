@@ -92,7 +92,6 @@ function InstallPackageViaBlaiseCli{
     try {
         Write-Host "Installing the package $filePath into the serverpark $ServerParkName"
         $InstrumentName = $_.Substring(0, $_.LastIndexOf('.'))
-        Write-Host "Instrument name $InstrumentName"
         C:\BlaiseServices\BlaiseCli\blaise.cli questionnaireinstall -s $ServerParkName -q $InstrumentName -f $filePath
        
     }
