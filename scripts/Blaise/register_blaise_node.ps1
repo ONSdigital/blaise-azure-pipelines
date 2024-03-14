@@ -37,7 +37,7 @@ function RegisterNode{
 
 try{
     # reguster for gusty
-    #RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
+    RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
 
     #register for cma
     #RegisterNode -ServerPark:$env:CmaServerParkName
