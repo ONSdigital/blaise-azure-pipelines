@@ -40,7 +40,7 @@ try{
     RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
 
     #register for cma
-    RegisterNode -ServerPark:$env:CmaServerParkName
+    #RegisterNode -ServerPark:$env:CmaServerParkName
 }
 catch{
     Write-Host "Nodes have not been registered: $($_.ScriptStackTrace)"
