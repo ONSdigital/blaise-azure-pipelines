@@ -36,11 +36,13 @@ function RegisterNode{
 }
 
 try{
+    #register for cma
+    RegisterNode -ServerPark:$env:CmaServerParkName
+
     # reguster for gusty
     RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
 
-    #register for cma
-    RegisterNode -ServerPark:$env:CmaServerParkName
+
 }
 catch{
     Write-Host "Nodes have not been registered: $($_.ScriptStackTrace)"
