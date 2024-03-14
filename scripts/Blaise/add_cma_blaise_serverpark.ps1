@@ -24,7 +24,7 @@ function ConfigureCmaServerpark{
 
 try{
     Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName"
-    ConfigureCmaServerpark -ServerParkName:$env:CmaServerParkName
+    #ConfigureCmaServerpark -ServerParkName:$env:CmaServerParkName
 }
 catch{
     Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
