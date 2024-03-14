@@ -31,7 +31,7 @@ function RegisterNode{
     Write-Host "Registering $currentNode on management node $managementNode"
 
 
-    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -binding:http -port:$connectionPort
+    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -user:$blaiseUserName -password:$blaisePassword -serverpark:$ServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -binding:http -port:$connectionPort
 
     Write-Host "$currentNode registered"
 }
