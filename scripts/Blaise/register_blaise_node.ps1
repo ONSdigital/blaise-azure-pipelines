@@ -20,7 +20,7 @@ function RegisterNode{
         throw [System.IO.ArgumentException] "No Blaise Admin Password argument provided"
     }
 
-    If ([string]::IsNullOrEmpty($BlaiseServerPark)) {
+    If ([string]::IsNullOrEmpty($ServerPark)) {
         throw [System.IO.ArgumentException] "No Blaise server park argument provided"
     }
 
