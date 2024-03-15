@@ -64,6 +64,7 @@ stages:
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
                   BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE) 
+              - template: /templates/add_cma_serverpark.yml                  
               - template: /templates/configure_node_roles_steps.yml
               - template: /templates/firewall_rule_steps.yml
                 parameters:
@@ -100,6 +101,36 @@ stages:
               steps:
               - checkout: self
               - template: /templates/register_node_steps.yml
+      
+      - deployment: InstallCmaPackages
+        condition: eq(variables.ENV_MULTI_NODE, true)
+        displayName: Install CMA Packages
+        dependsOn: RegisterDataEntryNodes
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/install_cma_packages.yml      
+
+      - deployment: InstallCmaPackages
+        condition: eq(variables.ENV_MULTI_NODE, false)
+        displayName: Install CMA Packages
+        dependsOn: InstallBlaise
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/install_cma_packages.yml                        
 
       - deployment: ConfigureBlaisesDatabases
         displayName: Configure Blaises Sql Databases

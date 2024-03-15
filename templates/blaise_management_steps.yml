@@ -13,13 +13,3 @@ steps:
   displayName: Configure gusty server park to run in disconnected mode
   inputs:
     filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/configure_blaise_serverpark.ps1'   
-
-- task: PowerShell@2
-  displayName: Add CMA server park to run in disconnected mode
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/add_cma_blaise_serverpark.ps1' 
-
-- task: PowerShell@2
-  displayName: Install CMA packages
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/install_cma_packages.ps1'       
