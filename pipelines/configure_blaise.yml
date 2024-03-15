@@ -59,12 +59,10 @@ stages:
             deploy:
               steps:
               - checkout: self
-              - template: /templates/download_cma_packages.yml
               - template: /templates/configure_blaise_steps.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE) 
-              - template: /templates/add_cma_serverpark.yml                  
+                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)          
               - template: /templates/configure_node_roles_steps.yml
               - template: /templates/firewall_rule_steps.yml
                 parameters:
@@ -86,11 +84,12 @@ stages:
               steps:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
+              - template: /templates/add_cma_serverpark.yml         
 
       - deployment: RegisterDataEntryNodes
         condition: eq(variables.ENV_MULTI_NODE, true)
         displayName: Register Data Entry Node
-        dependsOn: InstallBlaise
+        dependsOn: ManagementSetup
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -115,12 +114,13 @@ stages:
             deploy:
               steps:
               - checkout: self
+              - template: /templates/download_cma_packages.yml
               - template: /templates/install_cma_packages.yml      
 
       - deployment: InstallCmaPackagesOnSingleNode
         condition: eq(variables.ENV_MULTI_NODE, false)
         displayName: Install CMA Packages on single node
-        dependsOn: InstallBlaise
+        dependsOn: ManagementSetup
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -130,6 +130,7 @@ stages:
             deploy:
               steps:
               - checkout: self
+              - template: /templates/download_cma_packages.yml              
               - template: /templates/install_cma_packages.yml                        
 
       - deployment: ConfigureBlaisesDatabases
