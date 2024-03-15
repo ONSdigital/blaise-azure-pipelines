@@ -102,9 +102,9 @@ stages:
               - checkout: self
               - template: /templates/register_node_steps.yml
       
-      - deployment: InstallCmaPackages
+      - deployment: InstallCmaPackagesOnMultiNode
         condition: eq(variables.ENV_MULTI_NODE, true)
-        displayName: Install CMA Packages
+        displayName: Install CMA Packages on multi node
         dependsOn: RegisterDataEntryNodes
         environment:  
           name: ${{parameters.Environment}}
@@ -117,9 +117,9 @@ stages:
               - checkout: self
               - template: /templates/install_cma_packages.yml      
 
-      - deployment: InstallCmaPackages
+      - deployment: InstallCmaPackagesOnSingleNode
         condition: eq(variables.ENV_MULTI_NODE, false)
-        displayName: Install CMA Packages
+        displayName: Install CMA Packages on single node
         dependsOn: InstallBlaise
         environment:  
           name: ${{parameters.Environment}}
