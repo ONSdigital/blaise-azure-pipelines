@@ -53,6 +53,8 @@ try{
         Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName"
         AddServerpark -ServerParkName:$env:CmaServerParkName
     }
+    
+    exit 0
 }
 catch{
     Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
