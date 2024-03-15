@@ -13,8 +13,7 @@ function ServerParkExists {
                                          -port:$env:ENV_BLAISE_CONNECTION_PORT `
                                          -user:$env:ENV_BLAISE_ADMIN_USER `
                                          -password:$env:ENV_BLAISE_ADMIN_PASSWORD                                         
-    
-    -server:blaise-gusty-mgmt.europe-west2-a.c.ons-blaise-v2-dev-multinode.internal -user:blaise -password:8E1C3MnnxjJ8H8rg -binding:http -port:8031 | findstr -i "cma2"
+        
     If ([string]::IsNullOrEmpty($exists)) {
         return $false
     }
