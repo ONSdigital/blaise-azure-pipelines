@@ -59,7 +59,7 @@ function InstallPackageViaServerManager{
     CheckFileExists($filePath)
 
     try {
-        "Iinstalling the package $filePath into the serverpark $ServerParkName on port $env:ENV_BLAISE_CONNECTION_PORT for user $env:ENV_BLAISE_ADMIN_USER"
+        "Iinstalling the package $filePath into the serverpark $ServerParkName via servermanager"
         c:\blaise5\bin\servermanager -installsurvey:$filePath `
                                      -serverpark:$ServerParkName `
                                      -binding:http `
