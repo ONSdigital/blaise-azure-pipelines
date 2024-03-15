@@ -12,14 +12,13 @@ function ServerParkExists {
                                          -binding:http `
                                          -port:$env:ENV_BLAISE_CONNECTION_PORT `
                                          -user:$env:ENV_BLAISE_ADMIN_USER `
-                                         -password:$env:ENV_BLAISE_ADMIN_PASSWORD                                         
+                                         -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
+                                        | findstr -i "cma"                                        
         
     If ([string]::IsNullOrEmpty($exists)) {
-        Write-Host "'$ServerParkName' does not exist '$exists'"
         return $false
     }
 
-    Write-Host "'$ServerParkName' exists '$exists'"
     return $true
 }
 function AddServerpark{
