@@ -59,7 +59,7 @@ function InstallPackageViaServerManager{
     CheckFileExists($filePath)
 
     try {
-        "Iinstalling the package $filePath into the serverpark $ServerParkName"
+        "Iinstalling the package $filePath into the serverpark $ServerParkName on port $env:ENV_BLAISE_CONNECTION_PORT for user $env:ENV_BLAISE_ADMIN_PASSWORD"
         c:\blaise5\bin\servermanager -installsurvey:$filePath `
                                      -serverpark:$ServerParkName `
                                      -binding:http `
@@ -111,6 +111,7 @@ try{
     InstallPackageViaServerManager -ServerParkName $env:CmaServerParkName -filePath $env:CmaInstrumentPath\CMA.bpkg
 
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
+    Write-Host "Install other cma packages via cli"
     $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
     $InstrumentPackageList | ForEach-Object {        
         InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
