@@ -59,13 +59,13 @@ function InstallPackageViaServerManager{
     CheckFileExists($filePath)
 
     try {
-        "Iinstalling the package $filePath into the serverpark $ServerParkName on port $env:ENV_BLAISE_CONNECTION_PORT for user $env:ENV_BLAISE_ADMIN_PASSWORD"
+        "Iinstalling the package $filePath into the serverpark $ServerParkName on port $env:ENV_BLAISE_CONNECTION_PORT for user $env:ENV_BLAISE_ADMIN_USER"
         c:\blaise5\bin\servermanager -installsurvey:$filePath `
                                      -serverpark:$ServerParkName `
                                      -binding:http `
                                      -port:$env:ENV_BLAISE_CONNECTION_PORT `
-                                     -user:$env:ENV_BLAISE_ADMIN_PASSWORD `
-                                     -password:$env:ENV_BLAISE_ADMIN_USER   
+                                     -user:$env:ENV_BLAISE_ADMIN_USER `
+                                     -password:$env:ENV_BLAISE_ADMIN_PASSWORD
     }
     catch {
         Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
@@ -90,7 +90,7 @@ function InstallPackageViaBlaiseCli{
     CheckFileExists($filePath)
     
     try {
-        Write-Host "Installing the package $filePath into the serverpark $ServerParkName"
+        Write-Host "Installing the package $filePath into the serverpark $ServerParkName via the CLI"
         $InstrumentName = $_.Substring(0, $_.LastIndexOf('.'))
         C:\BlaiseServices\BlaiseCli\blaise.cli questionnaireinstall -s $ServerParkName -q $InstrumentName -f $filePath
        
