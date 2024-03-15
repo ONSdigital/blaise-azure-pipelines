@@ -15,9 +15,11 @@ function ServerParkExists {
                                          -password:$env:ENV_BLAISE_ADMIN_PASSWORD                                         
         
     If ([string]::IsNullOrEmpty($exists)) {
+        Write-Host "'$ServerParkName' does not exist '$exists'"
         return $false
     }
 
+    Write-Host "'$ServerParkName' exists '$exists'"
     return $true
 }
 function AddServerpark{
