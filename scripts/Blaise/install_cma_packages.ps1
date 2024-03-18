@@ -12,7 +12,7 @@ function InstrumentExists {
         throw [System.IO.ArgumentException] "No instrument name argument provided"
     }    
 
-    $exists = c:\blaise5\bin\servermanager listsurveys `
+    $exists = c:\blaise5\bin\servermanager -listsurveys `
                                          -serverpark:$ServerParkName `
                                          -binding:http `
                                          -port:$env:ENV_BLAISE_CONNECTION_PORT `
