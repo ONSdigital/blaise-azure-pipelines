@@ -20,6 +20,7 @@ function InstrumentExists {
                                          -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
                                         | findstr -i $InstrumentName                                        
         
+    Write-Host "InstrumentExists '$InstrumentName' -  exists"                        
     If ([string]::IsNullOrEmpty($exists)) {
         return $false
     }
