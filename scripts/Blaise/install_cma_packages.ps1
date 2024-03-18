@@ -1,3 +1,32 @@
+function InstrumentExists {
+    param(
+        [string] $ServerParkName,
+        [string] $InstrumentName
+    )
+
+    If ([string]::IsNullOrEmpty($ServerParkName)) {
+        throw [System.IO.ArgumentException] "No server park name argument provided"
+    }
+
+    If ([string]::IsNullOrEmpty($InstrumentName)) {
+        throw [System.IO.ArgumentException] "No instrument name argument provided"
+    }    
+
+    $exists = c:\blaise5\bin\servermanager listsurveys `
+                                         -serverpark:$ServerParkName `
+                                         -binding:http `
+                                         -port:$env:ENV_BLAISE_CONNECTION_PORT `
+                                         -user:$env:ENV_BLAISE_ADMIN_USER `
+                                         -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
+                                        | findstr -i $InstrumentName                                        
+        
+    If ([string]::IsNullOrEmpty($exists)) {
+        return $false
+    }
+
+    return $true
+}
+
 function CheckFileExists {
     param(
         [string] $filePath
@@ -113,9 +142,14 @@ try{
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
     Write-Host "Install other cma packages via cli"
     $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
-    $InstrumentPackageList | ForEach-Object {        
-        InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
-                                   -filePath $env:CmaInstrumentPath\$_ 
+    $InstrumentPackageList | ForEach-Object {     
+        if(InstrumentExists -ServerParkName:$env:CmaServerParkName -InstrumentName:$_ ) {
+            Write-Host "Instrument $_ already exists on $env:CmaServerParkName - don't install"
+        }
+        else {
+            InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
+            -filePath $env:CmaInstrumentPath\$_ 
+        }           
     } 
 
     # Cleanup temporary cma packages folder
