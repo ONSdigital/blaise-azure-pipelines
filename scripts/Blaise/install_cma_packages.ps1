@@ -19,8 +19,7 @@ function InstrumentExists {
                                          -user:$env:ENV_BLAISE_ADMIN_USER `
                                          -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
                                         | findstr -i $InstrumentName                                        
-        
-    Write-Host "InstrumentExists '$InstrumentName' -  exists"                        
+                       
     If ([string]::IsNullOrEmpty($exists)) {
         return $false
     }
@@ -142,14 +141,14 @@ try{
 
     # Install other packages via Bliase CLI to configure the datbaases to be cloud based
     Write-Host "Install other cma packages via cli"
-    $InstrumentPackageList = 'CMA_Attempts.bpkg', 'CMA_ContactInfo.bpkg', 'CMA_Launcher.bpkg', 'CMA_Logging.bpkg'
-    $InstrumentPackageList | ForEach-Object {     
-        if(InstrumentExists -ServerParkName:$env:CmaServerParkName -InstrumentName:$_ ) {
+    $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
+    $InstrumentList | ForEach-Object {     
+        if(InstrumentExists -ServerParkName:$env:CmaServerParkName -InstrumentName:$_) {
             Write-Host "Instrument $_ already exists on $env:CmaServerParkName - don't install"
         }
         else {
             InstallPackageViaBlaiseCli -ServerParkName $env:CmaServerParkName `
-            -filePath $env:CmaInstrumentPath\$_ 
+            -filePath $env:CmaInstrumentPath\$_.bpkg 
         }           
     } 
 
