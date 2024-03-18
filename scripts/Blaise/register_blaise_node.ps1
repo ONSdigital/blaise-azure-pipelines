@@ -39,10 +39,6 @@ try{
     # reguster for gusty
     RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
 
-    #see if a pause resolves the second node not being registered
-    Write-Host "Pause for 5 seconds"
-    Start-Sleep -Seconds 5
-
     #register for cma
     RegisterNode -ServerPark:$env:CmaServerParkName
 }
