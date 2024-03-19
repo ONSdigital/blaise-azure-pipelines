@@ -11,8 +11,11 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Write-Host "Login to GCP"
+      Write-Host "Authenticating GCP with shared project service account"
       gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
 
-      Write-Host "Downloading instrument"
+      Write-Host "Downloading CMA multi package"
       gsutil cp gs://$env:ENV_SHARED_BUCKET/CMA.mbpkg c:\CMA\CMA-MULTI.zip 
+
+      Write-Host "Reverting GCP authentication back to VM service account"
+      gcloud config set account $env:ENV_VM_SERVICEACCOUNT
