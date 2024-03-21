@@ -120,7 +120,7 @@ function InstallPackageViaBlaiseCli{
     
     try {
         Write-Host "Installing the package $filePath into the serverpark $ServerParkName via the CLI"
-        $InstrumentName = Split-Path -LeafBase $filePath
+        $InstrumentName = [System.IO.Path]::GetFileNameWithoutExtension($filePath)
         C:\BlaiseServices\BlaiseCli\blaise.cli questionnaireinstall -s $ServerParkName -q $InstrumentName -f $filePath
        
     }
