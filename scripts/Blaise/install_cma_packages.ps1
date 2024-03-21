@@ -125,7 +125,7 @@ function InstallPackageViaBlaiseCli{
        
     }
     catch {
-        Write-Host "There was an error installing the package $filePath into the serverpark $ServerParkName"
+        Write-Host "There was an error installing package $InstrumentName at $filePath into serverpark $ServerParkName"
         exit 1  
     }      
 }
