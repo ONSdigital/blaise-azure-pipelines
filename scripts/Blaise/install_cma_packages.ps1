@@ -1,13 +1,12 @@
-$cmaInstrumentPath = $env:CmaInstrumentPath
-$cmaMultiPackage = $env:CmaMultiPackage
-$cmaServerParkName = $env:CmaServerParkName
+$CmaInstrumentPath = $env:CmaInstrumentPath
+$CmaMultiPackage = $env:CmaMultiPackage
+$CmaServerParkName = $env:CmaServerParkName
 
 $BlaiseConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
 $BlaiseAdminUser = $env:ENV_BLAISE_ADMIN_USER
 $BlaiseAdminPassword = $env:ENV_BLAISE_ADMIN_PASSWORD
 
-function Test-InstrumentExists {
-    [CmdletBinding()]
+function Test-InstrumentInstalled {
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -18,18 +17,17 @@ function Test-InstrumentExists {
         [string]$InstrumentName
     )
 
-    $output = & "C:\blaise5\bin\servermanager.exe" -listsurveys `
+    $IsInstrumentInstalled = & "C:\blaise5\bin\servermanager.exe" -listsurveys `
         -serverpark:$ServerParkName `
         -binding:http `
         -port:$BlaiseConnectionPort `
         -user:$BlaiseAdminUser `
         -password:$BlaiseAdminPassword | Select-String -Pattern $InstrumentName -SimpleMatch
 
-    return ($null -ne $output)
+    return ($null -ne $IsInstrumentInstalled)
 }
 
 function Test-FileExists {
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -40,7 +38,6 @@ function Test-FileExists {
 }
 
 function Expand-ZipFile {
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -55,12 +52,11 @@ function Expand-ZipFile {
         throw "File '$FilePath' does not exist."
     }
 
-    Write-Host "Expanding ZIP file '$FilePath' to '$DestinationPath'"
+    Write-Host "Expanding zip file '$FilePath' to '$DestinationPath'"
     Expand-Archive -LiteralPath $FilePath -DestinationPath $DestinationPath -Force
 }
 
 function Install-PackageViaServerManager {
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -85,7 +81,6 @@ function Install-PackageViaServerManager {
 }
 
 function Install-PackageViaBlaiseCli {
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -106,26 +101,24 @@ function Install-PackageViaBlaiseCli {
 }
 
 try {
-    # Extract CMA packages from multi-package file
     Write-Host "Unzipping CMA multi-package '$CmaMultiPackage'"
     Expand-ZipFile -FilePath "$CmaInstrumentPath\$CmaMultiPackage" -DestinationPath $CmaInstrumentPath
 
-    # Install CMA package via Server Manager (as it does not contain a database)
+    # Install the "CMA" package via Server Manager as it does not use a data interface / database
     Install-PackageViaServerManager -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\CMA.bpkg"
 
-    # Install other packages via Blaise CLI to configure the databases to be cloud-based
+    # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
     $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
     foreach ($Instrument in $InstrumentList) {
-        if (Test-InstrumentExists -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
-            Write-Host "Instrument '$Instrument' already exists on '$CmaServerParkName' - skipping installation"
+        if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
+            Write-Host "Instrument '$Instrument' already installed on server park '$CmaServerParkName' - skipping installation"
         }
         else {
             Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
         }
     }
 
-    # Cleanup temporary CMA packages folder
-    Write-Host "Removing temporary CMA packages folder '$CmaInstrumentPath'"
+    Write-Host "Removing CMA working folder '$CmaInstrumentPath'"
     Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
 }
 catch {
@@ -133,3 +126,4 @@ catch {
     Write-Error "$($_.ScriptStackTrace)"
     exit 1
 }
+ 
