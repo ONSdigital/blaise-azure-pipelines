@@ -1,0 +1,5 @@
+steps:
+- task: PowerShell@2
+  displayName: Install CMA packages
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/install_cma_packages.ps1'       

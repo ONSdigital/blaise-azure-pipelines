@@ -6,6 +6,7 @@
       "Deployment.ServerParkManagement",
       "Deployment.InstrumentManagement",
       "AppManagement",
+      "Apps",
       "Apps.Appfeatures",
       "Appfeatures.login",
       "Appfeatures.getlistofinstruments",
