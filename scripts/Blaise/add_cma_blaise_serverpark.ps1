@@ -1,53 +1,62 @@
-function ConfigureCmaServerpark{
+function ServerParkExists {
     param(
-        [string] $ServerParkName,
-        [string] $ManagementNode,
-        [string] $ConnectionPort,
-        [string] $BlaiseUserName,
-        [string] $BlaisePassword
+        [string] $ServerParkName
     )
 
     If ([string]::IsNullOrEmpty($ServerParkName)) {
         throw [System.IO.ArgumentException] "No server park name argument provided"
     }
 
-    If ([string]::IsNullOrEmpty($ManagementNode)) {
-        throw [System.IO.ArgumentException] "No management node argument provided"
+    $exists = c:\blaise5\bin\servermanager -listserverparks `
+                                         -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
+                                         -binding:http `
+                                         -port:$env:ENV_BLAISE_CONNECTION_PORT `
+                                         -user:$env:ENV_BLAISE_ADMIN_USER `
+                                         -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
+                                        | findstr -i "cma"                                        
+        
+    If ([string]::IsNullOrEmpty($exists)) {
+        return $false
     }
 
-    If ([string]::IsNullOrEmpty($ConnectionPort)) {
-        throw [System.IO.ArgumentException] "No Blaise connection port argument provided"
-    }
+    return $true
+}
+function AddServerpark{
+    param(
+        [string] $ServerParkName
+    )
 
-    If ([string]::IsNullOrEmpty($BlaiseUserName)) {
-        throw [System.IO.ArgumentException] "No Blaise username argument provided"
-    }
-
-    If ([string]::IsNullOrEmpty($BlaisePassword)) {
-        throw [System.IO.ArgumentException] "No Blaise Admin Password argument provided"
+    If ([string]::IsNullOrEmpty($ServerParkName)) {
+        throw [System.IO.ArgumentException] "No server park name argument provided"
     }
 
     Write-Host "Add and/or configure server park '$ServerParkName' to run in disconnected mode with sync surveys set to true"
 
     #if the serverpark exists this will update the existing one
-    c:\blaise5\bin\servermanager -addserverpark:$ServerParkName -runmode:disconnected -server:$managementNode -syncsurveyswhenconnected:true -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
+    c:\blaise5\bin\servermanager -addserverpark:$ServerParkName `
+                                 -runmode:disconnected `
+                                 -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
+                                 -syncsurveyswhenconnected:true `
+                                 -binding:http `
+                                 -port:$env:ENV_BLAISE_CONNECTION_PORT `
+                                 -user:$env:ENV_BLAISE_ADMIN_USER `
+                                 -password:$env:ENV_BLAISE_ADMIN_PASSWORD
 
     Write-Host "Configured server park '$ServerParkName'"
 }
 
 try{
-    $BlaiseCmaServerPark = $env:CmaServerParkName
-    Write-Host "server park - $($BlaiseCmaServerPark)"
-    $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME
-    Write-Host "server - $($ManagementNode)"
-    $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT
-    Write-Host "port - $($ConnectionPort)"
-    $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD
-    $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
-
-    ConfigureCmaServerpark -ServerParkName:$BlaiseCmaServerPark -ManagementNode:$ManagementNode -ConnectionPort:$ConnectionPort -BlaiseUserName:$BlaiseUserName -BlaisePassword:$BlaisePassword
+    if(ServerParkExists -ServerParkName:$env:CmaServerParkName) {
+        Write-Host "Serverpark $env:CmaServerParkName already exists"
+    }
+    else {
+        Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName"
+        AddServerpark -ServerParkName:$env:CmaServerParkName
+    }
+    
+    exit 0
 }
 catch{
-    Write-Host "Adding and/or configuring CMA server park(s) failed: $($_.ScriptStackTrace)"
+    Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
     exit 1
 }
