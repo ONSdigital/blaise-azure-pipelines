@@ -1,10 +1,10 @@
 function RegisterNode{
     param(
+        [string] $ServerPark,
         [string] $CurrentNode = $(hostname),
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
         [string] $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
         [string] $BlaisePassword = $env:ENV_BLAISE_ADMIN_PASSWORD,
-        [string] $BlaiseServerPark = $env:ENV_BLAISE_SERVER_PARK_NAME,
         [string] $BlaiseUserName = $env:ENV_BLAISE_ADMIN_USER
     )
 
@@ -20,7 +20,7 @@ function RegisterNode{
         throw [System.IO.ArgumentException] "No Blaise Admin Password argument provided"
     }
 
-    If ([string]::IsNullOrEmpty($BlaiseServerPark)) {
+    If ([string]::IsNullOrEmpty($ServerPark)) {
         throw [System.IO.ArgumentException] "No Blaise server park argument provided"
     }
 
@@ -28,15 +28,19 @@ function RegisterNode{
         throw [System.IO.ArgumentException] "No Blaise username argument provided"
     }
 
-    Write-Host "Registering $currentNode on management node $managementNode"
+    Write-Host "Registering $currentNode on management node $managementNode for server park $ServerPark"
 
-    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword -serverpark:$blaiseServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -server:$managementNode -binding:http -port:$connectionPort
+    c:\blaise5\bin\servermanager -addserverparkserver:$currentNode -server:$managementNode -user:$blaiseUserName -password:$blaisePassword -serverpark:$ServerPark -serverport:$connectionPort -serverbinding:http -masterhostname:$managementNode -logicalroot:default -binding:http -port:$connectionPort
 
-    Write-Host "$currentNode registered"
+    Write-Host "$currentNode registered for server park $ServerPark"
 }
 
 try{
-    RegisterNode
+    # reguster for gusty
+    RegisterNode -ServerPark:$env:ENV_BLAISE_SERVER_PARK_NAME
+
+    #register for cma
+    RegisterNode -ServerPark:$env:CmaServerParkName
 }
 catch{
     Write-Host "Nodes have not been registered: $($_.ScriptStackTrace)"

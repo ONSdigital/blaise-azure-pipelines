@@ -62,7 +62,7 @@ stages:
               - template: /templates/configure_blaise_steps.yml
                 parameters:
                   BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE) 
+                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)          
               - template: /templates/configure_node_roles_steps.yml
               - template: /templates/firewall_rule_steps.yml
                 parameters:
@@ -84,11 +84,12 @@ stages:
               steps:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
+              - template: /templates/add_cma_serverpark.yml         
 
       - deployment: RegisterDataEntryNodes
         condition: eq(variables.ENV_MULTI_NODE, true)
         displayName: Register Data Entry Node
-        dependsOn: InstallBlaise
+        dependsOn: ManagementSetup
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -99,6 +100,38 @@ stages:
               steps:
               - checkout: self
               - template: /templates/register_node_steps.yml
+      
+      - deployment: InstallCmaPackagesOnMultiNode
+        condition: eq(variables.ENV_MULTI_NODE, true)
+        displayName: Install CMA Packages on multi node
+        dependsOn: RegisterDataEntryNodes
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/download_cma_packages.yml
+              - template: /templates/install_cma_packages.yml      
+
+      - deployment: InstallCmaPackagesOnSingleNode
+        condition: eq(variables.ENV_MULTI_NODE, false)
+        displayName: Install CMA Packages on single node
+        dependsOn: ManagementSetup
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/download_cma_packages.yml              
+              - template: /templates/install_cma_packages.yml                        
 
       - deployment: ConfigureBlaisesDatabases
         displayName: Configure Blaises Sql Databases
