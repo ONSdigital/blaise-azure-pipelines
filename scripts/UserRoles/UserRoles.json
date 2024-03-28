@@ -365,7 +365,6 @@
          "Appfeatures.deletedata",
          "Appfeatures.uploaddata",
          "Appfeatures.downloadcases",
-         "Appfeatures.updatesettings",
          "Appfeatures.viewsettings",
          "Appfeatures.viewsurveydetails"
       ]
