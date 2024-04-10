@@ -366,7 +366,8 @@
          "Appfeatures.uploaddata",
          "Appfeatures.downloadcases",
          "Appfeatures.viewsettings",
-         "Appfeatures.viewsurveydetails"
+         "Appfeatures.viewsurveydetails",
+         "SurveyDataAccess"
       ]
    }
 ]
