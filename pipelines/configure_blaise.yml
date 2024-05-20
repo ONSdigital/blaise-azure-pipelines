@@ -38,7 +38,7 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise
+          tags: blaise,data-delivery
         strategy:
           runOnce:
             deploy:
@@ -84,7 +84,7 @@ stages:
               steps:
               - checkout: self
               - template: /templates/blaise_management_steps.yml
-              - template: /templates/add_cma_serverpark.yml         
+              - template: /templates/add_cma_serverpark.yml                 
 
       - deployment: RegisterDataEntryNodes
         condition: eq(variables.ENV_MULTI_NODE, true)
@@ -147,4 +147,15 @@ stages:
               - checkout: self
               - template: /templates/configure_blaise_databases.yml
 
-
+      - deployment: DataDeliverySetup
+        displayName: Setup data delivery node
+        environment:  
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: data-delivery
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - template: /templates/blaise_management_steps.yml      
