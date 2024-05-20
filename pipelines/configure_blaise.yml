@@ -38,7 +38,7 @@ stages:
         environment:  
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise
+          tags: blaise-cli
         strategy:
           runOnce:
             deploy:
