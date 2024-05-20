@@ -1,0 +1,5 @@
+steps:
+- task: PowerShell@2
+  displayName: Install MYSQL Connectors
+  inputs:
+    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/install_mysql_drivers.ps1'       
