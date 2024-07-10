@@ -28,9 +28,12 @@ function ParseCurrentNodeRoles([Parameter(Mandatory=$False)]$CurrentRoles='') {
             '\bADMIN\b' { $Roles += 'admin' }
             '\bAUDITTRAIL\b' { $Roles += 'audittrail' }
             '\bCATI\b' { $Roles += 'cati' }
+            '\bCASEMANAGEMENT\b' { $Roles += 'casemanagement' }
             '\bDATA\b' { $Roles += 'data' }
             '\bDATAENTRY\b' { $Roles += 'dataentry' }
             '\bDASHBOARD\b' { $Roles += 'dashboard' }
+            '\bEVENT\b' { $Roles += 'event' }
+            '\bPUBLISH\b' { $Roles += 'publish' }
             '\bRESOURCE\b' { $Roles += 'resource' }
             '\bSESSION\b' { $Roles += 'session' }
             '\bWEB\b' { $Roles += 'web' }
