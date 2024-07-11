@@ -40,9 +40,9 @@ function Delete-DashboardFolders {
             try {
                 Remove-Item -Path $folder -Recurse -Force
                 Write-Host "Folder successfully deleted: $folder"
-            } catch {
-                Write-Host "Error occurred while deleting folder: $folder"
-            }
+                } catch {
+                Write-Host "Error deleting folder: $($_.Exception.Message) - $folder"
+                }
         } else {
             Write-Host "Folder does not exist: $folder"
         }
