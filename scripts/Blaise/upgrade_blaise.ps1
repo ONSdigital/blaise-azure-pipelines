@@ -17,6 +17,27 @@ Write-Host "Running msiexec for Blaise uninstall"
 Start-Process -Wait "msiexec" -ArgumentList $blaise_args
 Write-Host "Blaise uninstall complete"
 
+$catiDashboardFolder = "D:\Blaise5\Blaise"
+$blaiseDashboardFolder = "D:\Blaise5\BlaiseDashboard"
+
+$folders = @($catiDashboardFolder, $blaiseDashboardFolder)
+
+foreach ($folder in $folders) {
+    if (Test-Path -Path $folder) {
+        Write-Host "Folder found: $folder"
+        Write-Host "Attempting to delete folder..."    
+        try {
+            Remove-Item -Path $folder -Recurse -Force
+            Write-Host "Folder successfully deleted: $folder"
+        }
+        catch {
+            Write-Host "Error occurred while deleting folder: $folder"
+        }
+    } else {
+        Write-Host "Folder does not exist: $folder"
+    }
+}
+
 Write-Host "Blaise admin user: $env:ENV_BLAISE_ADMIN_USER"
 Write-Host "Blaise admin password: $env:ENV_BLAISE_ADMIN_PASSWORD"
 Write-Host "Setting Blaise upgrade args"
