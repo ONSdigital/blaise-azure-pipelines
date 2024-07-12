@@ -411,5 +411,20 @@
          "Appfeatures.viewsurveydetails",
          "SurveyDataAccess"
       ]
-   }
+   },
+   {
+      "name": "SVT Supervisor",
+      "description": "Role for survey validation team supervisors",
+      "permissions": []
+   },
+   {
+      "name": "SVT Editor",
+      "description": "Role for survey validation team editors",
+      "permissions": []
+   },
+   {
+      "name": "FRS Research",
+      "description": "Role for family resource survey research team",
+      "permissions": []
+   }       
 ]
