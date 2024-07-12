@@ -1,24 +1,37 @@
 . "$PSScriptRoot\check_server_roles.ps1"
 
 try {
-    $applyRules = NodeHasTheCorrectRoles
-    if (-Not $applyRules)
-    {
-        $roles = RolesNodeShouldHave
+    $hasCorrectRoles = Check-NodeHasCorrectRoles
+    if (-not $hasCorrectRoles) {
+        $roles = Get-RequiredRoles
+        if ($null -eq $roles) {
+            throw "Failed to retrieve required roles."
+        }
 
         Write-Host "Updating node roles to: $roles"
-        $output = C:\Blaise5\Bin\ServerManager -role:$roles | Out-String
-        Write-Host "Node roles updated $output"
+        try {
+            $output = & C:\Blaise5\Bin\ServerManager -role:$roles | Out-String
+            Write-Host "Node roles updated: $output"
+        }
+        catch {
+            throw "Failed to update node roles: $_"
+        }
 
         Write-Host "Restarting Blaise service"
-        restart-service blaiseservices5
-        Write-Host "Blaise service has been restarted"
+        try {
+            Restart-Service -Name BlaiseServices5 -ErrorAction Stop
+            Write-Host "Blaise service has been restarted"
+        }
+        catch {
+            throw "Failed to restart Blaise service: $_"
+        }
     }
     else {
         Write-Host "Node already has the correct roles"
     }
 }
 catch {
-    Write-Host "Error updating blaise node roles. $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+    Write-Error "Error updating Blaise node roles: $($_.Exception.Message)"
+    Write-Error "Stack trace: $($_.ScriptStackTrace)"
     exit 1
 }
