@@ -72,4 +72,4 @@ Uninstall-Blaise
 Delete-DashboardFolders
 Upgrade-Blaise
 
-Write-Host "Blaise upgrade complete 👍"
+Write-Host "Blaise upgrade complete"
