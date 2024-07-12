@@ -1,49 +1,66 @@
-function NodeHasTheCorrectRoles {
-    $requiredRoles = RolesNodeShouldHave
-    Write-Host "Required roles: $requiredRoles"
-    $currentRoles = ParseCurrentNodeRoles
-    Write-Host "Current roles: $currentRoles"
-    return CheckNodeHasCorrectRoles -CurrentNodeRoles $currentRoles -RolesNodeShouldHave $requiredRoles
-}
-function RolesNodeShouldHave {
-    $role_server_should_Have = [Environment]::GetEnvironmentVariable('ENV_BLAISE_ROLES', 'Machine')
-    $rolesItShouldHave = $role_server_should_Have.Split(',').Trim() | Sort-Object
-    return $rolesItShouldHave -join ','
-}
-
-function CurrentNodeRoles {
-    return C:\Blaise5\Bin\ServerManager -lsr | Out-String
-}
-
-function ParseCurrentNodeRoles([Parameter(Mandatory=$False)]$CurrentRoles='') {
-    if ([string]::IsNullOrEmpty($CurrentRoles))
-    {
-        $CurrentRoles = CurrentNodeRoles
+function Get-CurrentNodeRoles {
+    try {
+        $output = & C:\Blaise5\Bin\ServerManager -lsr | Out-String
+        return $output
     }
-    $Roles = @()
-    $CurrentRoles.Split('|').ForEach({
-        $Role = $_.Trim()
-        switch -regex ($Role)
-        {
-            '\bADMIN\b' { $Roles += 'admin' }
-            '\bAUDITTRAIL\b' { $Roles += 'audittrail' }
-            '\bCATI\b' { $Roles += 'cati' }
-            '\bDATA\b' { $Roles += 'data' }
-            '\bDATAENTRY\b' { $Roles += 'dataentry' }
-            '\bDASHBOARD\b' { $Roles += 'dashboard' }
-            '\bRESOURCE\b' { $Roles += 'resource' }
-            '\bSESSION\b' { $Roles += 'session' }
-            '\bWEB\b' { $Roles += 'web' }
-        }
-    })
-    $Roles = $Roles | Sort-Object
-    return $Roles -join ','
+    catch {
+        Write-Error "Failed to execute ServerManager: $_"
+        return $null
+    }
 }
 
-function CheckNodeHasCorrectRoles {
+function Parse-CurrentNodeRoles {
     param (
-        [string] $CurrentNodeRoles,
-        [string] $RolesNodeShouldHave
+        [Parameter(Mandatory=$false)]
+        [string]$CurrentRoles
     )
-    return $CurrentNodeRoles -eq $RolesNodeShouldHave
+
+    if ([string]::IsNullOrEmpty($CurrentRoles)) {
+        $CurrentRoles = Get-CurrentNodeRoles
+        if ([string]::IsNullOrEmpty($CurrentRoles)) { return $null }
+    }
+
+    $roleMapping = @{
+        'ADMIN' = 'admin'
+        'AUDITTRAIL' = 'audittrail'
+        'CATI' = 'cati'
+        'DATA' = 'data'
+        'DATAENTRY' = 'dataentry'
+        'DASHBOARD' = 'dashboard'
+        'RESOURCE' = 'resource'
+        'SESSION' = 'session'
+        'WEB' = 'web'
+    }
+
+    $roles = @()
+    foreach ($line in $CurrentRoles -split "`n") {
+        foreach ($key in $roleMapping.Keys) {
+            if ($line -match "\b$key\b") {
+                $roles += $roleMapping[$key]
+            }
+        }
+    }
+
+    if ($roles.Count -eq 0) { return $null }
+    return ($roles | Sort-Object | Select-Object -Unique) -join ','
+}
+
+function Get-RequiredRoles {
+    $roleServerShouldHave = $env:ENV_BLAISE_ROLES
+    if ([string]::IsNullOrEmpty($roleServerShouldHave)) {
+        Write-Warning "ENV_BLAISE_ROLES environment variable is not set."
+        return $null
+    }
+    $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object
+    return $roles -join ','
+}
+
+function Check-NodeHasCorrectRoles {
+    $requiredRoles = Get-RequiredRoles
+    if ($null -eq $requiredRoles) { return $false }
+
+    $currentRoles = Parse-CurrentNodeRoles
+    if ($null -eq $currentRoles) { return $false }
+
+    return $currentRoles -eq $requiredRoles
 }
