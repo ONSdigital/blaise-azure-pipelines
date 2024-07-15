@@ -1,5 +1,0 @@
-steps:
-- task: PowerShell@2
-  displayName: Update Blaise Databases to MySql
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/Blaise/mysql_database_setup.ps1'

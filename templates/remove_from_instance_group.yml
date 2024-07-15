@@ -1,17 +1,16 @@
-parameters: 
-    - name: instancegroup
-      displayName: The instance group name
-    - name: zone
-      displayName: zone name
-
+---
+parameters:
+  - name: instancegroup
+    displayName: The instance group name
+  - name: zone
+    displayName: The zone name
 steps:
-- task: PowerShell@2
-  displayName: logging into gcp
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/GCP_Login_Auth.ps1'
-
-- task: PowerShell@2
-  displayName: adding back to load balancer
-  inputs:
-    filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/remove_from_instance_group.ps1'
-    arguments: '-instancegroup ${{parameters.instancegroup}} -zone ${{parameters.zone}}'
+  - task: PowerShell@2
+    displayName: Log into GCP
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/login_gcp.ps1
+  - task: PowerShell@2
+    displayName: ARemove VM from instance group
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/remove_vm_from_instance_group.ps1
+      arguments: -instancegroup ${{parameters.instancegroup}} -zone ${{parameters.zone}}
