@@ -1,24 +1,21 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-  - stage: BlaiseInstall_${{parameters.Environment }}
-    displayName: ${{parameters.Environment }} Installation Of Blaise
+  - stage: ConfigureBlaise_${{parameters.Environment}}
+    displayName: Configure Blaise (${{parameters.Environment}})
     jobs:
       - deployment: InstallStackDriver
         displayName: Install Stackdriver
-        environment:  
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: blaise
@@ -26,16 +23,15 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/stackdriver_steps.yml
-                parameters:
-                  LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                  MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
-
-      - deployment: InstallMySQLConnector
-        displayName: Install MySQL .Net Connector
-        environment:  
+                - checkout: self
+                - template: /templates/install_stackdriver.yml
+                  parameters:
+                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: InstallMySqlConnector
+        displayName: Install MySQL connector
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: blaise-cli
@@ -43,14 +39,13 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/mysql_connector_steps.yml
-                parameters:
-                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
-
-      - deployment: InstallBlaise
-        displayName: Install Blaise
-        environment:  
+                - checkout: self
+                - template: /templates/install_mysql_connector.yml
+                  parameters:
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: ConfigureBlaise
+        displayName: Configure Blaise
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: blaise
@@ -58,23 +53,22 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/configure_blaise_steps.yml
-                parameters:
-                  BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)          
-              - template: /templates/configure_node_roles_steps.yml
-              - template: /templates/firewall_rule_steps.yml
-                parameters:
-                  RuleName: Blaise
-                  InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
-                  OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
-              - template: /templates/set_environment.yml
-
-      - deployment: ManagementSetup
-        displayName: Setup blaise management node
-        dependsOn: InstallBlaise
-        environment:  
+                - checkout: self
+                - template: /templates/configure_blaise.yml
+                  parameters:
+                    BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+                - template: /templates/configure_node_roles.yml
+                - template: /templates/add_windows_firewall_rules.yml
+                  parameters:
+                    RuleName: Blaise
+                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                - template: /templates/set_windows_timezone.yml
+      - deployment: ConfigureManagementNode
+        displayName: Configure management node
+        dependsOn: ConfigureBlaise
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
@@ -82,15 +76,14 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/blaise_management_steps.yml
-              - template: /templates/add_cma_serverpark.yml         
-
+                - checkout: self
+                - template: /templates/configure_management_node.yml
+                - template: /templates/add_cma_serverpark.yml
       - deployment: RegisterDataEntryNodes
         condition: eq(variables.ENV_MULTI_NODE, true)
-        displayName: Register Data Entry Node
-        dependsOn: ManagementSetup
-        environment:  
+        displayName: Register data entry node
+        dependsOn: ConfigureManagementNode
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: data-entry
@@ -98,14 +91,13 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/register_node_steps.yml
-      
+                - checkout: self
+                - template: /templates/register_node.yml
       - deployment: InstallCmaPackagesOnMultiNode
         condition: eq(variables.ENV_MULTI_NODE, true)
-        displayName: Install CMA Packages on multi node
+        displayName: Install CMA packages on multi node environment
         dependsOn: RegisterDataEntryNodes
-        environment:  
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
@@ -113,15 +105,14 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/download_cma_packages.yml
-              - template: /templates/install_cma_packages.yml      
-
+                - checkout: self
+                - template: /templates/download_cma_packages.yml
+                - template: /templates/install_cma_packages.yml
       - deployment: InstallCmaPackagesOnSingleNode
         condition: eq(variables.ENV_MULTI_NODE, false)
-        displayName: Install CMA Packages on single node
-        dependsOn: ManagementSetup
-        environment:  
+        displayName: Install CMA packages on single node environment
+        dependsOn: ConfigureManagementNode
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
@@ -129,14 +120,13 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/download_cma_packages.yml              
-              - template: /templates/install_cma_packages.yml                        
-
+                - checkout: self
+                - template: /templates/download_cma_packages.yml
+                - template: /templates/install_cma_packages.yml
       - deployment: ConfigureBlaisesDatabases
-        displayName: Configure Blaises Sql Databases
-        dependsOn: ManagementSetup
-        environment:  
+        displayName: Configure data interfaces
+        dependsOn: ConfigureManagementNode
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
@@ -144,7 +134,5 @@ stages:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/configure_blaise_databases.yml
-
-
+                - checkout: self
+                - template: /templates/configure_data_interfaces.yml

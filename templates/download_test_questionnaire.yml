@@ -1,18 +1,18 @@
 ---
 steps:
   - task: DownloadSecureFile@1
-    displayName: Download GCP Key
+    displayName: Download GCP key
     name: gcpkey
     inputs:
       secureFile: ons-blaise-v2-shared-221e50eb36c7.json
   - task: PowerShell@2
-    displayName: Download cma packages
+    displayName: Download test questionnaire
     inputs:
       targetType: inline
       script: |-
         Write-Host "Authenticating GCP with shared project service account"
         gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file=$(gcpkey.secureFilePath)
-        Write-Host "Downloading CMA multi package"
-        gsutil cp gs://$env:ENV_SHARED_BUCKET/CMA.mbpkg c:\CMA\CMA-MULTI.zip 
+        Write-Host "Downloading test questionnaire package"
+        gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:InstrumentName.bpkg c:\survey\$env:InstrumentName.bpkg
         Write-Host "Reverting GCP authentication back to VM service account"
         gcloud config set account $env:ENV_VM_SERVICEACCOUNT

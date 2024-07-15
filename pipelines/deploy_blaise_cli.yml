@@ -1,52 +1,47 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: GitBranch
-    displayName: Branch to deploy
-
+  - name: Branch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: ${{parameters.Environment }}_BlaiseCli
-  displayName: Deploying Blaise Cli ${{parameters.Environment }}
-  jobs:
+  - stage: DeployBlaiseCli_${{parameters.Environment}}
+    displayName: Deploy Blaise CLI (${{parameters.Environment}})
+    jobs:
       - deployment: DeployBlaiseCli
-        displayName: Deploy Blaise Cli
+        displayName: Deploy Blaise CLI
         variables:
-          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-        environment:  
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: blaise-cli
         strategy:
           runOnce:
-              deploy:
-                steps:
+            deploy:
+              steps:
                 - checkout: self
-
-                - template: /templates/download_artifact_steps.yml
-                  parameters: 
+                - template: /templates/download_build_artifact.yml
+                  parameters:
                     ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
-                      GitBranch: ${{ parameters.GitBranch }}
+                      GitBranch: ${{parameters.Branch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
-                      GitBranch: 'prod'
+                      GitBranch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
-                      GitBranch: 'preprod'
-                    ArtifactName: '_blaiseCli'
+                      GitBranch: preprod
+                    ArtifactName: _BlaiseCli
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 66
-
-                - template: /templates/copy_binary_files_steps.yml
+                - template: /templates/copy_files.yml
                   parameters:
                     TargetFolder: c:\blaiseServices\BlaiseCli
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
-

@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 ############
 # functions
 ############
@@ -37,7 +39,7 @@ CreateVariables1($metadataVariables)
 # INSTALL BLAISE
 #################
 
-Write-Host "Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION"
+LogInfo("Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION")
 
 Write-Host "LICENSEE: $BLAISE_LICENSEE"
 Write-Host "INSTALLDIR: $BLAISE_INSTALLDIR"
@@ -75,7 +77,7 @@ $blaise_args += "ADMINISTRATORPASSWORD=$BLAISE_ADMINPASS"
 $blaise_args += "INSTALLDIR=$BLAISE_INSTALLDIR"
 $blaise_args += "DEPLOYFOLDER=$BLAISE_DEPLOYFOLDER"
 
-# server park roles
+# serverpark roles
 $blaise_args += "MANAGEMENTSERVER=$BLAISE_MANAGEMENTSERVER"
 $blaise_args += "WEBSERVER=$BLAISE_WEBSERVER"
 $blaise_args += "DATAENTRYSERVER=$BLAISE_DATAENTRYSERVER"

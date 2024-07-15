@@ -1,57 +1,48 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: AutomatedTestsBranch
-    displayName: Automated tests git branch
-    default: master
-
+  - name: Branch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: CATITests_${{parameters.Environment }}
-  displayName: ${{parameters.Environment }} CATI Automated Tests
-  jobs:
-    - job: "AutomatedTests"
-      timeoutInMinutes: 0 # how long to run the job before automatically cancelling
-      cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
-      variables:
-        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
-        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
-      pool:
-        vmImage: 'windows-2019'
-      steps:
-      - template: /templates/blaise_reg_settings.yml
-        parameters:
-          BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-          BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
-
-      - template: /templates/download_test_instrument.yml
-
-      - template: /templates/download_artifact_steps.yml
-        parameters:
-          GitBranch: ${{parameters.AutomatedTestsBranch}}
-          ArtifactName: _AutomatedTests
-          DownloadPath: $(System.ArtifactsDirectory)
-          TargetFiles: '**/*Behaviour*.config'
-          PipelineNumber: 43
-
-      - ${{ if notin(parameters.Environment, 'dev', 'preprod') }}:
-        - template: /templates/automated_test_with_category_steps.yml
-          parameters:
-            BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
-            TestName: Cati Smoke Tests
-            TestCategory: Smoke
-
-      - ${{ if in(parameters.Environment, 'dev', 'preprod') }}:
-        - template: /templates/automated_test_steps.yml
-          parameters:
-            BehaviourSolutionName: Blaise.CATI.tests.Behaviour
-            TestName: Full Cati Regression Test
+  - stage: CatiTests_${{parameters.Environment}}
+    displayName: CATI tests (${{parameters.Environment}})
+    jobs:
+      - job: CatiTests
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+          ENV_BLAISE_SERVER_HOST_NAME: $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+        pool:
+          vmImage: windows-2019
+        steps:
+          - template: /templates/set_blaise_license_key.yml
+            parameters:
+              BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+              BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+          - template: /templates/download_test_questionnaire.yml
+          - template: /templates/download_build_artifact.yml
+            parameters:
+              GitBranch: ${{parameters.Branch}}
+              ArtifactName: _CatiTests
+              DownloadPath: $(System.ArtifactsDirectory)
+              TargetFiles: '**/*Behaviour*.config'
+              PipelineNumber: 43
+          - ${{ if notin(parameters.Environment, 'dev', 'preprod') }}:
+              - template: /templates/run_tests_with_category.yml
+                parameters:
+                  BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
+                  TestName: CATI smoke tests
+                  TestCategory: Smoke
+          - ${{ if in(parameters.Environment, 'dev', 'preprod') }}:
+              - template: /templates/run_tests.yml
+                parameters:
+                  BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
+                  TestName: CATI regression tests

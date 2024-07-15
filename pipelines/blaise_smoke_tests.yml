@@ -1,48 +1,42 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: AutomatedTestsBranch
-    displayName: Automated tests git branch
-    default: master
-
+  - name: Branch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: BlaiseInstall_${{parameters.Environment }}
-  displayName: ${{parameters.Environment }} Installation Of Blaise
-  jobs:
-    - job: "SmokeTests"
-      variables:
-        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
-        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
-      pool:
-        vmImage: 'windows-2019'
-      steps:
-      - template: /templates/blaise_reg_settings.yml
-        parameters:
-          BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-          BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
-
-      - template: /templates/download_test_instrument.yml
-
-      - template: /templates/download_artifact_steps.yml
-        parameters:
-          GitBranch: ${{parameters.AutomatedTestsBranch}}
-          ArtifactName: _AutomatedTests
-          DownloadPath: $(System.ArtifactsDirectory)
-          TargetFiles: '**/*Behaviour*.config'
-          PipelineNumber: 43
-
-      - template: /templates/automated_test_with_category_steps.yml
-        parameters:
-          BehaviourSolutionName: Blaise.Tests.Behaviour
-          TestName: Blaise Smoke Tests
-          TestCategory: Smoke
+  - stage: BlaiseTests_${{parameters.Environment}}
+    displayName: Blaise tests (${{parameters.Environment}})
+    jobs:
+      - job: BlaiseTests
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+          ENV_BLAISE_SERVER_HOST_NAME: $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+        pool:
+          vmImage: windows-2019
+        steps:
+          - template: /templates/set_blaise_license_key.yml
+            parameters:
+              BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+              BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+          - template: /templates/download_test_questionnaire.yml
+          - template: /templates/download_build_artifact.yml
+            parameters:
+              GitBranch: ${{parameters.Branch}}
+              ArtifactName: _BlaiseTests
+              DownloadPath: $(System.ArtifactsDirectory)
+              TargetFiles: '**/*Behaviour*.config'
+              PipelineNumber: 43
+          - template: /templates/run_tests_with_category.yml
+            parameters:
+              BehaviourSolutionName: Blaise.Tests.Behaviour
+              TestName: Blaise smoke tests
+              TestCategory: Smoke

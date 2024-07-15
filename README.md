@@ -1,74 +1,57 @@
-# Blaise Azure DevOps Pipelines
+# yamlfmt
 
-We use Azure DevOps pipelines to build and deploy C# applications, and execute scripts on Windows VMs. Blaise is Windows based and provides a .NET Framework API. We provision VMs via GCP and install an Azure DevOps agent on them. This allows us to deploy our applications onto the VMs and execute any necessary scripts. We call the Azure DevOps pipelines from Concourse via an authenicated HTTPS request.
+`yamlfmt` is an extensible command line tool or library to format yaml files. 
 
-Azure DevOps is integrated with our GitHub repositories. Changes to the pipeline yaml configuration files in the repositories, will be reflected within Azure DevOps.
+## Goals
 
-Some of the Azure DevOps pipeline yaml configuration files are stored in the repositories they relate to, such as the [rest-api]() and [nuget](). This resposotory stores Azure DevOps pipeline yaml configuration files that don't directly relate to a service, such as configuring Blaise and running integration tests.
+* Create a command line yaml formatting tool that is easy to distribute (single binary)
+* Make it simple to extend with new custom formatters
+* Enable alternative use as a library, providing a foundation for users to create a tool that meets specific needs 
 
-Azure DevOps pipeline require at least the following parameters:
+## Maintainers
 
-- `VarGroup` - Contains various environment variables and is created by [Terraform](). It's usually the GCP project name.
-- `Environment` - Informs Azure DevOps which VMs to execute the pipeline on. Created manually in the Azure DevOps web UI and is `dev`, `preprod`, and `prod` for the formal environments. Sandboxes is usually the developers first name.
+This tool is not yet officially supported by Google. It is currently maintained solely by @braydonk, and unless something changes primarily in spare time.
 
-## Environment deployment tags
+## Blog
 
-VMs (Virual Machines) are labelled with tags via a startup script when the Azure DevOps agent is registered with the VM. The VM startup scripts are stored in the [Terraform]() respository. Tags are used to target specific VMs via the yaml, the following snippet shows how to deploy to all VMs with the tag `data-entry`.
+I'm going to use these links to GitHub Discussions as a blog of sorts, until I can set up something more proper:
+* yamlfmt's recent slow development [#149](https://github.com/google/yamlfmt/discussions/149)
+* Issues related to the yaml.v3 library [#148](https://github.com/google/yamlfmt/discussions/148)
 
+## Installation
+
+To download the `yamlfmt` command, you can download the desired binary from releases or install the module directly:
 ```
-environment:
-  name: ${{parameters.Environment}}
-  resourceType: virtualMachine
-  tags: data-entry
+go install github.com/google/yamlfmt/cmd/yamlfmt@latest
 ```
+This currently requires Go version 1.18 or greater.
 
-## Hosted environemnt deployment
+NOTE: Recommended setup if this is your first time installing Go would be in [this DigitalOcean blog post](https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs).
 
-Not all deployments are targetted at our VMs in GCP. Integration tests for example are run from VMs hosted by Azure DevOps. Example yaml snippet:
+You can also download the binary you want from releases. The binary is self-sufficient with no dependencies, and can simply be put somewhere on your PATH and run with the command `yamlfmt`.
 
+You can also install the command as a [pre-commit](https://pre-commit.com/) hook. See the [pre-commit hook](./docs/pre-commit.md) docs for instructions.
+
+## Basic Usage
+
+See [Command Usage](./docs/command-usage.md) for in-depth information and available flags.
+
+To run the tool with all default settings, run the command with a path argument:
+```bash
+yamlfmt x.yaml y.yaml <...>
 ```
-pool:
-  vmImage: 'windows-2019'
-```
-
-## Templates
-
-Reusable yaml steps are created within the templates folder, task step format as follows:
-
-```
-steps:
-- task
-  implementation
-- task
-  implementation
-```
-
-To use a template within a yaml file:
-
-```
-- template: /templates/my_template.yml
-  parameters:
-    Parameter1: Value1
-    Parameter2: Value2
+You can specify as many paths as you want. You can also specify a directory which will be searched recursively for any files with the extension `.yaml` or `.yml`.
+```bash
+yamlfmt .
 ```
 
-## Setting up a new pipeline
-
-### Via Azure DevOps CLI
-
-Install the [Azure DevOps CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) and run the following command from this repository:
-
+You can also use an alternate mode that will search paths with doublestar globs by supplying the `-dstar` flag. 
+```bash
+yamlfmt -dstar **/*.{yaml,yml}
 ```
-az pipelines create --name "A name for your pipeline" --yml-path pipelines/pipeline_yaml_file.yml
-```
+See the [doublestar](https://github.com/bmatcuk/doublestar) package for more information on this format.
 
-### Via Azure DevOps web UI
+# Configuration File
 
-1. Navigate to https://dev.azure.com and login with your ONS email
-1. Go to *pipelines*
-1. Click *New pipeline*
-1. Select *GitHub (YAML)*
-1. Select *ONSDigital/blaise-azure-pipelines* repo
-1. Select *Existing Azure Pipelines YAML File*
-1. Select your yaml file in *Path* - If you are working from a branch, update the branch reference accordingly. By default, Azure will always point to the main branch, so this change will not need to be redone after merging.
-1. Save the pipeline
+The `yamlfmt` command can be configured through a yaml file called `.yamlfmt`. This file can live in your working directory, a path specified through a [CLI flag](./docs/command-usage.md#operation-flags), or in the standard global config path on your system (see docs for specifics).
+For in-depth configuration documentation see [Config](docs/config-file.md).
