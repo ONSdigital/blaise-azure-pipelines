@@ -44,11 +44,11 @@ stages:
                 - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
                     - template: /templates/run_tests_with_category.yml
                       parameters:
-                        BehaviourSolutionName: Blaise.Api.Tests.Behaviour
+                        TestSolutionName: Blaise.Api.Tests.Behaviour
                         TestName: REST API smoke tests
                         TestCategory: Smoke
                 - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
                     - template: /templates/run_tests.yml
                       parameters:
-                        BehaviourSolutionName: Blaise.Api.Tests.Behaviour
+                        TestSolutionName: Blaise.Api.Tests.Behaviour
                         TestName: REST API regression tests

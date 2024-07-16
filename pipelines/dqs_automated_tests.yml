@@ -41,11 +41,11 @@ stages:
           - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.DQS.Tests.Behaviour
+                  TestSolutionName: Blaise.DQS.Tests.Behaviour
                   TestName: DQS smoke tests
                   TestCategory: Smoke
           - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
               - template: /templates/run_tests.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.DQS.tests.Behaviour
+                  TestSolutionName: Blaise.DQS.tests.Behaviour
                   TestName: DQS regression tests

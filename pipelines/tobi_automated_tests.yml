@@ -39,11 +39,11 @@ stages:
           - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.TOBI.Tests.Behaviour
+                  TestSolutionName: Blaise.TOBI.Tests.Behaviour
                   TestName: TOBI smoke tests
                   TestCategory: Smoke
           - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
               - template: /templates/run_tests.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.TOBI.tests.Behaviour
+                  TestSolutionName: Blaise.TOBI.tests.Behaviour
                   TestName: TOBI regression tests
