@@ -77,7 +77,7 @@ $blaise_args += "ADMINISTRATORPASSWORD=$BLAISE_ADMINPASS"
 $blaise_args += "INSTALLDIR=$BLAISE_INSTALLDIR"
 $blaise_args += "DEPLOYFOLDER=$BLAISE_DEPLOYFOLDER"
 
-# serverpark roles
+# node roles
 $blaise_args += "MANAGEMENTSERVER=$BLAISE_MANAGEMENTSERVER"
 $blaise_args += "WEBSERVER=$BLAISE_WEBSERVER"
 $blaise_args += "DATAENTRYSERVER=$BLAISE_DATAENTRYSERVER"
@@ -86,6 +86,15 @@ $blaise_args += "RESOURCESERVER=$BLAISE_RESOURCESERVER"
 $blaise_args += "SESSIONSERVER=$BLAISE_SESSIONSERVER"
 $blaise_args += "AUDITTRAILSERVER=$BLAISE_AUDITTRAILSERVER"
 $blaise_args += "CATISERVER=$BLAISE_CATISERVER"
+
+if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
+    Write-Host "Adding additional node roles for Blaise version 5.14 or greater"
+    $blaise_args += "DASHBOARDSERVER=$BLAISE_DASHBOARDSERVER"
+    $blaise_args += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
+    $blaise_args += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
+    $blaise_args += "EVENTSERVER=$BLAISE_EVENTSERVER"
+    $blaise_args += "CARISERVER=$BLAISE_CARISERVER"
+}
 
 Write-Host "blaise_args: $blaise_args"
 
