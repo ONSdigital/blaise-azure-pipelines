@@ -55,6 +55,7 @@ function Get-RequiredRoles {
         Write-Warning "ENV_BLAISE_ROLES environment variable is not set."
         return $null
     }
+    Write-Host "TEST $roleServerShouldHave"
     $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object
     return $roles -join ','
 }
