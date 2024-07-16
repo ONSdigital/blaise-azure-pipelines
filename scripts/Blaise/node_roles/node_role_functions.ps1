@@ -29,7 +29,6 @@ function Parse-CurrentNodeRoles {
         'DASHBOARD' = 'dashboard'
         'DATA' = 'data'
         'DATAENTRY' = 'dataentry'
-        'DASHBOARD' = 'dashboard'
         'EVENT' = 'event'
         'PUBLISH' = 'publish'
         'RESOURCE' = 'resource'
