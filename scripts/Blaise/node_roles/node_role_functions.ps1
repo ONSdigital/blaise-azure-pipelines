@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\..\logging_functions.ps1"
+
 function Get-CurrentNodeRoles {
     try {
         $output = & C:\Blaise5\Bin\ServerManager -lsr | Out-String
@@ -55,7 +57,7 @@ function Get-RequiredRoles {
         Write-Warning "ENV_BLAISE_ROLES environment variable is not set."
         return $null
     }
-    Write-Host "TEST $roleServerShouldHave"
+    LogInfo("TEST $roleServerShouldHave")
     $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object
     return $roles -join ','
 }
