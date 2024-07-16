@@ -33,7 +33,7 @@ stages:
           - template: /templates/download_build_artifact.yml
             parameters:
               Branch: ${{parameters.IntegrationTestsBranch}}
-              ArtifactName: _DqsTests
+              ArtifactName: _AutomatedTests
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'
               PipelineNumber: 43
