@@ -32,11 +32,11 @@ stages:
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
-                      GitBranch: ${{parameters.DeployBranch}}
+                      Branch: ${{parameters.DeployBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
-                      GitBranch: prod
+                      Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
-                      GitBranch: preprod
+                      Branch: preprod
                     ArtifactName: _BlaiseCli
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
