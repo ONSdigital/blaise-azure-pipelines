@@ -50,7 +50,7 @@ stages:
                     LoggingAgent: $($env:ENV_LOGGING_AGENT)
                     MonitoringAgent: $($env:ENV_MONITORING_AGENT)
                     GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
-                - template: /templates/set_blaise_license_key.yml
+                - template: /templates/set_license_key.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
                     BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
