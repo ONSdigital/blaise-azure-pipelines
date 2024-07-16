@@ -1,7 +1,7 @@
 ---
 parameters:
   - name: Branch
-    displayName: Name of the git branch
+    displayName: Name of the Git branch
   - name: ArtifactName
     displayName: Name of the build artifact
   - name: DownloadPath
@@ -18,7 +18,7 @@ steps:
       project: fbaf94f7-2d40-410a-8a27-de142d8d2313
       pipeline: ${{parameters.PipelineNumber}}
       buildVersionToDownload: latestFromBranch
-      branchName: refs/heads/${{parameters.DeployBranch}}
+      branchName: refs/heads/${{parameters.Branch}}
       downloadType: single
       artifactName: ${{parameters.ArtifactName}}
       downloadPath: ${{parameters.DownloadPath}}

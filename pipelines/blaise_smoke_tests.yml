@@ -30,7 +30,7 @@ stages:
           - template: /templates/download_test_questionnaire.yml
           - template: /templates/download_build_artifact.yml
             parameters:
-              GitBranch: ${{parameters.IntegrationTestsBranch}}
+              Branch: ${{parameters.IntegrationTestsBranch}}
               ArtifactName: _BlaiseTests
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'

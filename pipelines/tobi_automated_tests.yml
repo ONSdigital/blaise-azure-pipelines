@@ -31,7 +31,7 @@ stages:
           - template: /templates/set_windows_culture.yml
           - template: /templates/download_build_artifact.yml
             parameters:
-              GitBranch: ${{parameters.IntegrationTestsBranch}}
+              Branch: ${{parameters.IntegrationTestsBranch}}
               ArtifactName: _TobiTests
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'

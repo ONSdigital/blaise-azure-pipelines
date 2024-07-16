@@ -32,11 +32,11 @@ stages:
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
-                      GitBranch: ${{parameters.IntegrationTestsBranch}}
+                      Branch: ${{parameters.IntegrationTestsBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
-                      GitBranch: prod
+                      Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
-                      GitBranch: preprod
+                      Branch: preprod
                     ArtifactName: _RestApiTests
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
