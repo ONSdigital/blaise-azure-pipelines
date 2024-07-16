@@ -1,11 +1,13 @@
 ---
 parameters:
-  BlaiseLicenseKey: ""
-  BlaiseActivationKey: ""
+  BlaiseLicenseKey: ''
+  BlaiseActivationKey: ''
 steps:
   - task: PowerShell@2
     displayName: Set Blaise license key
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/license_key/set_blaise_license_key.ps1
-      arguments: -BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}}
+      filePath: >-
+        $(Agent.BuildDirectory)/s/scripts/blaise/license_key/set_blaise_license_key.ps1
+      arguments: >-
+        -BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}}
         -BLAISE_ACTIVATION_CODE ${{parameters.BlaiseActivationKey}}

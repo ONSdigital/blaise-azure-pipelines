@@ -32,7 +32,7 @@ stages:
           - template: /templates/download_test_questionnaire.yml
           - template: /templates/download_build_artifact.yml
             parameters:
-              GitBranch: ${{parameters.Branch}}
+              GitBranch: ${{parameters.IntegrationTestsBranch}}
               ArtifactName: _DqsTests
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'
