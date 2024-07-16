@@ -23,6 +23,6 @@ try {
     }
 }
 catch {
-    Write-Host "An error occurred while making the request to $Url: $($_.Exception.Message)"
+    Write-Host "An error occurred while making the request to $Url: ${$_.Exception.Message}"
     exit 1
 }
