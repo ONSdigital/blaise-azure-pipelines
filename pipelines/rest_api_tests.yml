@@ -37,7 +37,7 @@ stages:
                       Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
                       Branch: preprod
-                    ArtifactName: _RestApiTests
+                    ArtifactName: _BlaiseRestApi
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 60
