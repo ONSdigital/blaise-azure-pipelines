@@ -38,11 +38,11 @@ stages:
           - ${{ if notin(parameters.Environment, 'dev', 'preprod') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
+                  TestSolutionName: Blaise.CATI.Tests.Behaviour
                   TestName: CATI smoke tests
                   TestCategory: Smoke
           - ${{ if in(parameters.Environment, 'dev', 'preprod') }}:
               - template: /templates/run_tests.yml
                 parameters:
-                  BehaviourSolutionName: Blaise.CATI.Tests.Behaviour
+                  TestSolutionName: Blaise.CATI.Tests.Behaviour
                   TestName: CATI regression tests

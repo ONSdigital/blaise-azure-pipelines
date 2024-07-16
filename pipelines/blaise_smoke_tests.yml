@@ -37,6 +37,6 @@ stages:
               PipelineNumber: 43
           - template: /templates/run_tests_with_category.yml
             parameters:
-              BehaviourSolutionName: Blaise.Tests.Behaviour
+              TestSolutionName: Blaise.Tests.Behaviour
               TestName: Blaise smoke tests
               TestCategory: Smoke
