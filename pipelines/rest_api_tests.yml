@@ -4,7 +4,7 @@ parameters:
     displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: IntegrationTestsBranch
+  - name: DeployBranch
     displayName: Branch to use
     default: main
 trigger: none
@@ -32,7 +32,7 @@ stages:
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
-                      Branch: ${{parameters.IntegrationTestsBranch}}
+                      Branch: ${{parameters.DeployBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
                       Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
