@@ -4,7 +4,7 @@ parameters:
     displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: Branch
+  - name: DeployBranch
     displayName: Branch to use
     default: main
 trigger: none
