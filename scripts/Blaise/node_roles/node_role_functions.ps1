@@ -58,6 +58,8 @@ function Get-RequiredRoles {
         return $null
     }
     LogInfo("TEST $roleServerShouldHave")
+    $rawValue = [System.Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", [System.EnvironmentVariableTarget]::Machine)
+    Write-Host "Raw ENV_BLAISE_ROLES value: $rawValue"
     $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object
     return $roles -join ','
 }
