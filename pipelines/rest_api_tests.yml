@@ -32,7 +32,7 @@ stages:
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
-                      GitBranch: ${{parameters.Branch}}
+                      GitBranch: ${{parameters.IntegrationTestsBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
                       GitBranch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
