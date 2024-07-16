@@ -64,6 +64,7 @@ function Check-NodeHasCorrectRoles {
     if ($null -eq $requiredRoles) { return $false }
 
     $currentRoles = Parse-CurrentNodeRoles
+    Write-Host "Current node roles: $currentRoles"
     if ($null -eq $currentRoles) { return $false }
 
     return $currentRoles -eq $requiredRoles
