@@ -2,12 +2,6 @@
 
 . "$PSScriptRoot\logging_functions.ps1"
 
-param (
-    [Parameter(Mandatory=$true)][string]$LoggingAgent,
-    [Parameter(Mandatory=$true)][string]$MonitoringAgent,
-    [Parameter(Mandatory=$true)][string]$GcpBucket
-)
-
 function Start-ServiceIfNotRunning {
     param([string]$ServiceName)
     $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
