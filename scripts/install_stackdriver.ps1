@@ -50,9 +50,10 @@ function Install-StackdriverAgent {
     $serviceName = "Stackdriver$AgentType"
     try {
         LogInfo("Downloading $AgentType agent installer from $GCP_BUCKET bucket...")
-        $gsutilOutput = gsutil cp "gs://$GCP_BUCKET/$AgentInstaller" $installerPath 2>&1
+        $gsutilCommand = "gsutil cp gs://$GCP_BUCKET/$AgentInstaller `"$installerPath`""
+        $gsutilOutput = Invoke-Expression $gsutilCommand 2>&1
         if ($LASTEXITCODE -ne 0) {
-            throw "gsutil command failed: $gsutilOutput"
+            throw "gsutil command failed with exit code $LASTEXITCODE. Output: $gsutilOutput"
         }
         
         if (!(Test-Path $installerPath)) {
@@ -106,6 +107,7 @@ try {
     exit 0
 }
 catch {
-    LogError("Error during Stackdriver agent install: $_")
+    LogError("Error during Stackdriver agent install: $($_.Exception.Message)")
+    LogError("Stack Trace: $($_.ScriptStackTrace)")
     exit 1
 }
