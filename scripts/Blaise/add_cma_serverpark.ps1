@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 function ServerParkExists {
     param(
         [string] $ServerParkName
@@ -30,7 +32,7 @@ function AddServerPark{
         throw [System.IO.ArgumentException] "No server park name argument provided"
     }
 
-    Write-Host "Add and/or configure server park $ServerParkName to run in disconnected mode with sync surveys set to true"
+    LogInfo("Add and/or configure server park $ServerParkName to run in disconnected mode with sync surveys set to true")
 
     # if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$ServerParkName `
@@ -42,21 +44,23 @@ function AddServerPark{
                                  -user:$env:ENV_BLAISE_ADMIN_USER `
                                  -password:$env:ENV_BLAISE_ADMIN_PASSWORD
 
-    Write-Host "Configured server park $ServerParkName"
+    LogInfo("Configured server park $ServerParkName")
 }
 
 try{
     if(ServerParkExists -ServerParkName:$env:CmaServerParkName) {
-        Write-Host "Server park $env:CmaServerParkName already exists"
+        LogInfo("Server park $env:CmaServerParkName already exists")
     }
     else {
-        Write-Host "Adding and/or configuring server park $env:CmaServerParkName"
+        LogInfo("Adding and/or configuring server park $env:CmaServerParkName")
         AddServerPark -ServerParkName:$env:CmaServerParkName
     }
     
     exit 0
 }
 catch{
-    Write-Host "Adding and/or configuring server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
+    LogError("Adding and/or configuring server park $env:CmaServerParkName failed")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
     exit 1
 }

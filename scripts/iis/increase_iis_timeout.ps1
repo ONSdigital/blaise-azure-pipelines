@@ -1,9 +1,12 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
 . "$PSScriptRoot\iis_timeout_functions.ps1"
 
 try{
     setTimeoutValues
 }
 catch {
-    Write-Host "Error checking/updating IIS timeouts $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+    LogError("Error checking/updating IIS timeouts")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
     exit 1
 }

@@ -6,7 +6,9 @@ function Get-CurrentNodeRoles {
         return $output
     }
     catch {
-        Write-Error "Failed to execute ServerManager: $_"
+        LogError("Failed to run ServerManager")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
         return $null
     }
 }
@@ -54,7 +56,7 @@ function Parse-CurrentNodeRoles {
 function Get-RequiredRoles {
     $roleServerShouldHave = [Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", "Machine")
     if ([string]::IsNullOrEmpty($roleServerShouldHave)) {
-        Write-Warning "ENV_BLAISE_ROLES environment variable is not set"
+        LogError("ENV_BLAISE_ROLES environment variable is not set")
         return $null
     }
     $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object
@@ -63,11 +65,11 @@ function Get-RequiredRoles {
 
 function Check-NodeHasCorrectRoles {
     $requiredRoles = Get-RequiredRoles
-    Write-Host "Required node roles: $requiredRoles"
+    LogInfo("Required node roles: $requiredRoles")
     if ($null -eq $requiredRoles) { return $false }
 
     $currentRoles = Parse-CurrentNodeRoles
-    Write-Host "Current node roles: $currentRoles"
+    LogInfo("Current node roles: $currentRoles")
     if ($null -eq $currentRoles) { return $false }
 
     return $currentRoles -eq $requiredRoles

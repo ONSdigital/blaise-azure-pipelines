@@ -9,7 +9,7 @@ foreach ($userRole in $userRoles)
     $exists = CheckUserRoleExists -userRoleName $userRole.name
 
     If ($exists -ne $true) {
-        throw [System.Exception] "$The user role '$($userRole.name)' was not found"
+        throw [System.Exception] "The user role '$($userRole.name)' was not found"
     }
 
     $getUserRoleResponse = GetUserRole -userRoleName $userRole.name
@@ -18,6 +18,6 @@ foreach ($userRole in $userRoles)
                  ($userRole | ConvertTo-Json -Compress)
 
     If ($roleEqual -ne $true) {
-        throw [System.Exception] "$The user role '$($userRole.name)' was not configured as expected"
+        throw [System.Exception] "The user role '$($userRole.name)' was not configured as expected"
     }
 }

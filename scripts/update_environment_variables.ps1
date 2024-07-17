@@ -1,3 +1,5 @@
+. "$PSScriptRoot\logging_functions.ps1"
+
 function GetMetadataVariables
 {
   $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
@@ -16,17 +18,17 @@ function CreateVariables($variableList)
         if ($variable.Name -Like "BLAISE_*")
         {
             New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-            Write-Host "Script env var - $varName = $varValue"
+            LogInfo("Script env var - $varName = $varValue")
         }
 
         if ($variable.Name -Like "ENV_*")
         {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
-            Write-Host "System env var - $varName = $varValue"
+            LogInfo("System env var - $varName = $varValue")
         }
     }
 }
 
-Write-Host "Setting up script and system environment variables..."
+LogInfo("Setting up script and system environment variables...")
 $metadataVariables = GetMetadataVariables
 CreateVariables($metadataVariables)

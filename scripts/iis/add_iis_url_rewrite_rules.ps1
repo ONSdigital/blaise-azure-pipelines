@@ -1,11 +1,13 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 function CheckIfURLRewriteMsiExists {
     If (Test-Path "C:\dev\data\rewrite_url.msi")
     {
-      Write-Host "Skipping as rewrite URL msi already downloaded..."
+      LogInfo("Skipping as rewrite URL msi already downloaded...")
     }
     else
     {
-      Write-Host "Downloading rewrite_url.msi"
+      LogInfo("Downloading rewrite_url.msi")
       gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
     }
 }
@@ -20,29 +22,30 @@ function AddRewriteRule {
   $existing = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "."
 
   if ($existing){
-      Write-Host "$ruleName already exists"
+      LogInfo("$ruleName already exists")
       return
   }
 
   try{
-    Write-Host "Adding rewrite rule..."
+    LogInfo("Adding rewrite rule...")
 
     Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundrules" -name "." -value @{name=$ruleName}
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 
-    Write-Host "$ruleName rule applied"
+    LogInfo("$ruleName rule applied")
   }
   catch{
-    Write-Host "URL rewrite rules have not been applied"
-    Write-Host $_.Exception.Message   
-      exit 1
+    LogError("URL rewrite rules have not been applied")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
+    exit 1
   }
 }
 
 CheckIfURLRewriteMsiExists
-Write-Host "Installing rewrite_url.msi..."
+LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
 AddRewriteRule -siteName "Blaise" -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"

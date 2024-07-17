@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 $CmaInstrumentPath = $env:CmaInstrumentPath
 $CmaMultiPackage = $env:CmaMultiPackage
 $CmaServerParkName = $env:CmaServerParkName
@@ -49,10 +51,10 @@ function Expand-ZipFile {
     )
 
     if (-not (Test-FileExists -FilePath $FilePath)) {
-        throw "File '$FilePath' does not exist."
+        throw "File '$FilePath' does not exist"
     }
 
-    Write-Host "Unzipping '$FilePath' to '$DestinationPath'"
+    LogInfo("Unzipping '$FilePath' to '$DestinationPath'")
     Expand-Archive -LiteralPath $FilePath -DestinationPath $DestinationPath -Force
 }
 
@@ -68,10 +70,10 @@ function Install-PackageViaServerManager {
     )
 
     if (-not (Test-FileExists -FilePath $FilePath)) {
-        throw "File '$FilePath' does not exist."
+        throw "File '$FilePath' does not exist"
     }
 
-    Write-Host "Installing package '$FilePath' into server park '$ServerParkName' via Server Manager"
+    LogInfo("Installing package '$FilePath' into server park '$ServerParkName' via Server Manager")
     & "C:\blaise5\bin\servermanager.exe" -installsurvey:$FilePath `
         -serverpark:$ServerParkName `
         -binding:http `
@@ -92,16 +94,16 @@ function Install-PackageViaBlaiseCli {
     )
 
     if (-not (Test-FileExists -FilePath $FilePath)) {
-        throw "File '$FilePath' does not exist."
+        throw "File '$FilePath' does not exist"
     }
 
     $InstrumentName = [System.IO.Path]::GetFileNameWithoutExtension($FilePath)
-    Write-Host "Installing package '$InstrumentName' from '$FilePath' into server park '$ServerParkName' via Blaise CLI"
+    LogInfo("Installing package '$InstrumentName' from '$FilePath' into server park '$ServerParkName' via Blaise CLI")
     & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath
 }
 
 try {
-    Write-Host "Unzipping CMA multi-package '$CmaMultiPackage' to '$CmaInstrumentPath'"
+    LogInfo("Unzipping CMA multi-package '$CmaMultiPackage' to '$CmaInstrumentPath'")
     Expand-ZipFile -FilePath "$CmaInstrumentPath\$CmaMultiPackage" -DestinationPath $CmaInstrumentPath
 
     # Install the "CMA" package via Server Manager as it does not use a data interface / database
@@ -111,19 +113,20 @@ try {
     $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
     foreach ($Instrument in $InstrumentList) {
         if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
-            Write-Host "Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping..."
+            LogInfo("Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping...")
         }
         else {
             Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
         }
     }
 
-    Write-Host "Removing CMA working folder '$CmaInstrumentPath'"
+    LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
     Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
 }
 catch {
-    Write-Error "Installing CMA packages failed: $($_.Exception.Message)"
-    Write-Error "$($_.ScriptStackTrace)"
+    LogError("Installing CMA packages failed")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
     exit 1
 }
  
