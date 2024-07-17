@@ -1,5 +1,11 @@
 # to do - change agent version if installed version doesn't match
 
+param (
+    [string]$LoggingAgent,
+    [string]$MonitoringAgent,
+    [string]$GCP_BUCKET
+)
+
 . "$PSScriptRoot\logging_functions.ps1"
 
 function Start-ServiceIfNotRunning {
@@ -75,8 +81,6 @@ function Install-StackdriverAgent {
 
 try {
     LogInfo("Starting Stackdriver agent install...")
-
-    param ([string]$LoggingAgent, [string]$MonitoringAgent, [string]$GCP_BUCKET)
     
     if ([string]::IsNullOrEmpty($LoggingAgent) -or [string]::IsNullOrEmpty($MonitoringAgent) -or [string]::IsNullOrEmpty($GCP_BUCKET)) {
         throw "One or more required parameters are missing. Please ensure LoggingAgent, MonitoringAgent, and GCP_BUCKET are provided."
