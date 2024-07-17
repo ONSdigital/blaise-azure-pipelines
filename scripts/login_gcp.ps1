@@ -1,2 +1,2 @@
-Write-Host "GCP Login with compute service account"
+Write-Host "Logging into GCP with VM service account"
 gcloud auth login $env:ENV_VM_SERVICEACCOUNT

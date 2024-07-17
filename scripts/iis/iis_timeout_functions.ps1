@@ -22,7 +22,7 @@ function setTimeoutValues{
             Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
             }
             catch{
-                Write-Host "Could not set session state time-out"
+                Write-Host "Could not set IIS session state timeout"
                 Write-Host $_.ScriptStackTrace
                 exit 1
             }
@@ -30,15 +30,15 @@ function setTimeoutValues{
                 Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value $expectedTimeout
             }
             catch{
-                Write-Host "Could not set IIS idle time-out"
+                Write-Host "Could not set IIS idle timeout"
                 Write-Host $_.ScriptStackTrace
                 exit 1
             }
-            Write-Host "Changes made to timeouts - Restart required"
+            Write-Host "IIS timeout changes made, restarting BlaiseAppPool..."
             Restart-WebAppPool BlaiseAppPool
             Write-Host "BlaiseAppPool has been restarted"
         }
         else {
-            Write-Host "No changes necessary to timeouts - Restart not required"
+            Write-Host "IIS timeout changes already applied"
         }
 }

@@ -52,7 +52,7 @@ function Expand-ZipFile {
         throw "File '$FilePath' does not exist."
     }
 
-    Write-Host "Expanding zip file '$FilePath' to '$DestinationPath'"
+    Write-Host "Unzipping '$FilePath' to '$DestinationPath'"
     Expand-Archive -LiteralPath $FilePath -DestinationPath $DestinationPath -Force
 }
 
@@ -101,7 +101,7 @@ function Install-PackageViaBlaiseCli {
 }
 
 try {
-    Write-Host "Unzipping CMA multi-package '$CmaMultiPackage'"
+    Write-Host "Unzipping CMA multi-package '$CmaMultiPackage' to '$CmaInstrumentPath'"
     Expand-ZipFile -FilePath "$CmaInstrumentPath\$CmaMultiPackage" -DestinationPath $CmaInstrumentPath
 
     # Install the "CMA" package via Server Manager as it does not use a data interface / database
@@ -111,7 +111,7 @@ try {
     $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
     foreach ($Instrument in $InstrumentList) {
         if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
-            Write-Host "Instrument '$Instrument' already installed on server park '$CmaServerParkName' - skipping installation"
+            Write-Host "Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping..."
         }
         else {
             Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"

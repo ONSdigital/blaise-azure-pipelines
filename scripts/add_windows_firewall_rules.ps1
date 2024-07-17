@@ -59,7 +59,7 @@ try {
     }
     else
     {
-        Write-Host "Firewall rules do not exist, creating them..."
+        Write-Host "Firewall rules missing, creating them..."
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Outbound" -Ports:$Outbound_Ports -PortType:"RemotePort"
     }

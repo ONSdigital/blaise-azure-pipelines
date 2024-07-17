@@ -13,7 +13,7 @@ if ([string]::IsNullOrEmpty($CurrentNode) -or
     [string]::IsNullOrEmpty($BlaiseAdminPassword) -or
     [string]::IsNullOrEmpty($BlaiseServerParkName) -or
     [string]::IsNullOrEmpty($BlaiseCmaServerParkName)) {
-    Write-Host "Required environment variables are not set."
+    Write-Host "Required environment variables are not set"
     exit 1
 }
 
@@ -23,7 +23,7 @@ function Register-Node {
     )
     $RetryCount = 0
     do {
-        Write-Host "Registering node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark'."
+        Write-Host "Registering node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark'"
         c:\blaise5\bin\servermanager.exe -addserverparkserver:$CurrentNode `
             -server:$BlaiseManagementNode `
             -user:$BlaiseAdminUser `
@@ -35,20 +35,20 @@ function Register-Node {
             -logicalroot:default `
             -binding:http `
             -port:$BlaiseConnectionPort
-        Write-Host "Attempt to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' completed."
+        Write-Host "Attempt to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' completed"
 
         $DidNodeRegister = Check-NodeRegistered -ServerPark $ServerPark
         if ($DidNodeRegister) {
-            Write-Host "Node '$CurrentNode' is registered on management node '$BlaiseManagementNode' for server park '$ServerPark'."
+            Write-Host "Node '$CurrentNode' is registered on management node '$BlaiseManagementNode' for server park '$ServerPark'"
             break
         } else {
-            Write-Host "Node '$CurrentNode' is not registered on management node '$BlaiseManagementNode' for server park '$ServerPark'. Retrying in 5 seconds..."
+            Write-Host "Node '$CurrentNode' is not registered on management node '$BlaiseManagementNode' for server park '$ServerPark', retrying in 5 seconds..."
             Start-Sleep -Seconds 5
             $RetryCount++
         }
     } while ($RetryCount -lt 3)
     if (-not $DidNodeRegister) {
-        Write-Host "Failed to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' after 3 retries."
+        Write-Host "Failed to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' after 3 retries"
         exit 1
     }
 }
@@ -69,7 +69,7 @@ try {
     Register-Node -ServerPark:$BlaiseServerParkName
     Register-Node -ServerPark:$BlaiseCmaServerParkName
 } catch {
-    Write-Host "Error registering node."
+    Write-Host "Error registering node"
     Write-Host "Error message: $($_.Exception.Message)"
     Write-Host "Script stack trace: $($_.ScriptStackTrace)"
     exit 1

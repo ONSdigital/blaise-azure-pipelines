@@ -20,15 +20,8 @@ function Test-ServiceExists {
 }
 
 function Uninstall-OpsAgent {
-    Write-Host "Attempting to uninstall Ops Agent..."
+    Write-Host "Uninstalling Google ops agent..."
     googet -noconfirm remove google-cloud-ops-agent
-}
-
-function Uninstall-StackDriverLogging {
-    if (Test-ServiceExists 'StackdriverLogging') {
-        Write-Host "Stopping StackdriverLogging service"
-        Stop-Service -Name StackdriverLogging -Force
-    }
 }
 
 function Install-StackDriverAgent {
@@ -37,7 +30,7 @@ function Install-StackDriverAgent {
         [string]$AgentFileName,
         [string]$InstallPath
     )
-    Write-Host "Downloading Stackdriver $AgentType agent installer from '$GCP_BUCKET'..."
+    Write-Host "Downloading Stackdriver $AgentType agent installer from $GCP_BUCKET bucket..."
     $localPath = Join-Path 'C:\dev\data' $AgentFileName
     gsutil cp "gs://$GCP_BUCKET/$AgentFileName" $localPath
 

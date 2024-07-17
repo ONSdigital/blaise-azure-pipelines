@@ -16,13 +16,13 @@ function CreateVariables($variableList)
         if ($variable.Name -Like "BLAISE_*")
         {
             New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-            Write-Host "Script Env Var - $varName = $varValue"
+            Write-Host "Script env var - $varName = $varValue"
         }
 
         if ($variable.Name -Like "ENV_*")
         {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
-            Write-Host "System Env Var - $varName = $varValue"
+            Write-Host "System env var - $varName = $varValue"
         }
     }
 }

@@ -54,7 +54,7 @@ function Parse-CurrentNodeRoles {
 function Get-RequiredRoles {
     $roleServerShouldHave = [Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", "Machine")
     if ([string]::IsNullOrEmpty($roleServerShouldHave)) {
-        Write-Warning "ENV_BLAISE_ROLES environment variable is not set."
+        Write-Warning "ENV_BLAISE_ROLES environment variable is not set"
         return $null
     }
     $roles = $roleServerShouldHave.Split(',') | ForEach-Object { $_.Trim() } | Sort-Object

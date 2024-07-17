@@ -3,7 +3,7 @@ param(
 )
 
 if (-not $Url) {
-    Write-Host "URL is not provided. Please set TESTING_URL environment variable or pass the URL as a parameter."
+    Write-Host "URL not provided, set TESTING_URL env var or pass as parameter"
     exit 1
 }
 
@@ -18,12 +18,12 @@ try {
         Write-Host "$hostname responded with status code $statusCode"
     }
     else {
-        Write-Host "$hostname has issues: Status code $statusCode"
+        Write-Host "$hostname has issues, status code $statusCode"
         exit 1
     }
 }
 catch {
     $errorMessage = $_.Exception.Message
-    Write-Host "An error occurred while making the request to $Url`: $errorMessage"
+    Write-Host "An error occurred while making the request to $Url - $errorMessage"
     exit 1
 }
