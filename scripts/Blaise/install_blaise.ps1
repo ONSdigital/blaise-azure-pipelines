@@ -21,7 +21,7 @@ function CreateVariables1($variableList)
       $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
       $varValue = ($varDefinition -replace $pattern, '$3')
       New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-      Write-Host "Script Env Var - $varName = $varValue"
+      Write-Host "Script env var - $varName = $varValue"
     }
   }
 }
@@ -39,25 +39,18 @@ CreateVariables1($metadataVariables)
 # INSTALL BLAISE
 #################
 
-LogInfo("Installing Blaise version: $env:ENV_BLAISE_CURRENT_VERSION")
+LogInfo("Installing Blaise $env:ENV_BLAISE_CURRENT_VERSION")
 
-Write-Host "LICENSEE: $BLAISE_LICENSEE"
-Write-Host "INSTALLDIR: $BLAISE_INSTALLDIR"
-Write-Host "DEPLOYFOLDER: $BLAISE_DEPLOYFOLDER"
-Write-Host "SERVERPARK: $BLAISE_SERVERPARK"
-Write-Host "GCP_BUCKET: $BLAISE_GCP_BUCKET"
-
-Write-Host "Download Blaise redistributables from '$BLAISE_GCP_BUCKET'"
+Write-Host "Downloading Blaise installer $env:ENV_BLAISE_INSTALL_PACKAGE from $BLAISE_GCP_BUCKET bucket..."
 gsutil cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
-# unzip blaise installer
 $folderPath = "c:\dev\data\Blaise"
-Write-Host "Expanding archive to 'Blaise' dir"
+Write-Host "Unzipping Blaise installer to 'C:\dev\data\Blaise\' folder..."
 Remove-Item $folderPath -Recurse -ErrorAction Ignore
 mkdir $folderPath
 Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 
-Write-Host "Setting Blaise install args"
+Write-Host "Setting Blaise install args..."
 $blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise5-install.log","/i C:\dev\data\Blaise\Blaise5.msi"
 $blaise_args += "FORCEINSTALL=1"
 $blaise_args += "USERNAME=`"ONS-USER`""
@@ -98,7 +91,7 @@ if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
 
 Write-Host "blaise_args: $blaise_args"
 
-Write-Host "Running msiexec"
+Write-Host "Running Blaise installer via msiexec..."
 Start-Process -Wait "msiexec" -ArgumentList $blaise_args
 
-Write-Host "Blaise installation complete"
+Write-Host "Blaise $env:ENV_BLAISE_CURRENT_VERSION installed"

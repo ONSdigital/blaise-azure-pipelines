@@ -21,7 +21,7 @@ function ServerParkExists {
 
     return $true
 }
-function AddServerpark{
+function AddServerPark{
     param(
         [string] $ServerParkName
     )
@@ -30,9 +30,9 @@ function AddServerpark{
         throw [System.IO.ArgumentException] "No server park name argument provided"
     }
 
-    Write-Host "Add and/or configure server park '$ServerParkName' to run in disconnected mode with sync surveys set to true"
+    Write-Host "Add and/or configure server park $ServerParkName to run in disconnected mode with sync surveys set to true"
 
-    #if the serverpark exists this will update the existing one
+    # if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$ServerParkName `
                                  -runmode:disconnected `
                                  -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
@@ -42,21 +42,21 @@ function AddServerpark{
                                  -user:$env:ENV_BLAISE_ADMIN_USER `
                                  -password:$env:ENV_BLAISE_ADMIN_PASSWORD
 
-    Write-Host "Configured server park '$ServerParkName'"
+    Write-Host "Configured server park $ServerParkName"
 }
 
 try{
     if(ServerParkExists -ServerParkName:$env:CmaServerParkName) {
-        Write-Host "Serverpark $env:CmaServerParkName already exists"
+        Write-Host "Server park $env:CmaServerParkName already exists"
     }
     else {
-        Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName"
-        AddServerpark -ServerParkName:$env:CmaServerParkName
+        Write-Host "Adding and/or configuring server park $env:CmaServerParkName"
+        AddServerPark -ServerParkName:$env:CmaServerParkName
     }
     
     exit 0
 }
 catch{
-    Write-Host "Adding and/or configuring CMA server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
+    Write-Host "Adding and/or configuring server park $env:CmaServerParkName failed: $($_.ScriptStackTrace)"
     exit 1
 }

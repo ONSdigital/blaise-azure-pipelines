@@ -64,7 +64,7 @@ function Upgrade-Blaise {
     Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
 }
 
-Write-Host "Upgrading Blaise to version: $env:ENV_BLAISE_CURRENT_VERSION"
+Write-Host "Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION"
 
 Download-BlaiseInstaller
 Unzip-BlaiseInstaller

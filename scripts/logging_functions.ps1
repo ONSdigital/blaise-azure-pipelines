@@ -1,4 +1,4 @@
-$source = "AzurePipeline"
+$source = "AzureDevOpsPipeline"
 
 function LogInfo {
     param (

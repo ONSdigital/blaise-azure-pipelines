@@ -9,13 +9,13 @@ function SetBlaiseLicenseViaRegistry {
 
         if ($licenseInfo.LicenseKey -eq $Blaise_License_Key)
         {
-            Write-Host "Serial number is correct: $($Blaise_License_Key)"
+            Write-Host "License key is correct: $($Blaise_License_Key)"
         }
         else
         {
-            Write-Host "Serial number is out of date"
+            Write-Host "License key is out of date, updating..."
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $Blaise_License_Key
-            Write-Host "Serial number updated to: $($Blaise_License_Key)"
+            Write-Host "License key updated to: $($Blaise_License_Key)"
         }
 
         if ($activationInfo.ActivationCode -eq $Blaise_Activation_Code)
@@ -24,7 +24,7 @@ function SetBlaiseLicenseViaRegistry {
         }
         else
         {
-            Write-Host "Activation code is out of date"
+            Write-Host "Activation code is out of date, updating..."
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $Blaise_Activation_Code
             Write-Host "Activation code updated to: $($Blaise_Activation_Code)"
         }

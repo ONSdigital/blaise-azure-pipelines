@@ -6,18 +6,17 @@ function CreateDataInterfaceFile {
     try {
         if (Test-Path $filePath)
         {
-            Write-Host "$filePath already exists"
+            Write-Host "Data interface file $filePath already exists"
             return $false
         }
         else {
-            #Create data interface
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
-            Write-Host "Created $applicationType Data Interface File"
+            Write-Host "Created $applicationType data interface file"
             return $true
         }
     }
     catch {
-        Write-Host "Error occured Creating $filePath data interface: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Host "Error occured creating $filePath data interface file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -28,23 +27,21 @@ function RegisterDataInterfaceFile {
         [string] $registerCommand
     )
     try {
-        #Get a list of all configuration settings for Blaise
         $configurationSettings = ListOfConfigurationSettings
 
         if ($configurationSettings.contains($filePath))
         {
-            Write-Host "$filePath is already registered"
+            Write-Host "Data interface file $filePath already registered"
             return $false
         }
         else {
-            #register data interface
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
-            Write-Host "$filePath registered"
+            Write-Host "Data interface file $filePath registered"
             return $true
         }
     }
     catch {
-        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Host "Error occured registering $filePath data interface file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 }
@@ -63,7 +60,7 @@ function RegisterDatainterfaceViaXML {
 "@
 
         if($xml.InnerXml.Contains($filePath)){
-            Write-Host "$filePath database is already set"
+            Write-Host "$filePath data interface xml file already registered"
             return $false
         }
         else
@@ -74,12 +71,12 @@ function RegisterDatainterfaceViaXML {
             $node.AppendChild($xmlFragment)
 
             $xml.Save($configFile)
-            Write-Host "$filePath database has been set"
+            Write-Host "$filePath data interface xml file registered"
             return $true
         }
     }
     catch{
-        Write-Host "Error occured updating $filePath database to mysql: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        Write-Host "Error occured registering $filePath data interface xml file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
         exit 1
     }
 

@@ -1,4 +1,3 @@
-    # Service Name paramater
     param($ServiceName)
 
     if (Get-Service $ServiceName -ErrorAction SilentlyContinue)
@@ -9,22 +8,21 @@
 
         if ($serviceStatus -eq "Running")
         {
-	    Write-Host "Service $ServiceName is in the state $serviceStatus, will attempt to stop"
+	    Write-Host "Windows service $ServiceName is $serviceStatus"
 
             Stop-Service $ServiceName
-            Write-Host "Stopping $ServiceName service..."
-            " ---------------------- "
+            Write-Host "Stopping Windows service $ServiceName..."
             Start-Sleep 10
 
             $arrService_current = Get-Service -Name $ServiceName
 
             if ($arrService_current.Status -eq "Running")
             {
-                Write-Host "Stopping $ServiceName service failed, kill the proces task"
+                Write-Host "Stopping Windows service $ServiceName failed, killing the process task..."
                 taskkill /f /pid (get-cimobject win32_service | Where-Object { $_.name -eq $ServiceName}).processID
             }
 
-            Write-Host "Service $ServiceName has been stopped"
+            Write-Host "Windows service $ServiceName has been stopped, deleting..."
             sc.exe delete $ServiceName
 
             return
@@ -32,7 +30,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "StartPending"))
         {
-		       Write-Host "Service $arrService is in the state $serviceStatus, will attempt to stop process and delete service"
+		       Write-Host "Windows service $arrService is $serviceStatus, deleting..."
 
                Stop-Process -Name $ServiceName -Force
                sc.exe delete $ServiceName
@@ -42,7 +40,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "Stopped"))
         {
-		    Write-Host "Service $arrService is in the state $serviceStatus, will attempt to delete service"
+		    Write-Host "Windows service $arrService is $serviceStatus, deleting..."
 
              sc.exe delete $ServiceName
 
@@ -52,5 +50,5 @@
         }
     else
     {
-        Write-Host "Service doesn't exist"
+        Write-Host "Windows service $ServiceName doesn't exist"
     }

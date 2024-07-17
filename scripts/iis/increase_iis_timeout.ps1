@@ -4,6 +4,6 @@ try{
     setTimeoutValues
 }
 catch {
-    Write-Host "Error checking/updating IIS timeouts. $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+    Write-Host "Error checking/updating IIS timeouts $($_.Exception.Message) at: $($_.ScriptStackTrace)"
     exit 1
 }

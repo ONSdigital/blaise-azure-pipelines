@@ -6,7 +6,7 @@ if (!$Blaise) {
 }
 else {
     $BlaiseVersion = $Blaise.DisplayVersion
-    Write-Host "Blaise version $BlaiseVersion is installed"
+    Write-Host "Blaise $BlaiseVersion installed"
     if ($Blaise.DisplayVersion -eq $env:ENV_BLAISE_CURRENT_VERSION) {
         "Blaise is already on the correct version"
     }
