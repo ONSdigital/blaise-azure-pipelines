@@ -1,3 +1,5 @@
+# to do - change agent version if installed version doesn't match
+
 . "$PSScriptRoot\logging_functions.ps1"
 
 param (
@@ -57,7 +59,7 @@ function Install-StackdriverAgent {
         Start-Process -Wait $installerPath -ArgumentList $installArgs
 
         if (Test-ServiceExists $serviceName) {
-            LogInfo("$AgentType agent installed successfully"
+            LogInfo("$AgentType agent installed successfully")
             Remove-Item $installerPath -Force
         } else {
             throw "Service $serviceName not found after installation"
