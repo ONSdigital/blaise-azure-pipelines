@@ -38,13 +38,13 @@ function Install-StackdriverAgent {
     param(
         [string]$AgentType,
         [string]$AgentInstaller,
-        [string]$GcpBucket
+        [string]$GCP_BUCKET
     )
     $installerPath = "C:\dev\data\$AgentInstaller"
     $serviceName = "Stackdriver$AgentType"
     try {
-        LogInfo("Downloading $AgentType agent installer from $GcpBucket bucket...")
-        $gsutilOutput = gsutil cp "gs://$GcpBucket/$AgentInstaller" $installerPath 2>&1
+        LogInfo("Downloading $AgentType agent installer from $GCP_BUCKET bucket...")
+        $gsutilOutput = gsutil cp "gs://$GCP_BUCKET/$AgentInstaller" $installerPath 2>&1
         if ($LASTEXITCODE -ne 0) {
             throw "gsutil command failed: $gsutilOutput"
         }
@@ -75,10 +75,11 @@ function Install-StackdriverAgent {
 
 try {
     LogInfo("Starting Stackdriver agent install...")
+
+    param ([string]$LoggingAgent, [string]$MonitoringAgent, [string]$GCP_BUCKET)
     
-    # Validate input parameters
-    if ([string]::IsNullOrEmpty($LoggingAgent) -or [string]::IsNullOrEmpty($MonitoringAgent) -or [string]::IsNullOrEmpty($GcpBucket)) {
-        throw "One or more required parameters are missing. Please ensure LoggingAgent, MonitoringAgent, and GcpBucket are provided."
+    if ([string]::IsNullOrEmpty($LoggingAgent) -or [string]::IsNullOrEmpty($MonitoringAgent) -or [string]::IsNullOrEmpty($GCP_BUCKET)) {
+        throw "One or more required parameters are missing. Please ensure LoggingAgent, MonitoringAgent, and GCP_BUCKET are provided."
     }
 
     if (Test-ServiceExists 'google-cloud-ops-agent') {
@@ -86,13 +87,13 @@ try {
     }
 
     if (-not (Test-ServiceExists 'StackdriverLogging')) {
-        Install-StackdriverAgent 'Logging' $LoggingAgent $GcpBucket
+        Install-StackdriverAgent 'Logging' $LoggingAgent $GCP_BUCKET
     } else {
         LogInfo("Stackdriver logging agent already installed")
     }
 
     if (-not (Test-ServiceExists 'StackdriverMonitoring')) {
-        Install-StackdriverAgent 'Monitoring' $MonitoringAgent $GcpBucket
+        Install-StackdriverAgent 'Monitoring' $MonitoringAgent $GCP_BUCKET
     } else {
         LogInfo("Stackdriver monitoring agent already installed")
     }
