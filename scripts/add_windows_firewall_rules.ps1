@@ -11,12 +11,12 @@ function SetFirewallRules
     if ($PortType -eq "LocalPort")
     {
         New-NetFirewallRule -DisplayName $RuleName -Direction $Direction -LocalPort $Ports -Protocol TCP -Action Allow
-        Write-Host "$RuleName $Direction firewall rule created with the following Local ports: $Ports"
+        Write-Host "$RuleName $Direction firewall rule created with the following local ports: $Ports"
     }
     if ($PortType -eq "RemotePort")
     {
         New-NetFirewallRule -DisplayName $RuleName -Direction $Direction -RemotePort $Ports -Protocol TCP -Action Allow
-        Write-Host "$RuleName $Direction firewall rule created with the following Remote ports: $Ports"
+        Write-Host "$RuleName $Direction firewall rule created with the following remote ports: $Ports"
     }
 }
 
@@ -59,7 +59,7 @@ try {
     }
     else
     {
-        Write-Host "No Firewall rule exists, Creating them"
+        Write-Host "Firewall rules do not exist, creating them..."
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Inbound" -Ports:$Inbound_Ports -PortType:"LocalPort"
         SetFirewallRules -RuleName:"$RuleName" -Direction:"Outbound" -Ports:$Outbound_Ports -PortType:"RemotePort"
     }
