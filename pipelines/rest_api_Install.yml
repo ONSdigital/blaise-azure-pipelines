@@ -34,7 +34,7 @@ stages:
             preDeploy:
               steps:
                 - checkout: self
-                - template: /templates/remove_from_instance_group.yml
+                - template: /templates/remove_vm_from_instance_group.yml
                   parameters:
                     instancegroup: restapi-group
                     zone: europe-west2-a

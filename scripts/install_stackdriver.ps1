@@ -1,64 +1,97 @@
-param ([string]$loggingagent, [string]$monitoringagent, [string]$GCP_BUCKET)
+. "$PSScriptRoot\logging_functions.ps1"
 
-function Start_Service_If_Not_Running($ServiceName) {
-    $service = Get-Service -Name $ServiceName
+param (
+    [Parameter(Mandatory=$true)][string]$LoggingAgent,
+    [Parameter(Mandatory=$true)][string]$MonitoringAgent,
+    [Parameter(Mandatory=$true)][string]$GcpBucket
+)
 
-    if ($service.Status -ne 'Running') {
+function Start-ServiceIfNotRunning {
+    param([string]$ServiceName)
+    $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    if ($service -and $service.Status -ne 'Running') {
         Start-Service $service
+        LogInfo("Started service: $ServiceName")
     }
 }
 
-function Check_Service_Exists($ServiceName) {
-    if (Get-Service $ServiceName -ErrorAction SilentlyContinue) {
-        return $TRUE
+function Test-ServiceExists {
+    param([string]$ServiceName)
+    return [bool](Get-Service $ServiceName -ErrorAction SilentlyContinue)
+}
+
+function Uninstall-OpsAgent {
+    LogInfo("Uninstalling Google ops agent...")
+    try {
+        googet -noconfirm remove google-cloud-ops-agent
+        LogInfo("Google ops agent uninstalled successfully")
     }
-    return $FALSE
-}
-
-function Uninstall_Ops_Agent() {
-    Write-Host "Attempting to uninstall Ops Agent..."
-    googet -noconfirm remove google-cloud-ops-agent
-}
-
-
-function Uninstall_StackDriver_Logging() {
-    if (Check_Service_Exists StackdriverLogging) {
-        Write-Host "Stopping StackdriverLogging service"
-        Stop-Service -Name StackdriverLogging
+    catch {
+        LogError("Error uninstalling Google ops agent: $_")
     }
 }
 
-function Install_StackDriver_Logging($loggingagent, $GCP_BUCKET) {
-    Write-Host "Downloading Stackdriver logging agent installer from '$GCP_BUCKET'..."
-    gsutil cp gs://$GCP_BUCKET/$loggingagent "C:\dev\data\$($loggingagent)"
-
-    Write-Host "Installing Stackdriver logging agent..."
-    $logging_args = "/S /D='C:\Program Files (x86)\stackdriver\loggingAgent'"
-    Start-Process -Wait "C:\dev\data\$($loggingagent)" -ArgumentList $logging_args
+function Uninstall-StackdriverLogging {
+    if (Test-ServiceExists 'StackdriverLogging') {
+        LogInfo("Stopping StackdriverLogging service")
+        Stop-Service -Name StackdriverLogging -ErrorAction Stop
+    }
 }
 
-function Install_StackDriver_Monitoring($monitoringagent, $GCP_BUCKET) {
-    Write-Host "Downloading Stackdriver monitoring agent installer from '$($GCP_BUCKET)'..."
-    gsutil cp gs://$GCP_BUCKET/$monitoringagent "C:\dev\data\$($monitoringagent)"
+function Install-StackdriverAgent {
+    param(
+        [string]$AgentType,
+        [string]$AgentInstaller,
+        [string]$GcpBucket
+    )
 
-    Write-Host "Installing Stackdriver monitoring agent..."
-    $monitoring_args = "/S /D='C:\Program Files (x86)\stackdriver\monitoringAgent'"
-    Start-Process -Wait "C:\dev\data\$($monitoringagent)" -ArgumentList $monitoring_args
+    $installerPath = "C:\dev\data\$AgentInstaller"
+    $serviceName = "Stackdriver$AgentType"
+
+    try {
+        LogInfo("Downloading $AgentType agent installer from $GcpBucket bucket...")
+        gsutil cp "gs://$GcpBucket/$AgentInstaller" $installerPath
+
+        LogInfo("Installing $AgentType agent...")
+        $installArgs = "/S /D=`"C:\Program Files (x86)\stackdriver\${AgentType}Agent`""
+        Start-Process -Wait $installerPath -ArgumentList $installArgs
+
+        if (Test-ServiceExists $serviceName) {
+            LogInfo("$AgentType agent installed successfully"
+            Remove-Item $installerPath -Force
+        } else {
+            throw "Service $serviceName not found after installation"
+        }
+    }
+    catch {
+        LogError("Error installing $AgentType agent: $_")
+        throw
+    }
 }
 
-Write-Host "Target logging agent is: $($loggingagent)"
-Write-Host "Target monitoring agent is: $($monitoringagent)"
-Write-Host "GCP artifact bucket is: $($GCP_BUCKET)"
+try {
+    LogInfo("Starting Stackdriver agent install...")
 
-if (Check_Service_Exists google-cloud-ops-agent) {
-    Uninstall_Ops_Agent
+    if (Test-ServiceExists 'google-cloud-ops-agent') {
+        Uninstall-OpsAgent
+    }
+
+    if (-not (Test-ServiceExists 'StackdriverLogging')) {
+        Install-StackdriverAgent 'Logging' $LoggingAgent $GcpBucket
+    } else {
+        LogInfo("Stackdriver logging agent already installed")
+    }
+
+    if (-not (Test-ServiceExists 'StackdriverMonitoring')) {
+        Install-StackdriverAgent 'Monitoring' $MonitoringAgent $GcpBucket
+    } else {
+        LogInfo("Stackdriver monitoring agent already installed")
+    }
+
+    LogInfo("Stackdriver agent install completed successfully")
+    exit 0
 }
-
-if (-not (Check_Service_Exists StackdriverLogging)) {
-    Install_StackDriver_Logging $loggingagent $GCP_BUCKET
+catch {
+    LogError("Error during Stackdriver agent install: $_")
+    exit 1
 }
-
-if (-not (Check_Service_Exists StackdriverMonitoring)) {
-    Install_StackDriver_Monitoring $monitoringagent $GCP_BUCKET
-}
-
