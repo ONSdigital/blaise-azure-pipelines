@@ -40,17 +40,25 @@ function Install-StackdriverAgent {
         [string]$AgentInstaller,
         [string]$GcpBucket
     )
-
     $installerPath = "C:\dev\data\$AgentInstaller"
     $serviceName = "Stackdriver$AgentType"
-
     try {
         LogInfo("Downloading $AgentType agent installer from $GcpBucket bucket...")
-        gsutil cp "gs://$GcpBucket/$AgentInstaller" $installerPath
+        $gsutilOutput = gsutil cp "gs://$GcpBucket/$AgentInstaller" $installerPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "gsutil command failed: $gsutilOutput"
+        }
+        
+        if (!(Test-Path $installerPath)) {
+            throw "Installer not found at $installerPath after download attempt"
+        }
 
         LogInfo("Installing $AgentType agent...")
         $installArgs = "/S /D=`"C:\Program Files (x86)\stackdriver\${AgentType}Agent`""
-        Start-Process -Wait $installerPath -ArgumentList $installArgs
+        $processInfo = Start-Process -FilePath $installerPath -ArgumentList $installArgs -Wait -PassThru
+        if ($processInfo.ExitCode -ne 0) {
+            throw "Installation process exited with code $($processInfo.ExitCode)"
+        }
 
         if (Test-ServiceExists $serviceName) {
             LogInfo("$AgentType agent installed successfully")
@@ -67,6 +75,11 @@ function Install-StackdriverAgent {
 
 try {
     LogInfo("Starting Stackdriver agent install...")
+    
+    # Validate input parameters
+    if ([string]::IsNullOrEmpty($LoggingAgent) -or [string]::IsNullOrEmpty($MonitoringAgent) -or [string]::IsNullOrEmpty($GcpBucket)) {
+        throw "One or more required parameters are missing. Please ensure LoggingAgent, MonitoringAgent, and GcpBucket are provided."
+    }
 
     if (Test-ServiceExists 'google-cloud-ops-agent') {
         Uninstall-OpsAgent
