@@ -1,8 +1,8 @@
-. "$PSScriptRoot\logging_functions.ps1"
-
 param(
     [string]$Url = $env:TESTING_URL
 )
+
+. "$PSScriptRoot\logging_functions.ps1"
 
 if (-not $Url) {
     LogInfo("URL not provided, set TESTING_URL env var or pass as parameter")
