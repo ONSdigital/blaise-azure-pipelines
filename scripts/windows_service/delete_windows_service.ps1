@@ -1,6 +1,6 @@
-. "$PSScriptRoot\..\logging_functions.ps1"
-
     param($ServiceName)
+
+    . "$PSScriptRoot\logging_functions.ps1"
 
     if (Get-Service $ServiceName -ErrorAction SilentlyContinue)
     {

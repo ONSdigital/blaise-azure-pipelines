@@ -1,6 +1,6 @@
-. "$PSScriptRoot\logging_functions.ps1"
-
 param ([string]$GCP_BUCKET)
+
+. "$PSScriptRoot\logging_functions.ps1"
 
 if (Test-Path C:\dev\data\mysql-connector-net-8.0.22.msi) {
     LogInfo("MySQL connector already installed, skipping...")

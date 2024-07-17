@@ -1,12 +1,12 @@
 # to do - change agent version if installed version doesn't match
 
-. "$PSScriptRoot\logging_functions.ps1"
-
 param (
     [string]$loggingagent,
     [string]$monitoringagent,
     [string]$GCP_BUCKET
 )
+
+. "$PSScriptRoot\logging_functions.ps1"
 
 function Start-ServiceIfNotRunning {
     param ([string]$ServiceName)

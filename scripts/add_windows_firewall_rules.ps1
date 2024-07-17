@@ -1,6 +1,6 @@
-. "$PSScriptRoot\logging_functions.ps1"
-
 param ([string]$RuleName, [string[]]$Inbound_Ports, [string[]]$Outbound_Ports)
+
+. "$PSScriptRoot\logging_functions.ps1"
 
 function SetFirewallRules
 {

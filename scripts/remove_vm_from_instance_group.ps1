@@ -1,6 +1,6 @@
-. "$PSScriptRoot\logging_functions.ps1"
-
 param ($instancegroup, $zone)
+
+. "$PSScriptRoot\logging_functions.ps1"
 
     try {
         $hostname = hostname

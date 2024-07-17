@@ -1,12 +1,12 @@
 ---
 steps:
   - task: DownloadSecureFile@1
-    displayName: Download GCP Key
+    displayName: Download GCP key
     name: gcpkey
     inputs:
       secureFile: ons-blaise-v2-shared-221e50eb36c7.json
   - task: PowerShell@2
-    displayName: Download cma packages
+    displayName: Download CMA packages
     inputs:
       targetType: inline
       script: |-
