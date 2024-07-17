@@ -51,9 +51,14 @@ function Install-StackdriverAgent {
     try {
         LogInfo("Downloading $AgentType agent installer from $GCP_BUCKET bucket...")
         $gsutilCommand = "gsutil cp gs://$GCP_BUCKET/$AgentInstaller `"$installerPath`""
-        $gsutilOutput = Invoke-Expression $gsutilCommand 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            throw "gsutil command failed with exit code $LASTEXITCODE. Output: $gsutilOutput"
+        $gsutilOutput = & cmd /c "$gsutilCommand 2>&1"
+        $gsutilExitCode = $LASTEXITCODE
+        
+        LogInfo("gsutil command output: $gsutilOutput")
+        LogInfo("gsutil exit code: $gsutilExitCode")
+
+        if ($gsutilExitCode -ne 0) {
+            throw "gsutil command failed with exit code $gsutilExitCode. Output: $gsutilOutput"
         }
         
         if (!(Test-Path $installerPath)) {
