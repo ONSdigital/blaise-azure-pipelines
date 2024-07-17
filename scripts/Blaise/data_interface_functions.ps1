@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 function CreateDataInterfaceFile {
     param (
         [string] $filePath,
@@ -6,17 +8,19 @@ function CreateDataInterfaceFile {
     try {
         if (Test-Path $filePath)
         {
-            Write-Host "Data interface file $filePath already exists"
+            LogInfo("Data interface file $filePath already exists")
             return $false
         }
         else {
             C:\BlaiseServices\BlaiseCli\blaise.cli datainterface -t $applicationType -f $filePath
-            Write-Host "Created $applicationType data interface file"
+            LogInfo("Created $applicationType data interface file")
             return $true
         }
     }
     catch {
-        Write-Host "Error occured creating $filePath data interface file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        LogError("Error occured creating $filePath data interface file")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
         exit 1
     }
 }
@@ -31,17 +35,19 @@ function RegisterDataInterfaceFile {
 
         if ($configurationSettings.contains($filePath))
         {
-            Write-Host "Data interface file $filePath already registered"
+            LogInfo("Data interface file $filePath already registered")
             return $false
         }
         else {
             c:\blaise5\bin\servermanager -ecs -$($registerCommand):$filePath
-            Write-Host "Data interface file $filePath registered"
+            LogInfo("Data interface file $filePath registered")
             return $true
         }
     }
     catch {
-        Write-Host "Error occured registering $filePath data interface file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        LogError("Error occured registering $filePath data interface file")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
         exit 1
     }
 }
@@ -60,7 +66,7 @@ function RegisterDatainterfaceViaXML {
 "@
 
         if($xml.InnerXml.Contains($filePath)){
-            Write-Host "$filePath data interface xml file already registered"
+            LogInfo("$filePath data interface XML file already registered")
             return $false
         }
         else
@@ -71,12 +77,14 @@ function RegisterDatainterfaceViaXML {
             $node.AppendChild($xmlFragment)
 
             $xml.Save($configFile)
-            Write-Host "$filePath data interface xml file registered"
+            LogInfo("$filePath data interface XML file registered")
             return $true
         }
     }
     catch{
-        Write-Host "Error occured registering $filePath data interface xml file: $($_.Exception.Message) at: $($_.ScriptStackTrace)"
+        LogError("Error occured registering $filePath data interface XML file")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
         exit 1
     }
 

@@ -21,7 +21,7 @@ function CreateVariables1($variableList)
       $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
       $varValue = ($varDefinition -replace $pattern, '$3')
       New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-      Write-Host "Script env var - $varName = $varValue"
+      LogInfo("Script env var - $varName = $varValue")
     }
   }
 }
@@ -30,7 +30,7 @@ function CreateVariables1($variableList)
 # RUNTIME ARGS
 ###############
 
-Write-Host "Setting up script environment variables..."
+LogInfo("Setting up script environment variables...")
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
 [System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
@@ -41,16 +41,16 @@ CreateVariables1($metadataVariables)
 
 LogInfo("Installing Blaise $env:ENV_BLAISE_CURRENT_VERSION")
 
-Write-Host "Downloading Blaise installer $env:ENV_BLAISE_INSTALL_PACKAGE from $BLAISE_GCP_BUCKET bucket..."
+LogInfo("Downloading Blaise installer $env:ENV_BLAISE_INSTALL_PACKAGE from $BLAISE_GCP_BUCKET bucket...")
 gsutil cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
 $folderPath = "c:\dev\data\Blaise"
-Write-Host "Unzipping Blaise installer to 'C:\dev\data\Blaise\' folder..."
+LogInfo("Unzipping Blaise installer to 'C:\dev\data\Blaise\' folder...")
 Remove-Item $folderPath -Recurse -ErrorAction Ignore
 mkdir $folderPath
 Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 
-Write-Host "Setting Blaise install args..."
+LogInfo("Setting Blaise install args...")
 $blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise5-install.log","/i C:\dev\data\Blaise\Blaise5.msi"
 $blaise_args += "FORCEINSTALL=1"
 $blaise_args += "USERNAME=`"ONS-USER`""
@@ -81,7 +81,7 @@ $blaise_args += "AUDITTRAILSERVER=$BLAISE_AUDITTRAILSERVER"
 $blaise_args += "CATISERVER=$BLAISE_CATISERVER"
 
 if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
-    Write-Host "Adding additional node roles for Blaise version 5.14 or greater"
+    LogInfo("Adding additional node roles for Blaise version 5.14 or greater")
     $blaise_args += "DASHBOARDSERVER=$BLAISE_DASHBOARDSERVER"
     $blaise_args += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
     $blaise_args += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
@@ -89,9 +89,9 @@ if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
     $blaise_args += "CARISERVER=$BLAISE_CARISERVER"
 }
 
-Write-Host "blaise_args: $blaise_args"
+LogInfo("blaise_args: $blaise_args")
 
-Write-Host "Running Blaise installer via msiexec..."
+LogInfo("Running Blaise installer via msiexec...")
 Start-Process -Wait "msiexec" -ArgumentList $blaise_args
 
-Write-Host "Blaise $env:ENV_BLAISE_CURRENT_VERSION installed"
+LogInfo("Blaise $env:ENV_BLAISE_CURRENT_VERSION installed")

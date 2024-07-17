@@ -1,13 +1,16 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 param ($ServiceName)
 
 try{
-    Write-Host "Restarting Windows service $ServiceName"
+    LogInfo("Restarting Windows service $ServiceName")
     restart-service $ServiceName
-    Write-Host "Windows service $ServiceName restarted"
+    LogInfo("Windows service $ServiceName restarted")
 }
 
 catch{
-    Write-Host "Could not restart $ServiceName Windows service"
-    Write-Host $_.ScriptStackTrace
+    LogError("Could not restart $ServiceName Windows service")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
     exit 1
 }

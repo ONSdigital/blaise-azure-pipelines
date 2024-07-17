@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
     param($ServiceName)
 
     if (Get-Service $ServiceName -ErrorAction SilentlyContinue)
@@ -8,21 +10,21 @@
 
         if ($serviceStatus -eq "Running")
         {
-	    Write-Host "Windows service $ServiceName is $serviceStatus"
+	    LogInfo("Windows service $ServiceName is $serviceStatus")
 
             Stop-Service $ServiceName
-            Write-Host "Stopping Windows service $ServiceName..."
+            LogInfo("Stopping Windows service $ServiceName...")
             Start-Sleep 10
 
             $arrService_current = Get-Service -Name $ServiceName
 
             if ($arrService_current.Status -eq "Running")
             {
-                Write-Host "Stopping Windows service $ServiceName failed, killing the process task..."
+                LogInfo("Stopping Windows service $ServiceName failed, killing the process task...")
                 taskkill /f /pid (get-cimobject win32_service | Where-Object { $_.name -eq $ServiceName}).processID
             }
 
-            Write-Host "Windows service $ServiceName has been stopped, deleting..."
+            LogInfo("Windows service $ServiceName has been stopped, deleting...")
             sc.exe delete $ServiceName
 
             return
@@ -30,7 +32,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "StartPending"))
         {
-		       Write-Host "Windows service $arrService is $serviceStatus, deleting..."
+		       LogInfo("Windows service $arrService is $serviceStatus, deleting...")
 
                Stop-Process -Name $ServiceName -Force
                sc.exe delete $ServiceName
@@ -40,7 +42,7 @@
 
         if ($serviceStatus -ne "running" -And ($serviceStatus -eq "Stopped"))
         {
-		    Write-Host "Windows service $arrService is $serviceStatus, deleting..."
+		    LogInfo("Windows service $arrService is $serviceStatus, deleting...")
 
              sc.exe delete $ServiceName
 
@@ -50,5 +52,5 @@
         }
     else
     {
-        Write-Host "Windows service $ServiceName doesn't exist"
+        LogInfo("Windows service $ServiceName doesn't exist")
     }

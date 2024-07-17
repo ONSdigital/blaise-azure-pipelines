@@ -1,13 +1,13 @@
-# Used to ensure VMs are all set to correct time zone
+. "$PSScriptRoot\logging_functions.ps1"
 
 $currentTimeZone = Get-TimeZone
 
 if ($currentTimeZone.Id -eq $env:Blaise_TimeZone)
 {
-    Write-Host "Time zone already correct - $($currentTimeZone.Id)"
+    LogInfo("Time zone already correct - $($currentTimeZone.Id)")
 }
 else {
-    Write-Host "Time zone incorrect - $($currentTimeZone.Id)"
+    LogInfo("Time zone incorrect - $($currentTimeZone.Id)")
 
     Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
 
@@ -17,15 +17,15 @@ else {
 
         foreach($appPool in $allAppPools.name)
         {
-            Write-Host "Restarting app pool $($appPool)"
+            LogInfo("Restarting app pool $($appPool)")
             Restart-WebAppPool -Name $appPool
         }
     }
     else {
-        Write-Host "IIS is not installed"
+        LogInfo("IIS is not installed")
     }
 
     $newTimeZone = Get-TimeZone
 
-    Write-Host "Time zone updated - $($newTimeZone)"
+    LogInfo("Time zone updated - $($newTimeZone)")
 }

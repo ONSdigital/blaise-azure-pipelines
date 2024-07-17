@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 function ConfigureServerpark{
     param(
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
@@ -27,17 +29,19 @@ function ConfigureServerpark{
         throw [System.IO.ArgumentException] "No Blaise username argument provided"
     }
 
-    Write-Host "Configuring server park $BlaiseServerPark to run in disconnected mode"
+    LogInfo("Configuring server park $BlaiseServerPark to run in disconnected mode")
 
     c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:disconnected -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
-    Write-Host "Configured server park $BlaiseServerPark"
+    LogInfo("Configured server park $BlaiseServerPark")
 }
 
 try{
     ConfigureServerpark
 }
 catch{
-    Write-Host "Configuring server park $BlaiseServerPark failed: $($_.ScriptStackTrace)"
+    LogError("Configuring server park $BlaiseServerPark failed")
+    LogError("$($_.Exception.Message)")
+    LogError("$($_.ScriptStackTrace)")
     exit 1
 }

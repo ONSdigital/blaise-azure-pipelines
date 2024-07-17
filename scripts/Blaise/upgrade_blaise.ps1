@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 $blaiseInstallDir = "C:\dev\data\Blaise"
 $blaiseGcpBucket = $env:ENV_BLAISE_GCP_BUCKET
 $blaiseInstallPackage = $env:ENV_BLAISE_INSTALL_PACKAGE
@@ -10,19 +12,19 @@ $dashboardFolders = @(
 )
 
 function Download-BlaiseInstaller {
-    Write-Host "Downloading Blaise installer"
+    LogInfo("Downloading Blaise installer")
     gsutil cp "gs://$blaiseGcpBucket/$blaiseInstallPackage" "C:\dev\data"
 }
 
 function Unzip-BlaiseInstaller {
-    Write-Host "Unzipping Blaise installer"
+    LogInfo("Unzipping Blaise installer")
     Remove-Item $blaiseInstallDir -Recurse -ErrorAction Ignore
     mkdir $blaiseInstallDir
     Expand-Archive -Force "C:\dev\data\$blaiseInstallPackage" $blaiseInstallDir
 }
 
 function Uninstall-Blaise {
-    Write-Host "Uninstalling Blaise"
+    LogInfo("Uninstalling Blaise")
     $blaiseArgs = @(
         "/qn"
         "/norestart"
@@ -33,24 +35,26 @@ function Uninstall-Blaise {
 }
 
 function Delete-DashboardFolders {
-    Write-Host "Deleting dashboard folders"
+    LogInfo("Deleting dashboard folders")
     foreach ($folder in $dashboardFolders) {
         if (Test-Path -Path $folder) {
-            Write-Host "Folder found: $folder"
+            LogInfo("Folder found: $folder")
             try {
                 Remove-Item -Path $folder -Recurse -Force
-                Write-Host "Folder successfully deleted: $folder"
+                LogInfo("Folder successfully deleted: $folder")
                 } catch {
-                Write-Host "Error deleting folder: $($_.Exception.Message) - $folder"
+                LogError("Error deleting folder $folder")
+                LogError("$($_.Exception.Message)")
+                LogError("$($_.ScriptStackTrace)")
                 }
         } else {
-            Write-Host "Folder does not exist: $folder"
+            LogInfo("Folder does not exist: $folder")
         }
     }
 }
 
 function Upgrade-Blaise {
-    Write-Host "Upgrading Blaise"
+    LogInfo("Upgrading Blaise")
     $blaiseArgs = @(
         "/qn"
         "/norestart"
@@ -64,7 +68,7 @@ function Upgrade-Blaise {
     Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
 }
 
-Write-Host "Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION"
+LogInfo("Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION")
 
 Download-BlaiseInstaller
 Unzip-BlaiseInstaller
@@ -72,4 +76,4 @@ Uninstall-Blaise
 Delete-DashboardFolders
 Upgrade-Blaise
 
-Write-Host "Blaise upgrade complete"
+LogInfo("Blaise upgrade complete")

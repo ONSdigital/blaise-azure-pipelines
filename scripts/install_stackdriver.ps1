@@ -1,5 +1,7 @@
 # to do - change agent version if installed version doesn't match
 
+. "$PSScriptRoot\logging_functions.ps1"
+
 param (
     [string]$loggingagent,
     [string]$monitoringagent,
@@ -20,7 +22,7 @@ function Test-ServiceExists {
 }
 
 function Uninstall-OpsAgent {
-    Write-Host "Uninstalling Google ops agent..."
+    LogInfo("Uninstalling Google ops agent...")
     googet -noconfirm remove google-cloud-ops-agent
 }
 
@@ -30,11 +32,11 @@ function Install-StackDriverAgent {
         [string]$AgentFileName,
         [string]$InstallPath
     )
-    Write-Host "Downloading Stackdriver $AgentType agent installer from $GCP_BUCKET bucket..."
+    LogInfo("Downloading Stackdriver $AgentType agent installer from $GCP_BUCKET bucket...")
     $localPath = Join-Path 'C:\dev\data' $AgentFileName
     gsutil cp "gs://$GCP_BUCKET/$AgentFileName" $localPath
 
-    Write-Host "Installing Stackdriver $AgentType agent..."
+    LogInfo("Installing Stackdriver $AgentType agent...")
     $args = "/S /D='$InstallPath'"
     Start-Process -Wait $localPath -ArgumentList $args
 }

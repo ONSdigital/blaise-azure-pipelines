@@ -30,6 +30,6 @@
     # $newDataInterfaceRegistered += RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
 
     if ($NewDataInterfaceCreated.Contains($true) -or $NewDataInterfaceRegistered.Contains($true)){
-        Write-Host "Changes have been made to data interfaces, restarting Blaise..."
+        LogInfo("Changes have been made to data interfaces, restarting Blaise...")
         restart-service blaiseservices5
     }
