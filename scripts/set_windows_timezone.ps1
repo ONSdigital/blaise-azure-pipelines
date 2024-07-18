@@ -2,13 +2,13 @@
 
 $currentTimeZone = Get-TimeZone
 
-if ($currentTimeZone.Id -eq $env:Blaise_TimeZone) {
+if ($currentTimeZone.Id -eq $env:TimeZone) {
     LogInfo("Time zone already correct - $($currentTimeZone.Id)")
 }
 else {
     LogInfo("Time zone incorrect - $($currentTimeZone.Id)")
 
-    Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
+    Set-TimeZone -Id $env:TimeZone -PassThru
 
     if (Get-Command Get-IISAppPool -ErrorAction SilentlyContinue) {
         $allAppPools = Get-IISAppPool
