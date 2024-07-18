@@ -9,30 +9,25 @@ function SetBlaiseLicenseViaRegistry {
         $licenseInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey'
         $activationInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode'
 
-        if ($licenseInfo.LicenseKey -eq $Blaise_License_Key)
-        {
+        if ($licenseInfo.LicenseKey -eq $Blaise_License_Key) {
             LogInfo("License key is correct: $($Blaise_License_Key)")
         }
-        else
-        {
+        else {
             LogInfo("License key is out of date, updating...")
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'LicenseKey' -value $Blaise_License_Key
             LogInfo("License key updated to: $($Blaise_License_Key)")
         }
 
-        if ($activationInfo.ActivationCode -eq $Blaise_Activation_Code)
-        {
+        if ($activationInfo.ActivationCode -eq $Blaise_Activation_Code) {
             LogInfo("Activation code is correct: $($Blaise_Activation_Code)")
         }
-        else
-        {
+        else {
             LogInfo("Activation code is out of date, updating...")
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\StatNeth\Blaise\5.0' -Name 'ActivationCode' -value $Blaise_Activation_Code
             LogInfo("Activation code updated to: $($Blaise_Activation_Code)")
         }
     }
-    else
-    {
+    else {
         LogInfo("No registry key found for Blaise")
     }
 }

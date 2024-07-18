@@ -4,8 +4,7 @@ $rolesJsonFile = "$PSScriptRoot\user_roles.json"
 
 $userRoles = Get-Content -Raw -Path $rolesJsonFile | ConvertFrom-Json
 
-foreach ($userRole in $userRoles)
-{
+foreach ($userRole in $userRoles) {
     $exists = CheckUserRoleExists -userRoleName $userRole.name
 
     If ($exists -ne $true) {

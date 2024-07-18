@@ -42,12 +42,14 @@ function Delete-DashboardFolders {
             try {
                 Remove-Item -Path $folder -Recurse -Force
                 LogInfo("Folder successfully deleted: $folder")
-                } catch {
+            }
+            catch {
                 LogError("Error deleting folder $folder")
                 LogError("$($_.Exception.Message)")
                 LogError("$($_.ScriptStackTrace)")
-                }
-        } else {
+            }
+        }
+        else {
             LogInfo("Folder does not exist: $folder")
         }
     }

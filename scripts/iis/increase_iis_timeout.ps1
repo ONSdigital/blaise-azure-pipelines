@@ -1,7 +1,7 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 . "$PSScriptRoot\iis_timeout_functions.ps1"
 
-try{
+try {
     setTimeoutValues
 }
 catch {

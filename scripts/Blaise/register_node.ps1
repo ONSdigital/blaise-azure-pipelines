@@ -43,7 +43,8 @@ function Register-Node {
         if ($DidNodeRegister) {
             LogInfo("Node '$CurrentNode' is registered on management node '$BlaiseManagementNode' for server park '$ServerPark'")
             break
-        } else {
+        }
+        else {
             LogInfo("Node '$CurrentNode' is not registered on management node '$BlaiseManagementNode' for server park '$ServerPark', retrying in 5 seconds...")
             Start-Sleep -Seconds 5
             $RetryCount++
@@ -70,7 +71,8 @@ function Check-NodeRegistered {
 try {
     Register-Node -ServerPark:$BlaiseServerParkName
     Register-Node -ServerPark:$BlaiseCmaServerParkName
-} catch {
+}
+catch {
     LogError("Error registering node")
     LogError("$($_.Exception.Message)")
     LogError("$($_.ScriptStackTrace)")

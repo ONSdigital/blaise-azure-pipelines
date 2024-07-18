@@ -10,12 +10,12 @@ function ServerParkExists {
     }
 
     $exists = c:\blaise5\bin\servermanager -listserverparks `
-                                         -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
-                                         -binding:http `
-                                         -port:$env:ENV_BLAISE_CONNECTION_PORT `
-                                         -user:$env:ENV_BLAISE_ADMIN_USER `
-                                         -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
-                                        | findstr -i "cma"                                        
+        -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
+        -binding:http `
+        -port:$env:ENV_BLAISE_CONNECTION_PORT `
+        -user:$env:ENV_BLAISE_ADMIN_USER `
+        -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
+    | findstr -i "cma"                                        
         
     If ([string]::IsNullOrEmpty($exists)) {
         return $false
@@ -23,7 +23,7 @@ function ServerParkExists {
 
     return $true
 }
-function AddServerPark{
+function AddServerPark {
     param(
         [string] $ServerParkName
     )
@@ -36,19 +36,19 @@ function AddServerPark{
 
     # if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$ServerParkName `
-                                 -runmode:disconnected `
-                                 -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
-                                 -syncsurveyswhenconnected:true `
-                                 -binding:http `
-                                 -port:$env:ENV_BLAISE_CONNECTION_PORT `
-                                 -user:$env:ENV_BLAISE_ADMIN_USER `
-                                 -password:$env:ENV_BLAISE_ADMIN_PASSWORD
+        -runmode:disconnected `
+        -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
+        -syncsurveyswhenconnected:true `
+        -binding:http `
+        -port:$env:ENV_BLAISE_CONNECTION_PORT `
+        -user:$env:ENV_BLAISE_ADMIN_USER `
+        -password:$env:ENV_BLAISE_ADMIN_PASSWORD
 
     LogInfo("Configured server park $ServerParkName")
 }
 
-try{
-    if(ServerParkExists -ServerParkName:$env:CmaServerParkName) {
+try {
+    if (ServerParkExists -ServerParkName:$env:CmaServerParkName) {
         LogInfo("Server park $env:CmaServerParkName already exists")
     }
     else {
@@ -58,7 +58,7 @@ try{
     
     exit 0
 }
-catch{
+catch {
     LogError("Adding and/or configuring server park $env:CmaServerParkName failed")
     LogError("$($_.Exception.Message)")
     LogError("$($_.ScriptStackTrace)")
