@@ -1,6 +1,6 @@
-. "$PSScriptRoot\..\logging_functions.ps1"
-
 param ($exeName, $ServiceName)
+
+. "$PSScriptRoot\..\logging_functions.ps1"
 
 LogInfo("Creating Windows service $ServiceName")
 sc.exe create $ServiceName binpath=C:\BlaiseServices\$ServiceName\$exeName.exe
