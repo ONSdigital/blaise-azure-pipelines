@@ -1,6 +1,6 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
-function ConfigureServerpark{
+function ConfigureServerpark {
     param(
         [string] $ManagementNode = $env:ENV_BLAISE_SERVER_HOST_NAME,
         [string] $ConnectionPort = $env:ENV_BLAISE_CONNECTION_PORT,
@@ -36,10 +36,10 @@ function ConfigureServerpark{
     LogInfo("Configured server park $BlaiseServerPark")
 }
 
-try{
+try {
     ConfigureServerpark
 }
-catch{
+catch {
     LogError("Configuring server park $BlaiseServerPark failed")
     LogError("$($_.Exception.Message)")
     LogError("$($_.ScriptStackTrace)")

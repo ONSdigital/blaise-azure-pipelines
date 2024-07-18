@@ -15,7 +15,7 @@ function Get-CurrentNodeRoles {
 
 function Parse-CurrentNodeRoles {
     param (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string]$CurrentRoles
     )
 
@@ -25,19 +25,19 @@ function Parse-CurrentNodeRoles {
     }
 
     $roleMapping = @{
-        'ADMIN' = 'admin'
-        'AUDITTRAIL' = 'audittrail'
-        'CARI' = 'cari'
+        'ADMIN'          = 'admin'
+        'AUDITTRAIL'     = 'audittrail'
+        'CARI'           = 'cari'
         'CASEMANAGEMENT' = 'casemanagement'
-        'CATI' = 'cati'
-        'DASHBOARD' = 'dashboard'
-        'DATA' = 'data'
-        'DATAENTRY' = 'dataentry'
-        'EVENT' = 'event'
-        'PUBLISH' = 'publish'
-        'RESOURCE' = 'resource'
-        'SESSION' = 'session'
-        'WEB' = 'web'
+        'CATI'           = 'cati'
+        'DASHBOARD'      = 'dashboard'
+        'DATA'           = 'data'
+        'DATAENTRY'      = 'dataentry'
+        'EVENT'          = 'event'
+        'PUBLISH'        = 'publish'
+        'RESOURCE'       = 'resource'
+        'SESSION'        = 'session'
+        'WEB'            = 'web'
     }
 
     $roles = @()

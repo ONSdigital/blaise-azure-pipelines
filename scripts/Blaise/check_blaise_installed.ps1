@@ -1,7 +1,7 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
 $CurrentPath = Get-Location
-$Blaise = Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"| Where-Object { $_.DisplayName -match 'blaise' } |Select-Object DisplayName, DisplayVersion, InstallDate, Version
+$Blaise = Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object { $_.DisplayName -match 'blaise' } | Select-Object DisplayName, DisplayVersion, InstallDate, Version
 if (!$Blaise) {
     LogInfo("Blaise is not installed")
     . "$CurrentPath\scripts\blaise\install_blaise.ps1"

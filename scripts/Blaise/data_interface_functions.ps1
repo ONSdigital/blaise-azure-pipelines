@@ -6,8 +6,7 @@ function CreateDataInterfaceFile {
         [string] $applicationType
     )
     try {
-        if (Test-Path $filePath)
-        {
+        if (Test-Path $filePath) {
             LogInfo("Data interface file $filePath already exists")
             return $false
         }
@@ -33,8 +32,7 @@ function RegisterDataInterfaceFile {
     try {
         $configurationSettings = ListOfConfigurationSettings
 
-        if ($configurationSettings.contains($filePath))
-        {
+        if ($configurationSettings.contains($filePath)) {
             LogInfo("Data interface file $filePath already registered")
             return $false
         }
@@ -65,12 +63,11 @@ function RegisterDatainterfaceViaXML {
         <add key="$interfaceFileName" value="$filePath"/>
 "@
 
-        if($xml.InnerXml.Contains($filePath)){
+        if ($xml.InnerXml.Contains($filePath)) {
             LogInfo("$filePath data interface XML file already registered")
             return $false
         }
-        else
-        {
+        else {
             $xmlFragment = $xml.CreateDocumentFragment()
             $xmlFragment.InnerXml = $txtFragment
             $node = $xml.SelectSingleNode('//appSettings')
@@ -81,7 +78,7 @@ function RegisterDatainterfaceViaXML {
             return $true
         }
     }
-    catch{
+    catch {
         LogError("Error occured registering $filePath data interface XML file")
         LogError("$($_.Exception.Message)")
         LogError("$($_.ScriptStackTrace)")

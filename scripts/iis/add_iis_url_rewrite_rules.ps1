@@ -1,15 +1,13 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
 function CheckIfURLRewriteMsiExists {
-    If (Test-Path "C:\dev\data\rewrite_url.msi")
-    {
-      LogInfo("Skipping as rewrite URL msi already downloaded...")
-    }
-    else
-    {
-      LogInfo("Downloading rewrite_url.msi")
-      gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
-    }
+  If (Test-Path "C:\dev\data\rewrite_url.msi") {
+    LogInfo("Skipping as rewrite URL msi already downloaded...")
+  }
+  else {
+    LogInfo("Downloading rewrite_url.msi")
+    gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
+  }
 }
 
 function AddRewriteRule {
@@ -21,22 +19,22 @@ function AddRewriteRule {
   )
   $existing = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "."
 
-  if ($existing){
-      LogInfo("$ruleName already exists")
-      return
+  if ($existing) {
+    LogInfo("$ruleName already exists")
+    return
   }
 
-  try{
+  try {
     LogInfo("Adding rewrite rule...")
 
-    Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundrules" -name "." -value @{name=$ruleName}
+    Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundrules" -name "." -value @{name = $ruleName }
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
     Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName"  -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 
     LogInfo("$ruleName rule applied")
   }
-  catch{
+  catch {
     LogError("URL rewrite rules have not been applied")
     LogError("$($_.Exception.Message)")
     LogError("$($_.ScriptStackTrace)")

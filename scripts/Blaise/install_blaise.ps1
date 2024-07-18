@@ -4,18 +4,14 @@
 # functions
 ############
 
-function GetMetadataVariables1
-{
+function GetMetadataVariables1 {
   $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
   return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 }
 
-function CreateVariables1($variableList)
-{
-  foreach ($variable in $variableList)
-  {
-    if ($variable.Name -Like "BLAISE_*")
-    {
+function CreateVariables1($variableList) {
+  foreach ($variable in $variableList) {
+    if ($variable.Name -Like "BLAISE_*") {
       $varName = $variable.Name
       $varDefinition = $variable.Definition
       $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
@@ -33,7 +29,7 @@ function CreateVariables1($variableList)
 LogInfo("Setting up script environment variables...")
 $metadataVariables = GetMetadataVariables1
 CreateVariables1($metadataVariables)
-[System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES',$BLAISE_ROLES,[System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('ENV_BLAISE_SERVER_ROLES', $BLAISE_ROLES, [System.EnvironmentVariableTarget]::Machine)
 
 #################
 # INSTALL BLAISE
@@ -51,7 +47,7 @@ mkdir $folderPath
 Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
 
 LogInfo("Setting Blaise install args...")
-$blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise5-install.log","/i C:\dev\data\Blaise\Blaise5.msi"
+$blaise_args = "/qn", "/norestart", "/log C:\dev\data\Blaise5-install.log", "/i C:\dev\data\Blaise\Blaise5.msi"
 $blaise_args += "FORCEINSTALL=1"
 $blaise_args += "USERNAME=`"ONS-USER`""
 $blaise_args += "COMPANYNAME=$BLAISE_LICENSEE"
@@ -81,12 +77,12 @@ $blaise_args += "AUDITTRAILSERVER=$BLAISE_AUDITTRAILSERVER"
 $blaise_args += "CATISERVER=$BLAISE_CATISERVER"
 
 if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
-    LogInfo("Adding additional node roles for Blaise version 5.14 or greater")
-    $blaise_args += "DASHBOARDSERVER=$BLAISE_DASHBOARDSERVER"
-    $blaise_args += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
-    $blaise_args += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
-    $blaise_args += "EVENTSERVER=$BLAISE_EVENTSERVER"
-    $blaise_args += "CARISERVER=$BLAISE_CARISERVER"
+  LogInfo("Adding additional node roles for Blaise version 5.14 or greater")
+  $blaise_args += "DASHBOARDSERVER=$BLAISE_DASHBOARDSERVER"
+  $blaise_args += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
+  $blaise_args += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
+  $blaise_args += "EVENTSERVER=$BLAISE_EVENTSERVER"
+  $blaise_args += "CARISERVER=$BLAISE_CARISERVER"
 }
 
 LogInfo("blaise_args: $blaise_args")

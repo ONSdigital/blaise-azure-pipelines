@@ -1,8 +1,8 @@
-BeforeAll {. "$PSScriptRoot\iis_timeout_functions.ps1"}
+BeforeAll { . "$PSScriptRoot\iis_timeout_functions.ps1" }
 
 describe "timeoutIsSetCorrectly" {
-    BeforeEach{
-        Mock currentTimeoutValues{ return "00:00:00", "00:00:00" }
+    BeforeEach {
+        Mock currentTimeoutValues { return "00:00:00", "00:00:00" }
         $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
     }
     it "should return true if the current timeouts are equal to the expected timeout" {

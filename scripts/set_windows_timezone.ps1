@@ -2,8 +2,7 @@
 
 $currentTimeZone = Get-TimeZone
 
-if ($currentTimeZone.Id -eq $env:Blaise_TimeZone)
-{
+if ($currentTimeZone.Id -eq $env:Blaise_TimeZone) {
     LogInfo("Time zone already correct - $($currentTimeZone.Id)")
 }
 else {
@@ -11,12 +10,10 @@ else {
 
     Set-TimeZone -Id $env:Blaise_TimeZone -PassThru
 
-    if (Get-Command Get-IISAppPool -ErrorAction SilentlyContinue)
-    {
+    if (Get-Command Get-IISAppPool -ErrorAction SilentlyContinue) {
         $allAppPools = Get-IISAppPool
 
-        foreach($appPool in $allAppPools.name)
-        {
+        foreach ($appPool in $allAppPools.name) {
             LogInfo("Restarting app pool $($appPool)")
             Restart-WebAppPool -Name $appPool
         }
