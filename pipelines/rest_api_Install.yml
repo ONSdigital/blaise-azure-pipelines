@@ -70,7 +70,7 @@ stages:
                   parameters:
                     ServiceName: BlaiseRestApi
                     ExeName: blaise.api
-                    TargetFolder: c:\blaiseServices\BlaiseRestApi
+                    TargetFolder: c:\BlaiseServices\BlaiseRestApi
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
                 - template: /templates/set_windows_timezone.yml
             routeTraffic:

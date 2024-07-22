@@ -43,5 +43,5 @@ stages:
                     PipelineNumber: 66
                 - template: /templates/copy_files.yml
                   parameters:
-                    TargetFolder: c:\blaiseServices\BlaiseCli
+                    TargetFolder: c:\BlaiseServices\BlaiseCli
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
