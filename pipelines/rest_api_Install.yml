@@ -40,16 +40,17 @@ stages:
                     zone: europe-west2-a
             deploy:
               steps:
-                - template: /templates/add_windows_firewall_rules.yml
-                  parameters:
-                    RuleName: RestAPI
-                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
-                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                 - template: /templates/install_stackdriver.yml
                   parameters:
                     LoggingAgent: $($env:ENV_LOGGING_AGENT)
                     MonitoringAgent: $($env:ENV_MONITORING_AGENT)
                     GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                - template: /templates/add_windows_firewall_rules.yml
+                  parameters:
+                    RuleName: Blaise
+                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                - template: /templates/set_windows_timezone.yml
                 - template: /templates/set_license_key.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
@@ -72,7 +73,6 @@ stages:
                     ExeName: blaise.api
                     TargetFolder: c:\BlaiseServices\BlaiseRestApi
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
-                - template: /templates/set_windows_timezone.yml
             routeTraffic:
               steps:
                 - template: /templates/add_vm_to_instance_group.yml

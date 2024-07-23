@@ -16,6 +16,36 @@ stages:
   - stage: DeployBlaiseCli_${{parameters.Environment}}
     displayName: Deploy Blaise CLI (${{parameters.Environment}})
     jobs:
+      - deployment: InstallStackDriver
+        displayName: Install Stackdriver
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-cli
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_stackdriver.yml
+                  parameters:
+                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: InstallMySqlConnector
+        displayName: Install MySQL connector
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-cli
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_mysql_connector.yml
+                  parameters:
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
       - deployment: DeployBlaiseCli
         displayName: Deploy Blaise CLI
         variables:
@@ -45,3 +75,9 @@ stages:
                   parameters:
                     TargetFolder: c:\BlaiseServices\BlaiseCli
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
+                - template: /templates/add_windows_firewall_rules.yml
+                  parameters:
+                    RuleName: Blaise
+                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                - template: /templates/set_windows_timezone.yml
