@@ -64,7 +64,7 @@ function RegisterDatainterfaceViaXML {
 "@
 
         if ($xml.InnerXml.Contains($filePath)) {
-            LogInfo("$filePath data interface XML file already registered")
+            LogInfo("Data interface file $filePath already registered via XML")
             return $false
         }
         else {
@@ -74,12 +74,12 @@ function RegisterDatainterfaceViaXML {
             $node.AppendChild($xmlFragment)
 
             $xml.Save($configFile)
-            LogInfo("$filePath data interface XML file registered")
+            LogInfo("Data interface file $filePath registered via XML")
             return $true
         }
     }
     catch {
-        LogError("Error occured registering $filePath data interface XML file")
+        LogError("Error occured registering $filePath data interface file via XML")
         LogError("$($_.Exception.Message)")
         LogError("$($_.ScriptStackTrace)")
         exit 1
