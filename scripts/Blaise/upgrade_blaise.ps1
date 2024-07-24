@@ -25,13 +25,13 @@ function Unzip-BlaiseInstaller {
 
 function Uninstall-Blaise {
     LogInfo("Uninstalling Blaise")
-    $blaiseArgs = @(
+    $blaiseUninstallArgs = @(
         "/qn"
         "/norestart"
         "/log C:\dev\data\Blaise\upgrade.log"
         "/x {24691BB5-A1CE-455B-A2D5-FBDE1CE10675}"
     )
-    Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUninstallArgs
 }
 
 function Delete-DashboardFolders {
@@ -57,17 +57,17 @@ function Delete-DashboardFolders {
 
 function Upgrade-Blaise {
     LogInfo("Upgrading Blaise")
-    $blaiseArgs = @(
+    $blaiseUpgradeArgs = @(
         "/qn"
         "/norestart"
         "/log upgrade.log"
         "/i C:\dev\data\Blaise\Blaise5.msi"
     )
-    $blaiseArgs += "FORCEINSTALL=1"
-    $blaiseArgs += "INSTALLATIONMODE=Upgrade"
-    $blaiseArgs += "ADMINISTRATORUSER=$blaiseAdminUser"
-    $blaiseArgs += "ADMINISTRATORPASSWORD=$blaiseAdminPassword"
-    Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
+    $blaiseUpgradeArgs += "FORCEINSTALL=1"
+    $blaiseUpgradeArgs += "INSTALLATIONMODE=Upgrade"
+    $blaiseUpgradeArgs += "ADMINISTRATORUSER=$blaiseAdminUser"
+    $blaiseUpgradeArgs += "ADMINISTRATORPASSWORD=$blaiseAdminPassword"
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUpgradeArgs
 }
 
 LogInfo("Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION")
