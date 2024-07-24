@@ -390,5 +390,10 @@
          "Appfeatures.viewsurveydetails",
          "SurveyDataAccess"
       ]
+   },
+   {
+      "name": "IPS Researcher",
+      "description": "Role for IPS Researchers",
+      "permissions": []
    }
 ]
