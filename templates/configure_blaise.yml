@@ -8,7 +8,7 @@ steps:
   - task: PowerShell@2
     displayName: Install Blaise
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/check_blaise_installed.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/check_blaise_install.ps1
     name: BlaiseVariables
   - task: PowerShell@2
     displayName: Update Blaise license key
