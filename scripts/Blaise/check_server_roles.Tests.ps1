@@ -1,9 +1,27 @@
-BeforeAll {. "$PSScriptRoot\check_server_roles.ps1"}
+BeforeAll { 
+    . "$PSScriptRoot\check_server_roles.ps1"
+    
+    # Mock Get-CurrentNodeRoles
+    Mock Get-CurrentNodeRoles {
+        return @"
+-----------------------------
+|        Server Roles         |
+-----------------------------
+| Name       | Port | Binding |
+-----------------------------
+| DATA       | 8031 | http    |
+| ADMIN      | 8033 | http    |
+-----------------------------
+"@
+    }
+    
+    # Mock $env:ENV_BLAISE_ROLES
+    $env:ENV_BLAISE_ROLES = "web,data,admin"
+}
 
-Describe 'Parse current node roles' {
-
-    It 'returns a correctly ordered comma separated list of roles' {
-        $CurrentRoles =  @"
+Describe 'Parse-CurrentNodeRoles' {
+    It 'returns a correctly ordered comma-separated list of roles' {
+        $CurrentRoles = @"
 -----------------------------
 |        Server Roles         |
 -----------------------------
@@ -16,12 +34,12 @@ Describe 'Parse current node roles' {
 -----------------------------
 "@
         $expected_output = "admin,audittrail,cati,data"
-        $result = ParseCurrentNodeRoles($CurrentRoles)
+        $result = Parse-CurrentNodeRoles -CurrentRoles $CurrentRoles
         $result | Should -Be $expected_output
     }
 
     It 'returns DATA and DATAENTRY roles correctly' {
-        $CurrentRoles =  @"
+        $CurrentRoles = @"
 -----------------------------
 |        Server Roles         |
 -----------------------------
@@ -35,12 +53,12 @@ Describe 'Parse current node roles' {
 -----------------------------
 "@
         $expected_output = "admin,audittrail,cati,data,dataentry"
-        $result = ParseCurrentNodeRoles($CurrentRoles)
+        $result = Parse-CurrentNodeRoles -CurrentRoles $CurrentRoles
         $result | Should -Be $expected_output
     }
 
     It 'does not return unexpected roles' {
-        $CurrentRoles =  @"
+        $CurrentRoles = @"
 -----------------------------
 |        Server Roles         |
 -----------------------------
@@ -53,8 +71,56 @@ Describe 'Parse current node roles' {
 -----------------------------
 "@
         $expected_output = "admin,audittrail"
-        $result = ParseCurrentNodeRoles($CurrentRoles)
+        $result = Parse-CurrentNodeRoles -CurrentRoles $CurrentRoles
         $result | Should -Be $expected_output
     }
 
+    It 'handles empty input correctly' {
+        Mock Get-CurrentNodeRoles { return "" }
+        $result = Parse-CurrentNodeRoles -CurrentRoles ""
+        $result | Should -BeNullOrEmpty
+    }
+}
+
+Describe 'Get-RequiredRoles' {
+    It 'returns sorted, comma-separated roles from environment variable' {
+        $env:ENV_BLAISE_ROLES = "web,data,admin"
+        $result = Get-RequiredRoles
+        $result | Should -Be "admin,data,web"
+    }
+
+    It 'returns null when environment variable is not set' {
+        $env:ENV_BLAISE_ROLES = $null
+        $result = Get-RequiredRoles
+        $result | Should -BeNullOrEmpty
+    }
+}
+
+Describe 'Check-NodeHasCorrectRoles' {
+    It 'returns true when current roles match required roles' {
+        Mock Get-RequiredRoles { return "admin,data,web" }
+        Mock Parse-CurrentNodeRoles { return "admin,data,web" }
+        $result = Check-NodeHasCorrectRoles
+        $result | Should -BeTrue
+    }
+
+    It 'returns false when current roles do not match required roles' {
+        Mock Get-RequiredRoles { return "admin,data,web" }
+        Mock Parse-CurrentNodeRoles { return "admin,data" }
+        $result = Check-NodeHasCorrectRoles
+        $result | Should -BeFalse
+    }
+
+    It 'returns false when required roles cannot be retrieved' {
+        Mock Get-RequiredRoles { return $null }
+        $result = Check-NodeHasCorrectRoles
+        $result | Should -BeFalse
+    }
+
+    It 'returns false when current roles cannot be parsed' {
+        Mock Get-RequiredRoles { return "admin,data,web" }
+        Mock Parse-CurrentNodeRoles { return $null }
+        $result = Check-NodeHasCorrectRoles
+        $result | Should -BeFalse
+    }
 }
