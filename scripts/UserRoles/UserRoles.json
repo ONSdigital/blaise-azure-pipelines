@@ -390,5 +390,26 @@
          "Appfeatures.viewsurveydetails",
          "SurveyDataAccess"
       ]
+   },
+   {
+      "name": "IPS Researcher",
+      "description": "Role for IPS Researchers",
+      "permissions": [
+         "Apps",
+         "AppManagement",
+         "Apps.Appfeatures",
+         "Appfeatures.login",
+         "Appfeatures.getlistofinstruments",
+         "Appfeatures.installsurvey",
+         "Appfeatures.removesurvey",
+         "Appfeatures.startsurvey",
+         "Appfeatures.browsedata",
+         "Appfeatures.deletedata",
+         "Appfeatures.uploaddata",
+         "Appfeatures.downloadcases",
+         "Appfeatures.viewsettings",
+         "Appfeatures.viewsurveydetails",
+         "SurveyDataAccess"
+      ]
    }
 ]
