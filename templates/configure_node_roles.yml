@@ -1,6 +1,0 @@
----
-steps:
-  - task: PowerShell@2
-    displayName: Configure node roles
-    inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/node_roles/configure_node_roles.ps1
