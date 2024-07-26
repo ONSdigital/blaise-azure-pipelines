@@ -22,7 +22,7 @@ steps:
       downloadType: single
       artifactName: ${{parameters.ArtifactName}}
       downloadPath: ${{parameters.DownloadPath}}
-  - task: replacetokens@
+  - task: replacetokens@6
     displayName: Replace config settings
     inputs:
       rootDirectory: $(System.ArtifactsDirectory)
