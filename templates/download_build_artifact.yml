@@ -22,7 +22,7 @@ steps:
       downloadType: single
       artifactName: ${{parameters.ArtifactName}}
       downloadPath: ${{parameters.DownloadPath}}
-  - task: replacetokens@3
+  - task: replacetokens@
     displayName: Replace config settings
     inputs:
       rootDirectory: $(System.ArtifactsDirectory)
@@ -33,5 +33,5 @@ steps:
       keepToken: false
       tokenPrefix: '#{'
       tokenSuffix: '}#'
-      useLegacyPattern: false
+      verbosity: 'info'
       enableTelemetry: true
