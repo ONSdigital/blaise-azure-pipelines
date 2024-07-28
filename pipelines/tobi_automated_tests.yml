@@ -41,7 +41,7 @@ stages:
                 parameters:
                   TestSolutionName: Blaise.TOBI.Tests.Behaviour
                   TestName: TOBI smoke tests
-                  TestCategory: Smoke
+                  TestCategory: smoke
           - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
