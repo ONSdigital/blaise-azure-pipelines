@@ -46,7 +46,7 @@ stages:
                       parameters:
                         TestSolutionName: Blaise.Api.Tests.Behaviour
                         TestName: REST API smoke tests
-                        TestCategory: Smoke
+                        TestCategory: smoke
                 - ${{ if ne(parameters.Environment, 'prod') }}:
                     - template: /templates/run_tests.yml
                       parameters:

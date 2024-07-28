@@ -39,4 +39,4 @@ stages:
             parameters:
               TestSolutionName: Blaise.Tests.Behaviour
               TestName: Blaise smoke tests
-              TestCategory: Smoke
+              TestCategory: smoke
