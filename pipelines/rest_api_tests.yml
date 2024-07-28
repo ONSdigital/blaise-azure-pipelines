@@ -41,13 +41,13 @@ stages:
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 60
-                - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
+                - ${{ if eq(parameters.Environment, 'prod') }}:
                     - template: /templates/run_tests_with_category.yml
                       parameters:
                         TestSolutionName: Blaise.Api.Tests.Behaviour
                         TestName: REST API smoke tests
                         TestCategory: Smoke
-                - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
+                - ${{ if ne(parameters.Environment, 'prod') }}:
                     - template: /templates/run_tests.yml
                       parameters:
                         TestSolutionName: Blaise.Api.Tests.Behaviour

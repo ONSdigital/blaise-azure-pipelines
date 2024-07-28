@@ -36,13 +36,13 @@ stages:
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'
               PipelineNumber: 43
-          - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
+          - ${{ if eq(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.TOBI.Tests.Behaviour
                   TestName: TOBI smoke tests
                   TestCategory: Smoke
-          - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
+          - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.TOBI.tests.Behaviour
