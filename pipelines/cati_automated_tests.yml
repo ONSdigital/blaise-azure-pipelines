@@ -35,13 +35,13 @@ stages:
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'
               PipelineNumber: 43
-          - ${{ if notin(parameters.Environment, 'dev', 'preprod') }}:
+          - ${{ if eq(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.CATI.Tests.Behaviour
                   TestName: CATI smoke tests
                   TestCategory: Smoke
-          - ${{ if in(parameters.Environment, 'dev', 'preprod') }}:
+          - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.CATI.Tests.Behaviour

@@ -38,13 +38,13 @@ stages:
               TargetFiles: '**/*Behaviour*.config'
               PipelineNumber: 43
           - template: /templates/set_windows_culture.yml
-          - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
+          - ${{ if eq(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.DQS.Tests.Behaviour
                   TestName: DQS smoke tests
                   TestCategory: Smoke
-          - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
+          - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.DQS.tests.Behaviour
