@@ -26,7 +26,7 @@ function Register-Node {
     $RetryCount = 0
     do {
         LogInfo("Registering node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark'")
-        c:\blaise5\bin\servermanager.exe -addserverparkserver:$CurrentNode `
+        $output = & c:\blaise5\bin\servermanager.exe -addserverparkserver:$CurrentNode `
             -server:$BlaiseManagementNode `
             -user:$BlaiseAdminUser `
             -password:$BlaiseAdminPassword `
@@ -37,6 +37,7 @@ function Register-Node {
             -logicalroot:default `
             -binding:http `
             -port:$BlaiseConnectionPort
+        LogInfo($output)
         LogInfo("Attempt to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' completed")
 
         $DidNodeRegister = Check-NodeRegistered -ServerPark $ServerPark
