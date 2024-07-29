@@ -36,7 +36,7 @@ function Register-Node {
             -masterhostname:$BlaiseManagementNode `
             -logicalroot:default `
             -binding:http `
-            -port:$BlaiseConnectionPort
+            -port:$BlaiseConnectionPort | Out-String
         LogInfo($output)
         LogInfo("Attempt to register node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark' completed")
 
