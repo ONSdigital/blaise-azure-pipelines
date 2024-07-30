@@ -84,14 +84,14 @@ Describe 'Parse-CurrentNodeRoles' {
 
 Describe 'Get-RequiredRoles' {
     It 'returns sorted, comma-separated roles from environment variable' {
-        $env:ENV_BLAISE_ROLES = "web,data,admin"
-        $result = Get-RequiredRoles
+        $result = Get-RequiredRoles -roleServerShouldHaveTest "web,data,admin"
+        Write-Host "Result: $result"
         $result | Should -Be "admin,data,web"
     }
 
     It 'returns null when environment variable is not set' {
-        $env:ENV_BLAISE_ROLES = $null
-        $result = Get-RequiredRoles
+        $result = Get-RequiredRoles -roleServerShouldHaveTest ""
+        Write-Host "Result: $result"
         $result | Should -BeNullOrEmpty
     }
 }
