@@ -1,0 +1,16 @@
+---
+parameters:
+  - name: instancegroup
+    displayName: The instance group name
+  - name: zone
+    displayName: The zone name
+steps:
+  - task: PowerShell@2
+    displayName: Log into GCP
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/login_gcp.ps1
+  - task: PowerShell@2
+    displayName: Remove VM from instance group
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/remove_vm_from_instance_group.ps1
+      arguments: -instancegroup ${{parameters.instancegroup}} -zone ${{parameters.zone}}

@@ -1,0 +1,15 @@
+---
+parameters:
+  - name: TargetFolder
+    displayName: Path of target folder
+  - name: SourceFolder
+    displayName: Path of source folder
+steps:
+  - task: CopyFiles@2
+    displayName: Copy files
+    inputs:
+      SourceFolder: ${{parameters.SourceFolder}}
+      Contents: '**'
+      TargetFolder: ${{parameters.TargetFolder}}
+      CleanTargetFolder: true
+      OverWrite: true

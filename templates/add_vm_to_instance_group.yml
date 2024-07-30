@@ -1,0 +1,20 @@
+---
+parameters:
+  - name: InstanceGroup
+    displayName: Instance group name
+  - name: Zone
+    displayName: Zone name
+steps:
+  - task: PowerShell@2
+    displayName: Check REST API
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/check_endpoint.ps1
+  - task: PowerShell@2
+    displayName: Log into GCP
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/login_gcp.ps1
+  - task: PowerShell@2
+    displayName: Add VM to instance group
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/add_vm_to_instance_group.ps1
+      arguments: -instancegroup ${{parameters.InstanceGroup}} -zone ${{parameters.Zone}}

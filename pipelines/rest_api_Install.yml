@@ -1,89 +1,81 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: GitBranch
-    displayName: Branch to deploy
+  - name: DeployBranch
+    displayName: Branch to use
+    default: main
   - name: MaxParallel
-    displayName: Number/ Percentage of targets to deploy to in parallel
+    displayName: Number/percentage of targets to deploy to in parallel
     default: 50%
-
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: ${{parameters.Environment }}_BlaiseRESTAPI
-  displayName: Installation Of RestAPI in ${{parameters.Environment }}
-  jobs:
+  - stage: InstallRestApi_${{parameters.Environment}}
+    displayName: Install REST API (${{parameters.Environment}})
+    jobs:
       - deployment: InstallRestAPI
-        displayName: Install Rest API
+        displayName: Install REST API
         variables:
-          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-          TESTING_URL: "http://localhost/api/v2/health"
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+          TESTING_URL: http://localhost/api/v2/health
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: restapi
         strategy:
           rolling:
-            maxParallel:  ${{parameters.MaxParallel}}
+            maxParallel: ${{parameters.MaxParallel}}
             preDeploy:
               steps:
-              - checkout: self
-
-              - template: /templates/remove_from_instance_group.yml
-                parameters:
+                - checkout: self
+                - template: /templates/remove_vm_from_instance_group.yml
+                  parameters:
                     instancegroup: restapi-group
                     zone: europe-west2-a
             deploy:
               steps:
-              - template: /templates/firewall_rule_steps.yml
-                parameters:
-                  RuleName: RestAPI
-                  OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
-                  InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
-
-              - template: /templates/stackdriver_steps.yml
-                parameters:
-                  LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                  MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                  GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
-
-              - template: /templates/blaise_reg_settings.yml
-                parameters:
-                  BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                  BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)         
-
-              - template: /templates/download_artifact_steps.yml
-                parameters:
-                  ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
-                    GitBranch: ${{ parameters.GitBranch }}
-                  ${{ if eq(parameters.Environment, 'prod') }}:
-                    GitBranch: 'prod'
-                  ${{ if eq(parameters.Environment, 'preprod') }}:
-                    GitBranch: 'preprod'
-                  ArtifactName: '_blaiseRestAPI'
-                  DownloadPath: $(System.ArtifactsDirectory)
-                  TargetFiles: '**/*.config'
-                  PipelineNumber: 60
-
-              - template: /templates/deploy_service_steps.yml
-                parameters:
-                  ServiceName: BlaiseRestApi
-                  ExeName: blaise.api
-                  TargetFolder: c:\blaiseServices\BlaiseRestApi
-                  SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
-
-              - template: /templates/set_environment.yml
+                - template: /templates/install_stackdriver.yml
+                  parameters:
+                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                - template: /templates/add_windows_firewall_rules.yml
+                  parameters:
+                    RuleName: Blaise
+                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                - template: /templates/set_windows_timezone.yml
+                - template: /templates/set_license_key.yml
+                  parameters:
+                    BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+                - template: /templates/download_build_artifact.yml
+                  parameters:
+                    ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
+                      Branch: ${{parameters.DeployBranch}}
+                    ${{ if eq(parameters.Environment, 'prod') }}:
+                      Branch: prod
+                    ${{ if eq(parameters.Environment, 'preprod') }}:
+                      Branch: preprod
+                    ArtifactName: _BlaiseRestApi
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
+                    PipelineNumber: 60
+                - template: /templates/deploy_windows_service.yml
+                  parameters:
+                    ServiceName: BlaiseRestApi
+                    ExeName: blaise.api
+                    TargetFolder: c:\BlaiseServices\BlaiseRestApi
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
             routeTraffic:
               steps:
-              - template: /templates/add_to_instance_group.yml
-                parameters:
+                - template: /templates/add_vm_to_instance_group.yml
+                  parameters:
                     instancegroup: restapi-group
                     zone: europe-west2-a

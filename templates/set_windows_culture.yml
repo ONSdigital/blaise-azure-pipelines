@@ -1,0 +1,8 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Set Windows culture
+    inputs:
+      targetType: inline
+      script: |-
+        Set-Culture en-GB
