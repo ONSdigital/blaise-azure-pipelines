@@ -5,7 +5,7 @@ function LogInfo {
         $message
     )
 
-    if ($IsWindows) {
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
         CreateSourceIfNotExists($source)
         Write-Host "Information: $message"
         Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Information -Message "$($source): $message"
@@ -19,7 +19,7 @@ function LogWarning {
         $message
     )
 
-    if ($IsWindows) {
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
         CreateSourceIfNotExists($source)
         Write-Host "Warning: $message"
         Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Warning -Message "$($source): $message"
@@ -33,7 +33,7 @@ function LogError {
         $message
     )
 
-    if ($IsWindows) {
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
         CreateSourceIfNotExists($source)
         Write-Host "Error: $message"
         Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Error -Message "$($source): $message"
@@ -47,7 +47,7 @@ function CreateSourceIfNotExists {
         $dataSource
     )
 
-    if ($IsWindows -and -Not [System.Diagnostics.EventLog]::SourceExists($dataSource)) {
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT' -and -Not [System.Diagnostics.EventLog]::SourceExists($dataSource)) {
         New-EventLog -LogName Application -Source $dataSource
     }
 }
