@@ -5,9 +5,13 @@ function LogInfo {
         $message
     )
 
-    CreateSourceIfNotExists($source)
-    Write-Host "Information: $message"
-    Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Information -Message "$($source): $message"
+    if ($IsWindows) {
+        CreateSourceIfNotExists($source)
+        Write-Host "Information: $message"
+        Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Information -Message "$($source): $message"
+    } else {
+        Write-Host "Information: $message"
+    }
 }
 
 function LogWarning {
@@ -15,9 +19,13 @@ function LogWarning {
         $message
     )
 
-    CreateSourceIfNotExists($source)
-    Write-Host "Warning: $message"
-    Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Warning -Message "$($source): $message"
+    if ($IsWindows) {
+        CreateSourceIfNotExists($source)
+        Write-Host "Warning: $message"
+        Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Warning -Message "$($source): $message"
+    } else {
+        Write-Host "Warning: $message"
+    }
 }
 
 function LogError {
@@ -25,9 +33,13 @@ function LogError {
         $message
     )
 
-    CreateSourceIfNotExists($source)
-    Write-Host "Error: $message"
-    Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Error -Message "$($source): $message"
+    if ($IsWindows) {
+        CreateSourceIfNotExists($source)
+        Write-Host "Error: $message"
+        Write-EventLog -LogName "Application" -Source $source -EventId 3001 -EntryType Error -Message "$($source): $message"
+    } else {
+        Write-Host "Error: $message"
+    }
 }
 
 function CreateSourceIfNotExists {
@@ -35,7 +47,7 @@ function CreateSourceIfNotExists {
         $dataSource
     )
 
-    if (-Not [System.Diagnostics.EventLog]::SourceExists($dataSource)) {
+    if ($IsWindows -and -Not [System.Diagnostics.EventLog]::SourceExists($dataSource)) {
         New-EventLog -LogName Application -Source $dataSource
     }
 }
