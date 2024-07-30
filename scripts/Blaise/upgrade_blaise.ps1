@@ -1,3 +1,5 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 $blaiseInstallDir = "C:\dev\data\Blaise"
 $blaiseGcpBucket = $env:ENV_BLAISE_GCP_BUCKET
 $blaiseInstallPackage = $env:ENV_BLAISE_INSTALL_PACKAGE
@@ -10,61 +12,65 @@ $dashboardFolders = @(
 )
 
 function Download-BlaiseInstaller {
-    Write-Host "Downloading Blaise installer"
+    LogInfo("Downloading Blaise installer")
     gsutil cp "gs://$blaiseGcpBucket/$blaiseInstallPackage" "C:\dev\data"
 }
 
 function Unzip-BlaiseInstaller {
-    Write-Host "Unzipping Blaise installer"
+    LogInfo("Unzipping Blaise installer")
     Remove-Item $blaiseInstallDir -Recurse -ErrorAction Ignore
     mkdir $blaiseInstallDir
     Expand-Archive -Force "C:\dev\data\$blaiseInstallPackage" $blaiseInstallDir
 }
 
 function Uninstall-Blaise {
-    Write-Host "Uninstalling Blaise"
-    $blaiseArgs = @(
+    LogInfo("Uninstalling Blaise")
+    $blaiseUninstallArgs = @(
         "/qn"
         "/norestart"
         "/log C:\dev\data\Blaise\upgrade.log"
         "/x {24691BB5-A1CE-455B-A2D5-FBDE1CE10675}"
     )
-    Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUninstallArgs
 }
 
 function Delete-DashboardFolders {
-    Write-Host "Deleting dashboard folders"
+    LogInfo("Deleting dashboard folders")
     foreach ($folder in $dashboardFolders) {
         if (Test-Path -Path $folder) {
-            Write-Host "Folder found: $folder"
+            LogInfo("Folder found: $folder")
             try {
                 Remove-Item -Path $folder -Recurse -Force
-                Write-Host "Folder successfully deleted: $folder"
-                } catch {
-                Write-Host "Error deleting folder: $($_.Exception.Message) - $folder"
-                }
-        } else {
-            Write-Host "Folder does not exist: $folder"
+                LogInfo("Folder successfully deleted: $folder")
+            }
+            catch {
+                LogError("Error deleting folder $folder")
+                LogError("$($_.Exception.Message)")
+                LogError("$($_.ScriptStackTrace)")
+            }
+        }
+        else {
+            LogInfo("Folder does not exist: $folder")
         }
     }
 }
 
 function Upgrade-Blaise {
-    Write-Host "Upgrading Blaise"
-    $blaiseArgs = @(
+    LogInfo("Upgrading Blaise")
+    $blaiseUpgradeArgs = @(
         "/qn"
         "/norestart"
         "/log upgrade.log"
         "/i C:\dev\data\Blaise\Blaise5.msi"
     )
-    $blaiseArgs += "FORCEINSTALL=1"
-    $blaiseArgs += "INSTALLATIONMODE=Upgrade"
-    $blaiseArgs += "ADMINISTRATORUSER=$blaiseAdminUser"
-    $blaiseArgs += "ADMINISTRATORPASSWORD=$blaiseAdminPassword"
-    Start-Process -Wait "msiexec" -ArgumentList $blaiseArgs
+    $blaiseUpgradeArgs += "FORCEINSTALL=1"
+    $blaiseUpgradeArgs += "INSTALLATIONMODE=Upgrade"
+    $blaiseUpgradeArgs += "ADMINISTRATORUSER=$blaiseAdminUser"
+    $blaiseUpgradeArgs += "ADMINISTRATORPASSWORD=$blaiseAdminPassword"
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUpgradeArgs
 }
 
-Write-Host "Upgrading Blaise to version: $env:ENV_BLAISE_CURRENT_VERSION"
+LogInfo("Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION")
 
 Download-BlaiseInstaller
 Unzip-BlaiseInstaller
@@ -72,4 +78,4 @@ Uninstall-Blaise
 Delete-DashboardFolders
 Upgrade-Blaise
 
-Write-Host "Blaise upgrade complete"
+LogInfo("Blaise upgrade complete")

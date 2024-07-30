@@ -1,0 +1,37 @@
+---
+parameters:
+  - name: Branch
+    displayName: Name of the Git branch
+  - name: ArtifactName
+    displayName: Name of the build artifact
+  - name: DownloadPath
+    displayName: Path to download build
+  - name: TargetFiles
+    displayName: Expression of files for token replacement
+  - name: PipelineNumber
+    displayName: Number of pipeline which builds the project
+steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: Download latest build
+    inputs:
+      buildType: specific
+      project: fbaf94f7-2d40-410a-8a27-de142d8d2313
+      pipeline: ${{parameters.PipelineNumber}}
+      buildVersionToDownload: latestFromBranch
+      branchName: refs/heads/${{parameters.Branch}}
+      downloadType: single
+      artifactName: ${{parameters.ArtifactName}}
+      downloadPath: ${{parameters.DownloadPath}}
+  - task: replacetokens@6
+    displayName: Replace config settings
+    inputs:
+      rootDirectory: $(System.ArtifactsDirectory)
+      targetFiles: ${{parameters.TargetFiles}}
+      encoding: auto
+      writeBOM: true
+      actionOnMissing: warn
+      keepToken: false
+      tokenPrefix: '#{'
+      tokenSuffix: '}#'
+      verbosity: 'info'
+      enableTelemetry: true
