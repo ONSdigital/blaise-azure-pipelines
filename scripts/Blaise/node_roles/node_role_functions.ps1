@@ -60,7 +60,7 @@ function Get-RequiredRoles {
     $roleServerShouldHave = if ($null -ne $roleServerShouldHaveTest) {
         $roleServerShouldHaveTest
     } else {
-        [Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", "Machine")
+        $roleServerShouldHave = [Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", "Machine")
     }
     
     if ([string]::IsNullOrEmpty($roleServerShouldHave)) {
