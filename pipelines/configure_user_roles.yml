@@ -1,32 +1,29 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: ConfigureUserRoles_${{parameters.Environment }}
-  displayName: ${{parameters.Environment }} Configure User Roles
-  variables:
-        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-  jobs:
+  - stage: ConfigureUserRoles_${{parameters.Environment}}
+    displayName: Configure user roles (${{parameters.Environment}})
+    variables:
+      ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+    jobs:
       - deployment: UserRoles
-        displayName: Configure User Roles
-        environment:  
+        displayName: Configure user roles
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: restapitests
+          tags: mgmt
         strategy:
           runOnce:
             deploy:
               steps:
-              - checkout: self
-              - template: /templates/user_roles_steps.yml
+                - checkout: self
+                - template: /templates/add_user_roles.yml

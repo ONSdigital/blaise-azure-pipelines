@@ -1,60 +1,54 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: GitBranch
-    displayName: Branch to deploy
-
+  - name: DeployBranch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: ${{parameters.Environment }}_BlaiseRESTAPI
-  displayName: Automated tests for RestAPI in ${{parameters.Environment }}
-  jobs:
-      - deployment: InstallRestAPI
-        displayName: Install Rest API
+  - stage: RestApiTests_${{parameters.Environment}}
+    displayName: REST API tests (${{parameters.Environment}})
+    jobs:
+      - deployment: RestApiTests
+        displayName: REST API tests
         variables:
-          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-        environment:  
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: restapitests
         strategy:
           runOnce:
-              deploy:
-                steps:
-                - template: /templates/download_test_instrument.yml
-
-                - template: /templates/download_artifact_steps.yml
-                  parameters: 
+            deploy:
+              steps:
+                - template: /templates/download_test_questionnaire.yml
+                - template: /templates/download_build_artifact.yml
+                  parameters:
                     ${{ if notin(parameters.Environment, 'preprod', 'prod') }}:
-                      GitBranch: ${{ parameters.GitBranch }}
+                      Branch: ${{parameters.DeployBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
-                      GitBranch: 'prod'
+                      Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
-                      GitBranch: 'preprod'
-                    ArtifactName: '_blaiseRestAPI'
+                      Branch: preprod
+                    ArtifactName: _BlaiseRestApi
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 60
-
-                - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
-                  - template: /templates/automated_test_with_category_steps.yml
-                    parameters: 
-                      BehaviourSolutionName: Blaise.Api.Tests.Behaviour
-                      TestName: REST API SMOKE TEST
-                      TestCategory: Smoke
-
-                - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
-                  - template: /templates/automated_test_steps.yml
-                    parameters: 
-                      BehaviourSolutionName: Blaise.Api.Tests.Behaviour
-                      TestName: Full Regression REST API Test
-
+                - ${{ if eq(parameters.Environment, 'prod') }}:
+                    - template: /templates/run_tests_with_category.yml
+                      parameters:
+                        TestSolutionName: Blaise.Api.Tests.Behaviour
+                        TestName: REST API smoke tests
+                        TestCategory: smoke
+                - ${{ if ne(parameters.Environment, 'prod') }}:
+                    - template: /templates/run_tests.yml
+                      parameters:
+                        TestSolutionName: Blaise.Api.Tests.Behaviour
+                        TestName: REST API regression tests

@@ -1,0 +1,15 @@
+---
+parameters:
+  - name: LoggingAgent
+    displayName: Name of Stackdriver logging agent exe
+  - name: MonitoringAgent
+    displayName: Name of Stackdriver monitoring agent exe
+  - name: GCP_Bucket
+    displayName: Name of GCP bucket to download Stackdriver agents from
+steps:
+  - task: PowerShell@2
+    displayName: Install Stackdriver
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_stackdriver.ps1
+      arguments: -loggingagent ${{parameters.LoggingAgent}} -monitoringagent ${{parameters.MonitoringAgent}}
+        -GCP_BUCKET ${{parameters.GCP_Bucket}}
