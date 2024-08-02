@@ -1,0 +1,10 @@
+---
+parameters:
+  - name: GCP_Bucket
+    displayName: Name of GCP bucket to download MySQL connector from
+steps:
+  - task: PowerShell@2
+    displayName: Install MySQL connector
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_mysql_connector.ps1
+      arguments: -GCP_BUCKET ${{parameters.GCP_Bucket}}

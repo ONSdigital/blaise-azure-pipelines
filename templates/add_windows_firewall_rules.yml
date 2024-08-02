@@ -1,0 +1,15 @@
+---
+parameters:
+  - name: RuleName
+    displayName: Firewall rule name
+  - name: InboundPorts
+    displayName: Inbound ports to be opened (comma seperated)
+  - name: OutboundPorts
+    displayName: Outbound ports to be opened (comma seperated)
+steps:
+  - task: PowerShell@2
+    displayName: Add Windows firewall rules
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/add_windows_firewall_rules.ps1
+      arguments: -RuleName:${{parameters.RuleName}} -Inbound_Ports ${{parameters.InboundPorts}}
+        -Outbound_Ports ${{parameters.OutboundPorts}}

@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Configure data interfaces
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/configure_data_interfaces.ps1

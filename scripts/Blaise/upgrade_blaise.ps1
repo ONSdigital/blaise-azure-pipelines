@@ -1,52 +1,81 @@
-$folderPath = "c:\dev\data\Blaise"
+. "$PSScriptRoot\..\logging_functions.ps1"
 
-Write-Host "Upgrade blaise to version: $env:ENV_BLAISE_CURRENT_VERSION"
+$blaiseInstallDir = "C:\dev\data\Blaise"
+$blaiseGcpBucket = $env:ENV_BLAISE_GCP_BUCKET
+$blaiseInstallPackage = $env:ENV_BLAISE_INSTALL_PACKAGE
+$blaiseAdminUser = $env:ENV_BLAISE_ADMIN_USER
+$blaiseAdminPassword = $env:ENV_BLAISE_ADMIN_PASSWORD
 
-Write-Host "Download Blaise redistributables"
-gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
+$dashboardFolders = @(
+    "D:\Blaise5\Blaise"
+    "D:\Blaise5\BlaiseDashboard"
+)
 
-Write-Host "Expand archive to 'Blaise' dir"
-Remove-Item $folderPath -Recurse -ErrorAction Ignore
-mkdir $folderPath
+function Download-BlaiseInstaller {
+    LogInfo("Downloading Blaise installer")
+    gsutil cp "gs://$blaiseGcpBucket/$blaiseInstallPackage" "C:\dev\data"
+}
 
-Expand-Archive -Force C:\dev\data\$env:ENV_BLAISE_INSTALL_PACKAGE C:\dev\data\Blaise\
-Write-Host "Setting Blaise uninstall args"
-$blaise_args = "/qn","/norestart","/log C:\dev\data\Blaise\upgrade.log","/x {24691BB5-A1CE-455B-A2D5-FBDE1CE10675}"
-Write-Host "blaise_args: $blaise_args"
-Write-Host "Running msiexec for Blaise uninstall"
-Start-Process -Wait "msiexec" -ArgumentList $blaise_args
-Write-Host "Blaise uninstall complete"
+function Unzip-BlaiseInstaller {
+    LogInfo("Unzipping Blaise installer")
+    Remove-Item $blaiseInstallDir -Recurse -ErrorAction Ignore
+    mkdir $blaiseInstallDir
+    Expand-Archive -Force "C:\dev\data\$blaiseInstallPackage" $blaiseInstallDir
+}
 
-$catiDashboardFolder = "D:\Blaise5\Blaise"
-$blaiseDashboardFolder = "D:\Blaise5\BlaiseDashboard"
+function Uninstall-Blaise {
+    LogInfo("Uninstalling Blaise")
+    $blaiseUninstallArgs = @(
+        "/qn"
+        "/norestart"
+        "/log C:\dev\data\Blaise\upgrade.log"
+        "/x {24691BB5-A1CE-455B-A2D5-FBDE1CE10675}"
+    )
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUninstallArgs
+}
 
-$folders = @($catiDashboardFolder, $blaiseDashboardFolder)
-
-foreach ($folder in $folders) {
-    if (Test-Path -Path $folder) {
-        Write-Host "Folder found: $folder"
-        Write-Host "Attempting to delete folder..."    
-        try {
-            Remove-Item -Path $folder -Recurse -Force
-            Write-Host "Folder successfully deleted: $folder"
+function Delete-DashboardFolders {
+    LogInfo("Deleting dashboard folders")
+    foreach ($folder in $dashboardFolders) {
+        if (Test-Path -Path $folder) {
+            LogInfo("Folder found: $folder")
+            try {
+                Remove-Item -Path $folder -Recurse -Force
+                LogInfo("Folder successfully deleted: $folder")
+            }
+            catch {
+                LogError("Error deleting folder $folder")
+                LogError("$($_.Exception.Message)")
+                LogError("$($_.ScriptStackTrace)")
+            }
         }
-        catch {
-            Write-Host "Error occurred while deleting folder: $folder"
+        else {
+            LogInfo("Folder does not exist: $folder")
         }
-    } else {
-        Write-Host "Folder does not exist: $folder"
     }
 }
 
-Write-Host "Blaise admin user: $env:ENV_BLAISE_ADMIN_USER"
-Write-Host "Blaise admin password: $env:ENV_BLAISE_ADMIN_PASSWORD"
-Write-Host "Setting Blaise upgrade args"
-$blaise_args = "/qn","/norestart","/log upgrade.log","/i C:\dev\data\Blaise\Blaise5.msi"
-$blaise_args += "FORCEINSTALL=1"
-$blaise_args += "INSTALLATIONMODE=Upgrade"
-$blaise_args += "ADMINISTRATORUSER=$env:ENV_BLAISE_ADMIN_USER"
-$blaise_args += "ADMINISTRATORPASSWORD=$env:ENV_BLAISE_ADMIN_PASSWORD"
-Write-Host "blaise_args: $blaise_args"
-Write-Host "Running msiexec for Blaise upgrade"
-Start-Process -Wait "msiexec" -ArgumentList $blaise_args
-Write-Host "Blaise upgrade complete"
+function Upgrade-Blaise {
+    LogInfo("Upgrading Blaise")
+    $blaiseUpgradeArgs = @(
+        "/qn"
+        "/norestart"
+        "/log upgrade.log"
+        "/i C:\dev\data\Blaise\Blaise5.msi"
+    )
+    $blaiseUpgradeArgs += "FORCEINSTALL=1"
+    $blaiseUpgradeArgs += "INSTALLATIONMODE=Upgrade"
+    $blaiseUpgradeArgs += "ADMINISTRATORUSER=$blaiseAdminUser"
+    $blaiseUpgradeArgs += "ADMINISTRATORPASSWORD=$blaiseAdminPassword"
+    Start-Process -Wait "msiexec" -ArgumentList $blaiseUpgradeArgs
+}
+
+LogInfo("Upgrading Blaise to version $env:ENV_BLAISE_CURRENT_VERSION")
+
+Download-BlaiseInstaller
+Unzip-BlaiseInstaller
+Uninstall-Blaise
+Delete-DashboardFolders
+Upgrade-Blaise
+
+LogInfo("Blaise upgrade complete")

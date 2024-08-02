@@ -1,0 +1,27 @@
+---
+parameters:
+  - name: BlaiseLicenseKey
+    displayName: Blaise license key
+  - name: BlaiseActivationKey
+    displayName: Blaise activation key
+steps:
+  - task: PowerShell@2
+    displayName: Install Blaise
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/check_blaise_install.ps1
+    name: BlaiseVariables
+  - task: PowerShell@2
+    displayName: Update Blaise license key
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/license_key/update_license_key.ps1
+      arguments: -BLAISE_LICENSE_KEY ${{parameters.BlaiseLicenseKey}} -BLAISE_ACTIVATION_CODE
+        ${{parameters.BlaiseActivationKey}}
+  - task: PowerShell@2
+    displayName: Set service recovery options
+    inputs:
+      targetType: inline
+      script: |
+        $serviceName = '$(BlaiseServiceName)'
+        $command = "sc.exe failure $serviceName reset=0 actions=restart/1000"
+        Invoke-Expression $command
+    enabled: true
