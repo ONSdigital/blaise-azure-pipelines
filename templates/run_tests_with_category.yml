@@ -1,0 +1,31 @@
+---
+parameters:
+  - name: TestSolutionName
+    displayName: Test solution name
+  - name: TestName
+    displayName: Test name
+  - name: TestCategory
+    displayName: Test category to run
+steps:
+  - task: VisualStudioTestPlatformInstaller@1
+    displayName: Install Visual Studio test platform
+    inputs:
+      packageFeedSelector: nugetOrg
+      versionSelector: latestPreRelease
+  - task: VSTest@2
+    displayName: Run category of tests
+    inputs:
+      searchFolder: $(System.ArtifactsDirectory)
+      testAssemblyVer2: |
+        **\${{parameters.TestSolutionName}}\**\${{parameters.TestSolutionName}}.dll
+        !**\obj\**
+        resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+      runOnlyImpactedTests: false
+      uiTests: true
+      vsTestVersion: toolsInstaller
+      runInParallel: false
+      runTestsInIsolation: false
+      codeCoverageEnabled: false
+      testRunTitle: ${{parameters.TestName}}
+      testFiltercriteria: TestCategory=${{parameters.TestCategory}}
+    continueOnError: false

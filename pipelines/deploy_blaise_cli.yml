@@ -1,52 +1,83 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: GitBranch
-    displayName: Branch to deploy
-
+  - name: DeployBranch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: ${{parameters.Environment }}_BlaiseCli
-  displayName: Deploying Blaise Cli ${{parameters.Environment }}
-  jobs:
-      - deployment: DeployBlaiseCli
-        displayName: Deploy Blaise Cli
-        variables:
-          ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
-        environment:  
+  - stage: DeployBlaiseCli_${{parameters.Environment}}
+    displayName: Deploy Blaise CLI (${{parameters.Environment}})
+    jobs:
+      - deployment: InstallStackDriver
+        displayName: Install Stackdriver
+        environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: blaise-cli
         strategy:
           runOnce:
-              deploy:
-                steps:
+            deploy:
+              steps:
                 - checkout: self
-
-                - template: /templates/download_artifact_steps.yml
-                  parameters: 
+                - template: /templates/install_stackdriver.yml
+                  parameters:
+                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
+                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: InstallMySqlConnector
+        displayName: Install MySQL connector
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-cli
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_mysql_connector.yml
+                  parameters:
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: DeployBlaiseCli
+        displayName: Deploy Blaise CLI
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-cli
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/download_build_artifact.yml
+                  parameters:
                     ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
-                      GitBranch: ${{ parameters.GitBranch }}
+                      Branch: ${{parameters.DeployBranch}}
                     ${{ if eq(parameters.Environment, 'prod') }}:
-                      GitBranch: 'prod'
+                      Branch: prod
                     ${{ if eq(parameters.Environment, 'preprod') }}:
-                      GitBranch: 'preprod'
-                    ArtifactName: '_blaiseCli'
+                      Branch: preprod
+                    ArtifactName: _BlaiseCli
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 66
-
-                - template: /templates/copy_binary_files_steps.yml
+                - template: /templates/copy_files.yml
                   parameters:
-                    TargetFolder: c:\blaiseServices\BlaiseCli
+                    TargetFolder: c:\BlaiseServices\BlaiseCli
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
-
+                - template: /templates/add_windows_firewall_rules.yml
+                  parameters:
+                    RuleName: Blaise
+                    InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                    OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
+                - template: /templates/set_windows_timezone.yml

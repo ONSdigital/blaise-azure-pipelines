@@ -1,5 +1,0 @@
-steps: 
-  - task: PowerShell@2
-    displayName: Setting TimeZones on VMs
-    inputs:
-      filePath: '$(Agent.BuildDirectory)/s/scripts/helpers/set_timezones.ps1'
