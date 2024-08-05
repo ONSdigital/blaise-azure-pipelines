@@ -1,57 +1,49 @@
+---
 parameters:
   - name: VarGroup
-    displayName: Variable Group
+    displayName: Variable group
   - name: Environment
     displayName: Environment to use
-  - name: AutomatedTestsBranch
-    displayName: Automated tests git branch
-    default: master
-
+  - name: IntegrationTestsBranch
+    displayName: Branch to use
+    default: main
 trigger: none
-
 pr: none
-
 variables:
-  - group: ${{ parameters.VarGroup }}
+  - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
-- stage: TOBITests_${{parameters.Environment }}
-  displayName: ${{parameters.Environment }} TOBI Automated Tests
-  jobs:
-    - job: "AutomatedTests"
-      variables:
-        ENV_BLAISE_SERVER_BINDING : $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
-        ENV_BLAISE_SERVER_HOST_NAME : $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
-      pool:
-        vmImage: 'windows-2019'
-      steps:
-      - template: /templates/blaise_reg_settings.yml
-        parameters:
-          BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-          BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
-
-      - template: /templates/download_test_instrument.yml
-
-      - template: /templates/setup_region_and_culture.yml
-
-      - template: /templates/download_artifact_steps.yml
-        parameters:
-          GitBranch: ${{parameters.AutomatedTestsBranch}}
-          ArtifactName: _AutomatedTests
-          DownloadPath: $(System.ArtifactsDirectory)
-          TargetFiles: '**/*Behaviour*.config'
-          PipelineNumber: 43
-
-      - ${{ if notin(parameters.Environment, 'preprod', 'dev') }}:
-        - template: /templates/automated_test_with_category_steps.yml
-          parameters:
-            BehaviourSolutionName: Blaise.TOBI.Tests.Behaviour
-            TestName: TOBI Smoke Tests
-            TestCategory: Smoke
-
-      - ${{ if in(parameters.Environment, 'preprod', 'dev') }}:
-        - template: /templates/automated_test_steps.yml
-          parameters:
-            BehaviourSolutionName: Blaise.TOBI.tests.Behaviour
-            TestName: TOBI Full Regression tests
+  - stage: TobiTests_${{parameters.Environment}}
+    displayName: TOBI tests (${{parameters.Environment}})
+    jobs:
+      - job: TobiTests
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
+          ENV_BLAISE_SERVER_HOST_NAME: $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
+        pool:
+          vmImage: windows-2019
+        steps:
+          - template: /templates/set_license_key.yml
+            parameters:
+              BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+              BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+          - template: /templates/download_test_questionnaire.yml
+          - template: /templates/set_windows_culture.yml
+          - template: /templates/download_build_artifact.yml
+            parameters:
+              Branch: ${{parameters.IntegrationTestsBranch}}
+              ArtifactName: _AutomatedTests
+              DownloadPath: $(System.ArtifactsDirectory)
+              TargetFiles: '**/*Behaviour*.config'
+              PipelineNumber: 43
+          - ${{ if eq(parameters.Environment, 'prod') }}:
+              - template: /templates/run_tests_with_category.yml
+                parameters:
+                  TestSolutionName: Blaise.TOBI.Tests.Behaviour
+                  TestName: TOBI smoke tests
+                  TestCategory: smoke
+          - ${{ if ne(parameters.Environment, 'prod') }}:
+              - template: /templates/run_tests.yml
+                parameters:
+                  TestSolutionName: Blaise.TOBI.tests.Behaviour
+                  TestName: TOBI regression tests

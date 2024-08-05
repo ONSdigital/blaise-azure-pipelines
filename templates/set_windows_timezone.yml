@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Set Windows timezone
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/set_windows_timezone.ps1

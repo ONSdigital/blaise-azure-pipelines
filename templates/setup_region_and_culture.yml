@@ -1,7 +1,0 @@
-steps:
-  - task: PowerShell@2
-    displayName: Set Culture on the environment
-    inputs:
-      targetType: 'inline'
-      script: |
-        Set-Culture en-GB
