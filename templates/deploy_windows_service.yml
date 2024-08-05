@@ -1,0 +1,29 @@
+---
+parameters:
+  - name: ServiceName
+    displayName: Name of the service to be deployed
+  - name: ExeName
+    displayName: Name of the service executable
+  - name: TargetFolder
+    displayName: Path of service target folder
+  - name: SourceFolder
+    displayName: Path of service source folder
+steps:
+  - task: PowerShell@2
+    displayName: Delete current ${{parameters.ServiceName}} service
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/windows_service/delete_windows_service.ps1
+      arguments: -ServiceName ${{parameters.ServiceName}}
+  - task: CopyFiles@2
+    displayName: Copy ${{parameters.ServiceName}} files
+    inputs:
+      SourceFolder: ${{parameters.SourceFolder}}
+      Contents: '**'
+      TargetFolder: ${{parameters.TargetFolder}}
+      CleanTargetFolder: true
+      OverWrite: true
+  - task: PowerShell@2
+    displayName: Create new ${{parameters.ServiceName}} service
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/windows_service/create_windows_service.ps1
+      arguments: -ServiceName ${{parameters.ServiceName}} -exeName ${{parameters.ExeName}}
