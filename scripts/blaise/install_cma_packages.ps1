@@ -112,12 +112,12 @@ try {
     # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
     $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
     foreach ($Instrument in $InstrumentList) {
-        if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
-            LogInfo("Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping...")
-        }
-        else {
-            Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
-        }
+        # if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
+        #     LogInfo("Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping...")
+        # }
+        # else {
+        Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
+        # }
     }
 
     LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
