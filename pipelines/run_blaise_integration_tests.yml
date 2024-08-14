@@ -35,8 +35,14 @@ stages:
               DownloadPath: $(System.ArtifactsDirectory)
               TargetFiles: '**/*Behaviour*.config'
               PipelineNumber: 43
-          - template: /templates/run_tests_with_category.yml
-            parameters:
-              TestSolutionName: Blaise.Tests.Behaviour
-              TestName: Blaise smoke tests
-              TestCategory: smoke
+          - ${{ if eq(parameters.Environment, 'prod') }}:
+              - template: /templates/run_tests_with_category.yml
+                parameters:
+                  TestSolutionName: Blaise.Tests.Behaviour
+                  TestName: Blaise smoke tests
+                  TestCategory: smoke
+          - ${{ if ne(parameters.Environment, 'prod') }}:
+              - template: /templates/run_tests.yml
+                parameters:
+                  TestSolutionName: Blaise.Tests.Behaviour
+                  TestName: Blaise regression tests
