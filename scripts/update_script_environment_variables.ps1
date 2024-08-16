@@ -5,7 +5,7 @@ function GetMetadataVariables {
     # return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 
     $variableGroupName = $env:VarGroup  # Get the variable group name from the pipeline parameter
-
+    LogInfo("Variable group name: $variableGroupName")
     # Get variable names and values from the environment variables
     $variables = Get-ChildItem Env: | Where-Object { $_.Name -like "$variableGroupName.*" } | ForEach-Object {
         $variableName = $_.Name.Substring($variableGroupName.Length + 1) # Remove the variable group prefix
