@@ -6,7 +6,7 @@ function GetMetadataVariables {
 
     $variableGroupId = $env:PARAMETERS.VarGroup.Id
 
-    $variableGroup = Get-AzDevOpsVariableGroup -Id $variableGroupId 
+    $variableGroup = Get-AzDevOpsVariableGroupVsts -Id $variableGroupId 
     $variableGroupName = $variableGroup.name
 
     LogInfo("Variable group name: $variableGroupName")
