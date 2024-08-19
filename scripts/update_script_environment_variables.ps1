@@ -5,11 +5,11 @@ function GetMetadataVariables {
     # return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 
     $variableGroupId = $env:PARAMETERS.VarGroup.Id
+    LogInfo("Variable group ID: $variableGroupId")
+    # $variableGroup = Get-AzDevOpsVariableGroupVsts -Id $variableGroupId 
+    # $variableGroupName = $variableGroup.name
 
-    $variableGroup = Get-AzDevOpsVariableGroupVsts -Id $variableGroupId 
-    $variableGroupName = $variableGroup.name
-
-    LogInfo("Variable group name: $variableGroupName")
+    # LogInfo("Variable group name: $variableGroupName")
     # Get variable names and values from the environment variables
     $variables = Get-ChildItem Env: | Where-Object { $_.Name -like "$variableGroupName.*" } | ForEach-Object {
         $variableName = $_.Name.Substring($variableGroupName.Length + 1) # Remove the variable group prefix
