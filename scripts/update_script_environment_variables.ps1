@@ -4,7 +4,11 @@ function GetMetadataVariables {
     # $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
     # return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 
-    $variableGroupName = $env:VarGroup  # Get the variable group name from the pipeline parameter
+    $variableGroupId = $env:PARAMETERS.VarGroup.Id
+
+    $variableGroup = Get-AzDevOpsVariableGroup -Id $variableGroupId 
+    $variableGroupName = $variableGroup.name
+
     LogInfo("Variable group name: $variableGroupName")
     # Get variable names and values from the environment variables
     $variables = Get-ChildItem Env: | Where-Object { $_.Name -like "$variableGroupName.*" } | ForEach-Object {
