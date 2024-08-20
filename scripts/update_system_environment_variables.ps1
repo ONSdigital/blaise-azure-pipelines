@@ -26,7 +26,7 @@ function CreateVariables($variableList) {
                     LogInfo("Secret Manager var - $varName = $secretValue")
                 }
                 catch {
-                    LogError("Failed to retrieve secret for $varName: $($_.Exception.Message)")
+                    LogError("Failed to retrieve secret for $varName - $($_.Exception.Message)")
                 }
             } else {
                 [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
