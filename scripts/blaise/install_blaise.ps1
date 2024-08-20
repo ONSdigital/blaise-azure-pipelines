@@ -1,5 +1,5 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
-. "$PSScriptRoot\..\update_script_environment_variables.ps1"
+# . "$PSScriptRoot\..\update_script_environment_variables.ps1"
 
 LogInfo("Installing Blaise $env:ENV_BLAISE_CURRENT_VERSION")
 
