@@ -17,7 +17,7 @@ function CreateVariables($variableList) {
         if ($variable.Name -Like "ENV_*") {
             if ($varValue.StartsWith("projects/")) { 
                 if (-not (Get-Module -ListAvailable -Name SecretManagement)) {
-                    Install-Module -Name SecretManagement
+                    Install-Module -Name SecretManagement -AcceptLicense
                 }
 
                 try {
