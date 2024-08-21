@@ -1,5 +1,7 @@
 $source = "AzureDevOpsPipeline"
 
+Import-Module Microsoft.PowerShell.Management
+
 function LogInfo {
     param (
         $message
