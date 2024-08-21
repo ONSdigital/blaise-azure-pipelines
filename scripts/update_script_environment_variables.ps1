@@ -2,7 +2,7 @@
 
 function GetMetadataVariables {
     $variablesFromMetadata = Invoke-RestMethod http://metadata.google.internal/computeMetadata/v1/instance/attributes/?recursive=true -Headers @{ "Metadata-Flavor" = "Google" }
-    return $variablesFromMetadata | Get-Member -MemberType NoteProperty   
+    return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 }
 
 function CreateVariables($variableList) {
@@ -13,22 +13,8 @@ function CreateVariables($variableList) {
         $varValue = ($varDefinition -replace $pattern, '$3')
 
         if ($variable.Name -Like "BLAISE_*") {
-            if ($varValue.StartsWith("projects/")) {
-                if (-not (Get-Module -ListAvailable -Name SecretManagement)) {
-                    Install-Module -Name SecretManagement
-                }
-                try {
-                    $secretValue = Get-Secret -SecretId $varValue -Version 'latest'
-                    New-Variable -Scope script -Name ($varName) -Value $secretValue -Force 
-                    LogInfo("Secret Manager var - $varName = $secretValue")
-                }
-                catch {
-                    LogError("Failed to retrieve secret for $varName: $($_.Exception.Message)")
-                }
-            } else {
-                New-Variable -Scope script -Name ($varName) -Value $varValue -Force
-                LogInfo("Script env var - $varName = $varValue")
-            }
+            New-Variable -Scope script -Name ($varName) -Value $varValue -Force
+            LogInfo("Script env var - $varName = $varValue")
         }
     }
 }
