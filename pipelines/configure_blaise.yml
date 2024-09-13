@@ -26,7 +26,7 @@ stages:
                 - checkout: self
                 - task: PowerShell@2
                   inputs:
-                    filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
+                    filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables_new.ps1
       - deployment: InstallStackDriver
         displayName: Install Stackdriver
         environment:
