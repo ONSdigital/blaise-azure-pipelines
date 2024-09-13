@@ -20,6 +20,7 @@ function CreateVariables($variableList) {
             $secretValue = & gcloud secrets versions access latest --secret=$secret
 
             [System.Environment]::SetEnvironmentVariable($varName, ($secretValue), [System.EnvironmentVariableTarget]::Machine)
+            LogInfo("BENNY Secret Update System Environment Variables - $varName = $secretValue")
         }
         elseif ($variable.Name -Like "ENV_*") {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
