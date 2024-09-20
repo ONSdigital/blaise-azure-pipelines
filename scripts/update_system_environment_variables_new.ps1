@@ -5,7 +5,13 @@ function GetMetadataVariables {
     return $variablesFromMetadata | Get-Member -MemberType NoteProperty
 }
 
-function UpdateEnvironmentalVariable($varName, $secretValue, $secret) {
+function UpdateEnvironmentalVariable {
+
+    param (
+        [string]$varName,
+        [string]$secretValue,
+        [string]$secret
+    )
 
     Write-Host "UpdateEnvironmentalVariables Called with following values"
     Write-Host "varName = $varName"
