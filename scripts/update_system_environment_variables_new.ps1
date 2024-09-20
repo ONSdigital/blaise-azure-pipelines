@@ -34,7 +34,7 @@ function UpdateEnvironmentalVariable {
         # This is for environments that have been previously set up, so the secret values should remain the same
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
         # echo -n $envValue | gcloud secrets versions add $secret --data-file=-     
-        Write-Output -NoNewline $envValue | gcloud secrets versions add $secret --data-file=-
+        Write-Output $envValue | gcloud secrets versions add $secret --data-file=-
     }
 }
 
@@ -52,7 +52,8 @@ function CreateVariables($variableList) {
 
             $secretValue = & gcloud secrets versions access latest --secret=$secret
 
-            UpdateEnvironmentalVariable($variable.Name, $secretValue, $secret)
+
+            UpdateEnvironmentalVariable $variable.Name $secretValue $secret
         }
         elseif ($variable.Name -Like "ENV_*") {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
