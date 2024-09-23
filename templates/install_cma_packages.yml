@@ -3,4 +3,4 @@ steps:
   - task: PowerShell@2
     displayName: Install CMA packages
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/install_cma_packages.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/check_cma_packages.ps1
