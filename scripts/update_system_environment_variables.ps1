@@ -10,13 +10,15 @@ function UpdateEnvironmentalVariable {
     param (
         [string]$varName,
         [string]$secretValue,
-        [string]$secret
+        [string]$secret,
+        [string]$projectId
     )
 
     Write-Host "UpdateEnvironmentalVariables Called with following values"
     Write-Host "varName = $varName"
     Write-Host "secretValue = $secretValue"
     Write-Host "secret = $secret"
+    Write-Host "projectId = $projectId"
 
     $envValue = [System.Environment]::GetEnvironmentVariable($varName, [System.EnvironmentVariableTarget]::Machine)
 
@@ -34,7 +36,7 @@ function UpdateEnvironmentalVariable {
         # This is for environments that have been previously set up, so the secret values should remain the same
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
         # echo -n $envValue | gcloud secrets versions add $secret --data-file=-     
-        Write-Output $envValue | gcloud secrets versions add $secret --data-file=-
+        Write-Output $envValue | gcloud secrets versions add $secret --project=$projectId --data-file=-
     }
 }
 
@@ -48,12 +50,12 @@ function CreateVariables($variableList) {
         if ($variable.Name -Like "ENV_*" -and $varValue -Like "projects/*/secrets/*") {
 
             $parts = $varValue -split "/"
+            $projectId = $parts[1]
             $secret = $parts[3]
 
-            $secretValue = & gcloud secrets versions access latest --secret=$secret
+            $secretValue = & gcloud secrets versions access latest --secret=$secret --project=$projectId
 
-
-            UpdateEnvironmentalVariable $variable.Name $secretValue $secret
+            UpdateEnvironmentalVariable $variable.Name $secretValue $secret $projectId
         }
         elseif ($variable.Name -Like "ENV_*") {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)
