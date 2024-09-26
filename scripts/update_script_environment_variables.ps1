@@ -15,8 +15,10 @@ function CreateVariables($variableList) {
         if ($variable.Name -Like "BLAISE_*" -and $varValue -Like "projects/*/secrets/*") {
 
             $parts = $varValue -split "/"
-            $projectId = $parts[1]
+            $projectNumber = $parts[1]
             $secret = $parts[3]
+
+            $projectId = gcloud projects describe $projectNumber --format="get(projectId)"
 
             $secretValue = & gcloud secrets versions access latest --secret=$secret --project=$projectId
 
