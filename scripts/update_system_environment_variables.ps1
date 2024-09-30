@@ -54,7 +54,11 @@ function CreateVariables($variableList) {
             $parts = $varValue -split "/"
             $secret = $parts[3]
 
+            Write-Host "Calling gcloud with secret of '$secret'"
+
             $secretValue = & gcloud secrets versions access latest --secret=$secret
+
+            Write-Host "After gcloud call retrieved secretValue of '$secretValue'"
 
             UpdateEnvironmentalVariable $variable.Name $secretValue $secret
         }
