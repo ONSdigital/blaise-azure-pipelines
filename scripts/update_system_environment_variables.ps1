@@ -10,15 +10,13 @@ function UpdateEnvironmentalVariable {
     param (
         [string]$varName,
         [string]$secretValue,
-        [string]$secret,
-        [string]$projectId
+        [string]$secret
     )
 
     Write-Host "UpdateEnvironmentalVariables Called with following values"
     Write-Host "varName = $varName"
     Write-Host "secretValue = $secretValue"
     Write-Host "secret = $secret"
-    Write-Host "projectId = $projectId"
 
     $envValue = [System.Environment]::GetEnvironmentVariable($varName, [System.EnvironmentVariableTarget]::Machine)
 
@@ -28,15 +26,19 @@ function UpdateEnvironmentalVariable {
     if ($envValue -eq $secretValue) {
         Write-Host  "Values are the same, doing nothing"
     }
-    elseif ($envValue -eq "" -or $envValue -eq $null) {
+    elseif ($envValue -eq "" -or $null -eq $envValue) {
         Write-Host "Environmental Variable not set, so using Secret value"
         [System.Environment]::SetEnvironmentVariable($varName, ($secretValue), [System.EnvironmentVariableTarget]::Machine)
     }
-    elseif ($envValue -ne "" -and $envValue -ne $null -and $secretValue -ne "" -and $null -ne $secretValue) {
+    elseif ($envValue -ne "" -and $null -ne $envValue -and $secretValue -ne "" -and $null -ne $secretValue) {
         # This is for environments that have been previously set up, so the secret values should remain the same
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
-        # echo -n $envValue | gcloud secrets versions add $secret --data-file=-     
-        Write-Output $envValue | gcloud secrets versions add $secret --project=$projectId --data-file=-
+        # echo -n $envValue | gcloud secrets versions add $secret --data-file=-  
+        Write-Output $envValue | gcloud secrets versions add $secret --data-file=-
+    } 
+    elseif ($envValue -ne "" -and $null -ne $envValue) {
+        # Secret value must be empty at this stage, but Environmental variable is set.
+        Write-Output "Environmental Variable is set but there is no value for the secret value"
     }
 }
 
@@ -50,14 +52,11 @@ function CreateVariables($variableList) {
         if ($variable.Name -Like "ENV_*" -and $varValue -Like "projects/*/secrets/*") {
 
             $parts = $varValue -split "/"
-            $projectNumber = $parts[1]
             $secret = $parts[3]
 
-            $projectId = gcloud projects describe $projectNumber --format="get(projectId)"
+            $secretValue = & gcloud secrets versions access latest --secret=$secret
 
-            $secretValue = & gcloud secrets versions access latest --secret=$secret --project=$projectId
-
-            UpdateEnvironmentalVariable $variable.Name $secretValue $secret $projectId
+            UpdateEnvironmentalVariable $variable.Name $secretValue $secret
         }
         elseif ($variable.Name -Like "ENV_*") {
             [System.Environment]::SetEnvironmentVariable($varName, ($varValue), [System.EnvironmentVariableTarget]::Machine)

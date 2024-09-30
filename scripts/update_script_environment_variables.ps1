@@ -15,12 +15,9 @@ function CreateVariables($variableList) {
         if ($variable.Name -Like "BLAISE_*" -and $varValue -Like "projects/*/secrets/*") {
 
             $parts = $varValue -split "/"
-            $projectNumber = $parts[1]
             $secret = $parts[3]
 
-            $projectId = gcloud projects describe $projectNumber --format="get(projectId)"
-
-            $secretValue = & gcloud secrets versions access latest --secret=$secret --project=$projectId
+            $secretValue = & gcloud secrets versions access latest --secret=$secret
 
             New-Variable -Scope script -Name ($varName) -Value $secretValue -Force
             LogInfo("BENNY2 Secret Update Script env var - $varName = $secretValue")
