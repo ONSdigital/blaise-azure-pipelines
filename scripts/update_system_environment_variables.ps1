@@ -34,9 +34,19 @@ function UpdateEnvironmentalVariable {
         # This is for environments that have been previously set up, so the secret values should remain the same
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
         
-        $tempFile = New-TemporaryFile
-        Set-Content -Path $tempFile -Value $envValue -NoNewline -Encoding utf8NoBOM
+        $tempFile = New-TemporaryFile   
+
+        # Create a UTF8 encoding without BOM
+        $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
+
+        # Write the content to the file using the specified encoding
+        [System.IO.File]::WriteAllText($tempFile, $envValue, $utf8NoBomEncoding)
+
+        
+        # Add the secret using gcloud
         & gcloud secrets versions add $secret --data-file=$tempFile
+
+        # Clean up the temporary file
         Remove-Item $tempFile
     } 
     elseif ($envValue -ne "" -and $null -ne $envValue) {
