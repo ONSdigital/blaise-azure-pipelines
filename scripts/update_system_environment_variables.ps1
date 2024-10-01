@@ -35,7 +35,8 @@ function UpdateEnvironmentalVariable {
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
         
         $tempFile = New-TemporaryFile
-        Set-Content -Path $tempFile -Value $envValue
+        #Set-Content -Path $tempFile -Value $envValue  
+        $envValue | Out-File -FilePath $tempFile -NoNewline  
         & gcloud secrets versions add $secret --data-file=$tempFile
         Remove-Item $tempFile
     } 
