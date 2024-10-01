@@ -33,5 +33,5 @@ steps:
       keepToken: false
       tokenPrefix: '#{'
       tokenSuffix: '}#'
-      verbosity: 'info'
+      verbosity: 'debug'
       enableTelemetry: true
