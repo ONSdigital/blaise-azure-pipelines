@@ -36,7 +36,7 @@ function UpdateEnvironmentalVariable {
         # echo -n $envValue | gcloud secrets versions add $secret --data-file=-  
         $envValue = $envValue -replace "^\uFEFF", ""
         [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-        $envValue | gcloud secrets versions add $secret --data-file=-
+        $envValue | Out-String -NoNewline | gcloud secrets versions add $secret --data-file=-
     } 
     elseif ($envValue -ne "" -and $null -ne $envValue) {
         # Secret value must be empty at this stage, but Environmental variable is set.
