@@ -36,7 +36,7 @@ function UpdateEnvironmentalVariable {
         
         $tempFile = New-TemporaryFile
         #Set-Content -Path $tempFile -Value $envValue  
-        $envValue | Out-File -FilePath $tempFile -NoNewline  
+        $envValue | Out-File -FilePath $tempFile -NoNewline -Encoding utf8
         & gcloud secrets versions add $secret --data-file=$tempFile
         Remove-Item $tempFile
     } 
