@@ -36,7 +36,7 @@ function UpdateEnvironmentalVariable {
         
         $tempFile = New-TemporaryFile
         Set-Content -Path $tempFile -Value $envValue
-        & gcloud secrets versions add $secretName --data-file=$tempFile
+        & gcloud secrets versions add $secret --data-file=$tempFile
         Remove-Item $tempFile
     } 
     elseif ($envValue -ne "" -and $null -ne $envValue) {
