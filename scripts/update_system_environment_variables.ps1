@@ -33,10 +33,11 @@ function UpdateEnvironmentalVariable {
     elseif ($envValue -ne "" -and $null -ne $envValue -and $secretValue -ne "" -and $null -ne $secretValue) {
         # This is for environments that have been previously set up, so the secret values should remain the same
         Write-Host "Environmental Variable is set to a different value than Secret, Creating new secret version"
-        # echo -n $envValue | gcloud secrets versions add $secret --data-file=-  
-        $envValue = $envValue -replace "^\uFEFF", ""
-        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-        [Console]::Write($envValue) | gcloud secrets versions add $secret --data-file=-
+        
+        $tempFile = New-TemporaryFile
+        Set-Content -Path $tempFile -Value $envValue
+        & gcloud secrets versions add $secretName --data-file=$tempFile
+        Remove-Item $tempFile
     } 
     elseif ($envValue -ne "" -and $null -ne $envValue) {
         # Secret value must be empty at this stage, but Environmental variable is set.
