@@ -28,7 +28,7 @@ steps:
       rootDirectory: $(System.ArtifactsDirectory)
       targetFiles: ${{parameters.TargetFiles}}
       encoding: auto
-      writeBOM: true
+      writeBOM: false
       actionOnMissing: warn
       keepToken: false
       tokenPrefix: '#{'
