@@ -22,6 +22,12 @@ steps:
       downloadType: single
       artifactName: ${{parameters.ArtifactName}}
       downloadPath: ${{parameters.DownloadPath}}
+  - task: PowerShell@2
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
+  - task: PowerShell@2
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/update_script_environment_variables.ps1
   - task: replacetokens@6
     displayName: Replace config settings
     inputs:
