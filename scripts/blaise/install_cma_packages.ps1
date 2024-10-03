@@ -19,9 +19,6 @@ function Test-InstrumentInstalled {
         [string]$InstrumentName
     )
 
-
-    LogInfo("BENNY004 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
-
     $IsInstrumentInstalled = & "C:\blaise5\bin\servermanager.exe" -listsurveys `
         -serverpark:$ServerParkName `
         -binding:http `
@@ -75,9 +72,6 @@ function Install-PackageViaServerManager {
     if (-not (Test-FileExists -FilePath $FilePath)) {
         throw "File '$FilePath' does not exist"
     }
-
-
-    LogInfo("BENNY005 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
 
     LogInfo("Installing package '$FilePath' into server park '$ServerParkName' via Server Manager")
     & "C:\blaise5\bin\servermanager.exe" -installsurvey:$FilePath `

@@ -31,9 +31,6 @@ function ConfigureServerpark {
 
     LogInfo("Configuring server park $BlaiseServerPark to run in disconnected mode")
 
-
-    LogInfo("BENNY003 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
-
     c:\blaise5\bin\servermanager -editserverpark:$BlaiseServerPark -server:$managementNode -runmode:disconnected -syncsurveyswhenconnected:false -binding:http -port:$connectionPort -user:$blaiseUserName -password:$blaisePassword
 
     LogInfo("Configured server park $BlaiseServerPark")
