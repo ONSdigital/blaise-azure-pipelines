@@ -9,8 +9,6 @@ function ServerParkExists {
         throw [System.IO.ArgumentException] "No server park name argument provided"
     }
 
-    LogInfo("BENNY001 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
-
     $exists = c:\blaise5\bin\servermanager -listserverparks `
         -server:$env:ENV_BLAISE_SERVER_HOST_NAME `
         -binding:http `
@@ -35,8 +33,6 @@ function AddServerPark {
     }
 
     LogInfo("Add and/or configure server park $ServerParkName to run in disconnected mode with sync surveys set to true")
-
-    LogInfo("BENNY002 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
 
     # if the serverpark exists this will update the existing one
     c:\blaise5\bin\servermanager -addserverpark:$ServerParkName `

@@ -25,8 +25,6 @@ function Register-Node {
     )
     $RetryCount = 0
     do {
-
-        LogInfo("BENNY006 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
         LogInfo("Registering node '$CurrentNode' on management node '$BlaiseManagementNode' for server park '$ServerPark'")
         $output = & c:\blaise5\bin\servermanager.exe -addserverparkserver:$CurrentNode `
             -server:$BlaiseManagementNode `
@@ -63,9 +61,6 @@ function Check-NodeRegistered {
     param(
         [string] $ServerPark
     )
-
-
-    LogInfo("BENNY006 ENV_BLAISE_ADMIN_PASSWORD = $env:ENV_BLAISE_ADMIN_PASSWORD")
 
     $IsNodeRegistered = c:\blaise5\bin\servermanager.exe -listserverparkservers `
         -server:$BlaiseManagementNode `

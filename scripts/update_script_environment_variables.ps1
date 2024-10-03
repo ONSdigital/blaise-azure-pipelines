@@ -20,7 +20,6 @@ function CreateVariables($variableList) {
             $secretValue = & gcloud secrets versions access latest --secret=$secret
 
             New-Variable -Scope script -Name ($varName) -Value $secretValue -Force
-            LogInfo("BENNY2 Secret Update Script env var - $varName = $secretValue")
         }
         elseif ($variable.Name -Like "BLAISE_*") {
             New-Variable -Scope script -Name ($varName) -Value $varValue -Force
