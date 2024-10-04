@@ -99,7 +99,7 @@ function Install-PackageViaBlaiseCli {
 
     $InstrumentName = [System.IO.Path]::GetFileNameWithoutExtension($FilePath)
     LogInfo("Installing package '$InstrumentName' from '$FilePath' into server park '$ServerParkName' via Blaise CLI")
-    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath
+    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath -o "false"
 }
 
 try {
