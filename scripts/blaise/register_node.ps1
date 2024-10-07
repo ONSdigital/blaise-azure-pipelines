@@ -61,6 +61,7 @@ function Check-NodeRegistered {
     param(
         [string] $ServerPark
     )
+
     $IsNodeRegistered = c:\blaise5\bin\servermanager.exe -listserverparkservers `
         -server:$BlaiseManagementNode `
         -user:$BlaiseAdminUser `
