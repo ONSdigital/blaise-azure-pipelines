@@ -99,7 +99,7 @@ function Install-PackageViaBlaiseCli {
 
     $InstrumentName = [System.IO.Path]::GetFileNameWithoutExtension($FilePath)
     LogInfo("Installing package '$InstrumentName' from '$FilePath' into server park '$ServerParkName' via Blaise CLI")
-    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath
+    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath -o "false"
 }
 
 try {
@@ -112,12 +112,7 @@ try {
     # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
     $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
     foreach ($Instrument in $InstrumentList) {
-        if (Test-InstrumentInstalled -ServerParkName $CmaServerParkName -InstrumentName $Instrument) {
-            LogInfo("Instrument '$Instrument' already installed on server park '$CmaServerParkName', skipping...")
-        }
-        else {
-            Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
-        }
+        Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
     }
 
     LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
