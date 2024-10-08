@@ -12,7 +12,16 @@ function CreateVariables($variableList) {
         $pattern = "^(.*?)$([regex]::Escape($varName))(.?=)(.*)"
         $varValue = ($varDefinition -replace $pattern, '$3')
 
-        if ($variable.Name -Like "BLAISE_*") {
+        if ($variable.Name -Like "BLAISE_*" -and $varValue -Like "projects/*/secrets/*") {
+
+            $parts = $varValue -split "/"
+            $secret = $parts[3]
+
+            $secretValue = & gcloud secrets versions access latest --secret=$secret
+
+            New-Variable -Scope script -Name ($varName) -Value $secretValue -Force
+        }
+        elseif ($variable.Name -Like "BLAISE_*") {
             New-Variable -Scope script -Name ($varName) -Value $varValue -Force
             LogInfo("Script env var - $varName = $varValue")
         }
