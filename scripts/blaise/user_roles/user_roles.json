@@ -447,5 +447,26 @@
       "name": "FRS_Research",
       "description": "Role for family resource survey research team",
       "permissions": []
-   }       
+   },
+   {
+      "name": "Field Interviewer",
+      "description": "Role for Field Interviewers",
+      "permissions": [
+         "Apps",
+         "AppManagement",
+         "Apps.Appfeatures",
+         "Appfeatures.login",
+         "Appfeatures.getlistofinstruments",
+         "Appfeatures.installsurvey",
+         "Appfeatures.removesurvey",
+         "Appfeatures.startsurvey",
+         "Appfeatures.browsedata",
+         "Appfeatures.deletedata",
+         "Appfeatures.uploaddata",
+         "Appfeatures.downloadcases",
+         "Appfeatures.viewsettings",
+         "Appfeatures.viewsurveydetails",
+         "SurveyDataAccess"
+      ]
+   }
 ]
