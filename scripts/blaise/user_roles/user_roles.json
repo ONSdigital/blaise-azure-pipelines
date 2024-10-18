@@ -434,7 +434,7 @@
       ]
    },
    {
-      "name": "SVT Supervisor",
+      "name": "SVT_Supervisor",
       "description": "Role for survey validation team supervisors",
       "permissions": []
    },
