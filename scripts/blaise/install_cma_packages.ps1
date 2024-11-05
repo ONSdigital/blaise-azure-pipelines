@@ -90,7 +90,11 @@ function Install-PackageViaBlaiseCli {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string]$FilePath
+        [string]$FilePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$CreateDatabaseTables       
     )
 
     if (-not (Test-FileExists -FilePath $FilePath)) {
@@ -99,28 +103,37 @@ function Install-PackageViaBlaiseCli {
 
     $InstrumentName = [System.IO.Path]::GetFileNameWithoutExtension($FilePath)
     LogInfo("Installing package '$InstrumentName' from '$FilePath' into server park '$ServerParkName' via Blaise CLI")
-    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath -o "false"
+    & "C:\BlaiseServices\BlaiseCli\blaise.cli.exe" questionnaireinstall -s $ServerParkName -q $InstrumentName -f $FilePath -o $CreateDatabaseTables
 }
 
-try {
-    LogInfo("Unzipping CMA multi-package '$CmaMultiPackage' to '$CmaInstrumentPath'")
-    Expand-ZipFile -FilePath "$CmaInstrumentPath\$CmaMultiPackage" -DestinationPath $CmaInstrumentPath
+function Install-Cma-Packages {
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$CreateDatabaseTables
+    )
 
-    # Install the "CMA" package via Server Manager as it does not use a data interface / database
-    Install-PackageViaServerManager -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\CMA.bpkg"
-
-    # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
-    $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
-    foreach ($Instrument in $InstrumentList) {
-        Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg"
+    try {
+        LogInfo("Unzipping CMA multi-package '$CmaMultiPackage' to '$CmaInstrumentPath'")
+        Expand-ZipFile -FilePath "$CmaInstrumentPath\$CmaMultiPackage" -DestinationPath $CmaInstrumentPath
+    
+        # Install the "CMA" package via Server Manager as it does not use a data interface / database
+        Install-PackageViaServerManager -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\CMA.bpkg"
+    
+        # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
+        $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
+        foreach ($Instrument in $InstrumentList) {
+            Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg" -CreateDatabaseTables $CreateDatabaseTables
+        }
+    
+        LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
+        Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
     }
+    catch {
+        LogError("Installing CMA packages failed")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
+    }    
+}
 
-    LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
-    Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
-}
-catch {
-    LogError("Installing CMA packages failed")
-    LogError("$($_.Exception.Message)")
-    LogError("$($_.ScriptStackTrace)")
-    exit 1
-}
