@@ -25,5 +25,4 @@ steps:
       runTestsInIsolation: false
       codeCoverageEnabled: false
       testRunTitle: ${{parameters.TestName}}
-      otherConsoleOptions: '/stoponerror'
     continueOnError: false
