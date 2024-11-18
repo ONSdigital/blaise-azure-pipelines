@@ -28,4 +28,5 @@ steps:
       codeCoverageEnabled: false
       testRunTitle: ${{parameters.TestName}}
       testFiltercriteria: TestCategory=${{parameters.TestCategory}}
+      otherConsoleOptions: '/stoponerror'
     continueOnError: false
