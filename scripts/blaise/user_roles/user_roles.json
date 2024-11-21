@@ -449,6 +449,11 @@
       "permissions": []
    },
    {
+      "name": "Survey_Support",
+      "description": "Role for survey support team",
+      "permissions": []
+   },   
+   {
       "name": "Field Interviewer",
       "description": "Role for Field Interviewers",
       "permissions": [
