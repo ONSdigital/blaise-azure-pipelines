@@ -392,6 +392,27 @@
       ]
    },
    {
+      "name": "IPS Support",
+      "description": "Role for IPS Support",
+      "permissions": [
+         "Apps",
+         "AppManagement",
+         "Apps.Appfeatures",
+         "Appfeatures.login",
+         "Appfeatures.getlistofinstruments",
+         "Appfeatures.installsurvey",
+         "Appfeatures.removesurvey",
+         "Appfeatures.startsurvey",
+         "Appfeatures.browsedata",
+         "Appfeatures.deletedata",
+         "Appfeatures.uploaddata",
+         "Appfeatures.downloadcases",
+         "Appfeatures.viewsettings",
+         "Appfeatures.viewsurveydetails",
+         "SurveyDataAccess"
+      ]
+   },
+   {
       "name": "IPS Researcher",
       "description": "Role for IPS Researchers",
       "permissions": [
@@ -452,7 +473,7 @@
       "name": "Survey_Support",
       "description": "Role for survey support team",
       "permissions": []
-   },   
+   },
    {
       "name": "Field Interviewer",
       "description": "Role for Field Interviewers",
