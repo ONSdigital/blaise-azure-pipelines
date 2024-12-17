@@ -394,23 +394,7 @@
    {
       "name": "IPS Support",
       "description": "Role for IPS Support",
-      "permissions": [
-         "Apps",
-         "AppManagement",
-         "Apps.Appfeatures",
-         "Appfeatures.login",
-         "Appfeatures.getlistofinstruments",
-         "Appfeatures.installsurvey",
-         "Appfeatures.removesurvey",
-         "Appfeatures.startsurvey",
-         "Appfeatures.browsedata",
-         "Appfeatures.deletedata",
-         "Appfeatures.uploaddata",
-         "Appfeatures.downloadcases",
-         "Appfeatures.viewsettings",
-         "Appfeatures.viewsurveydetails",
-         "SurveyDataAccess"
-      ]
+      "permissions": []
    },
    {
       "name": "IPS Researcher",
