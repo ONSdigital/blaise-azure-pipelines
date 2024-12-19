@@ -27,22 +27,6 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
-      # - deployment: InstallStackDriver
-      #   displayName: Install Stackdriver
-      #   environment:
-      #     name: ${{parameters.Environment}}
-      #     resourceType: virtualMachine
-      #     tags: blaise
-      #   strategy:
-      #     runOnce:
-      #       deploy:
-      #         steps:
-      #           - checkout: self
-      #           - template: /templates/install_stackdriver.yml
-      #             parameters:
-      #               LoggingAgent: $($env:ENV_LOGGING_AGENT)
-      #               MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-      #               GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
