@@ -16,22 +16,22 @@ stages:
   - stage: DeployBlaiseCli_${{parameters.Environment}}
     displayName: Deploy Blaise CLI (${{parameters.Environment}})
     jobs:
-      - deployment: InstallStackDriver
-        displayName: Install Stackdriver
-        environment:
-          name: ${{parameters.Environment}}
-          resourceType: virtualMachine
-          tags: blaise-cli
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - template: /templates/install_stackdriver.yml
-                  parameters:
-                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      # - deployment: InstallStackDriver
+      #   displayName: Install Stackdriver
+      #   environment:
+      #     name: ${{parameters.Environment}}
+      #     resourceType: virtualMachine
+      #     tags: blaise-cli
+      #   strategy:
+      #     runOnce:
+      #       deploy:
+      #         steps:
+      #           - checkout: self
+      #           - template: /templates/install_stackdriver.yml
+      #             parameters:
+      #               LoggingAgent: $($env:ENV_LOGGING_AGENT)
+      #               MonitoringAgent: $($env:ENV_MONITORING_AGENT)
+      #               GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
