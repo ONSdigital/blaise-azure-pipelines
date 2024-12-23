@@ -1,3 +1,4 @@
+# This pipeline configures Blaise software and services on GCP VMs deployed via Terraform.
 ---
 parameters:
   - name: VarGroup
