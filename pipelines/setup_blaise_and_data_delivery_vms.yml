@@ -52,7 +52,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/configure_blaise.yml
+                - template: /templates/setup_blaise_and_data_delivery_vms.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
                     BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
