@@ -1,3 +1,5 @@
+# This pipeline deploys the Blaise CLI on GCP VMs
+# This pipeline is separate from setup_blaise_and_data_delivery_vms.yml so changes can be deployed independently
 ---
 parameters:
   - name: VarGroup
