@@ -1,4 +1,3 @@
-# This pipeline configures Blaise software and services on the blaise and data-delivery VMs deployed via Terraform.
 ---
 parameters:
   - name: VarGroup
