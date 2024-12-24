@@ -1,6 +1,6 @@
 # Blaise Azure DevOps Pipelines
 
-We use Azure DevOps pipelines to build and deploy C# applications, and execute scripts on Windows VMs. Blaise is Windows based and provides a .NET Framework API. We provision VMs via GCP and install an Azure DevOps agent on them. This allows us to deploy our applications onto the VMs and execute any necessary scripts. We call the Azure DevOps pipelines from Concourse via an authenicated HTTPS request.
+We use Azure DevOps pipelines to build and deploy C# applications, and execute scripts on Windows VMs. Blaise is Windows based and provides a .NET Framework API. We provision VMs via GCP and install an Azure DevOps agent on them. This allows us to deploy our applications onto the VMs and execute any necessary scripts. We call the Azure DevOps pipelines from Concourse via an authenticated HTTPS request.
 
 Azure DevOps is integrated with our GitHub repositories. Changes to the pipeline YAML configuration files in the repositories, will be reflected within Azure DevOps.
 

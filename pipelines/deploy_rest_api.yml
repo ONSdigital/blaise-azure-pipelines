@@ -40,11 +40,7 @@ stages:
                     zone: europe-west2-a
             deploy:
               steps:
-                - template: /templates/install_stackdriver.yml
-                  parameters:
-                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                - template: /templates/install_google_ops_agent.yml
                 - template: /templates/add_windows_firewall_rules.yml
                   parameters:
                     RuleName: Blaise

@@ -16,8 +16,8 @@ stages:
   - stage: DeployBlaiseCli_${{parameters.Environment}}
     displayName: Deploy Blaise CLI (${{parameters.Environment}})
     jobs:
-      - deployment: InstallStackDriver
-        displayName: Install Stackdriver
+      - deployment: InstallGoogleOpsAgent
+        displayName: Install Google Ops Agent
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -27,11 +27,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/install_stackdriver.yml
-                  parameters:
-                    LoggingAgent: $($env:ENV_LOGGING_AGENT)
-                    MonitoringAgent: $($env:ENV_MONITORING_AGENT)
-                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+                - template: /templates/install_google_ops_agent.yml
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
