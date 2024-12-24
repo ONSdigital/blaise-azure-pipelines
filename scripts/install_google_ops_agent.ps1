@@ -106,7 +106,6 @@ function Check-GoogleOpsAgent {
 }
 
 Write-Host "Checking Stackdriver is not installed..."
-. .\stackdriver-functions.ps1
 Check-StackdriverLogging
 Check-StackdriverMonitoring
 
