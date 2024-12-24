@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Install Google Ops Agent
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_google_ops_agent.ps1
