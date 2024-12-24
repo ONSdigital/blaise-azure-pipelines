@@ -1,4 +1,4 @@
-# This pipeline configures Blaise software and services on GCP VMs deployed via Terraform.
+# This pipeline configures Blaise software and services on the blaise and data-delivery VMs deployed via Terraform.
 ---
 parameters:
   - name: VarGroup
@@ -28,6 +28,18 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
+      - deployment: InstallGoogleOpsAgent
+        displayName: Install Google Ops Agent
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_google_ops_agent.yml
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
