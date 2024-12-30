@@ -66,19 +66,20 @@ function Install-GoogleOpsAgent {
             "https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1",
             "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1"
         )
-        Write-Host "Download completed successfully."
     } catch {
         Write-Error "Failed to download the installation script. Error: $_"
         return
     }
+    Write-Host "Download completed successfully."
 
     Write-Host "Running GCP Cloud Ops Agent..."
     try {
         Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 -AlsoInstall"
-        Write-Host "Google Ops Agent installed successfully."
     } catch {
         Write-Error "Failed to run the installation script. Error: $_"
+        return
     }
+    Write-Host "Google Ops Agent installed successfully."
 }
 
 function Check-GoogleOpsAgent {
