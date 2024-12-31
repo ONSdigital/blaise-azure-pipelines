@@ -96,7 +96,9 @@ function Install-GoogleOpsAgent {
 
     Write-Host "DEBUG: Checking GCP Cloud Ops Agent..."
     $opsAgentServiceExists = Check-ServiceExists "google-cloud-ops-agent"
+    Write-Host "DEBUG: google-cloud-ops-agent service exists: $opsAgentServiceExists"
     $opsAgentProgramExists = Check-ProgramExists "GooGet - google-cloud-ops-agent"
+    Write-Host "DEBUG: google-cloud-ops-agent programme exists: $opsAgentProgramExists"
 
     Write-Host "Running GCP Cloud Ops Agent..."
     try {
