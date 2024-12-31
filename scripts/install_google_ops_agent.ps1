@@ -105,9 +105,6 @@ function Check-GoogleOpsAgent {
     }
 }
 
-$activeServiceAccount = & gcloud auth list --filter=status:ACTIVE --format="value(account)"
-Write-Host "The current active service account is: $activeServiceAccount"
-
 Write-Host "Checking Stackdriver is not installed..."
 Check-StackdriverLogging
 Check-StackdriverMonitoring
