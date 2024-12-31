@@ -62,9 +62,6 @@ function Check-StackdriverMonitoring {
 function Install-GoogleOpsAgent {
     Write-Host "Downloading GCP Cloud Ops Agent..."
 
-    Write-Host "DEBUG: Setting up gcpdiag..."
-    gcpdiag lint --project=ons-blaise-v2-dev-el47 [--name=data-delivery] --show-skipped --include=gce/err/2024_004 [--output=[JSON]]
-
     $serviceAccountRoles = gcloud projects get-iam-policy ons-blaise-v2-dev-el47
     Write-Host "DEBUG: serviceAccountRoles: $serviceAccountRoles"
     Write-Host "DEBUG: {env:UserProfile}: ${env:UserProfile}"
@@ -96,10 +93,6 @@ function Install-GoogleOpsAgent {
         Write-Error "DEBUG: Failed to test ${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1. Error: $_"
         return
     }
-
-    Write-Host "DEBUG: Checking GCP Cloud Ops Agent..."
-    $opsAgentServiceExists = Check-ServiceExists "google-cloud-ops-agent"
-    $opsAgentProgramExists = Check-ProgramExists "GooGet - google-cloud-ops-agent"
 
     Write-Host "Running GCP Cloud Ops Agent..."
     try {
