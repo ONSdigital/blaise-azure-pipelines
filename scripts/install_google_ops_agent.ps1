@@ -92,7 +92,6 @@ function Install-GoogleOpsAgent {
     } catch {
         Write-Error "DEBUG: Failed to test ${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1. Error: $_"
         return
-    }
 
     Write-Host "Running GCP Cloud Ops Agent..."
     try {
