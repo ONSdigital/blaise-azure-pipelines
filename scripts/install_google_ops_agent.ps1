@@ -64,8 +64,6 @@ function Install-GoogleOpsAgent {
 
     $serviceAccountRoles = gcloud projects get-iam-policy ons-blaise-v2-dev-el47
     Write-Host "DEBUG: serviceAccountRoles: $serviceAccountRoles"
-    $powershellExecutionPolicy = Get-ExecutionPolicy
-    Write-Host "DEBUG: powershellExecutionPolicy: $powershellExecutionPolicy"
     Write-Host "DEBUG: {env:UserProfile}: ${env:UserProfile}"
     Write-Host "DEBUG: env:UserProfile: $env:UserProfile"
 
