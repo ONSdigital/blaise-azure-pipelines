@@ -61,6 +61,20 @@ function Check-StackdriverMonitoring {
 
 function Install-GoogleOpsAgent {
     Write-Host "Downloading GCP Cloud Ops Agent..."
+
+    $serviceAccountRoles = gcloud projects get-iam-policy ons-blaise-v2-dev-el47
+    Write-Host "DEBUG: serviceAccountRoles: $serviceAccountRoles"
+    Write-Host "DEBUG: {env:UserProfile}: ${env:UserProfile}"
+    Write-Host "DEBUG: env:UserProfile: $env:UserProfile"
+
+    try {
+        Write-Host "DEBUG: Testing Network Connectivity"
+        Test-NetConnection -ComputerName "dl.google.com" -Port 443
+    } catch {
+        Write-Error "DEBUG: Failed to test Network Connectivity. Error: $_"
+        return
+    }
+
     try {
         (New-Object Net.WebClient).DownloadFile(
             "https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.ps1",
@@ -72,12 +86,20 @@ function Install-GoogleOpsAgent {
         return
     }
 
+    try {
+        Write-Host "DEBUG: Testing ${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1..."
+        Test-Path "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1"
+    } catch {
+        Write-Error "DEBUG: Failed to test ${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1. Error: $_"
+        return
+
     Write-Host "Running GCP Cloud Ops Agent..."
     try {
         Invoke-Expression "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1 -AlsoInstall"
         Write-Host "Google Ops Agent installed successfully."
     } catch {
         Write-Error "Failed to run the installation script. Error: $_"
+        Get-Content "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1" -Tail 20
     }
 }
 
