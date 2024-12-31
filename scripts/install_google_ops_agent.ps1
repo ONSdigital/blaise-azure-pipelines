@@ -62,9 +62,6 @@ function Check-StackdriverMonitoring {
 function Install-GoogleOpsAgent {
     Write-Host "Downloading GCP Cloud Ops Agent..."
 
-    Write-Host "DEBUG: Setting up gcpdiag..."
-    gcpdiag lint --project=ons-blaise-v2-dev-el47 [--name=data-delivery] --show-skipped --include=gce/err/2024_004 [--output=[JSON]]
-
     $serviceAccountRoles = gcloud projects get-iam-policy ons-blaise-v2-dev-el47
     Write-Host "DEBUG: serviceAccountRoles: $serviceAccountRoles"
     Write-Host "DEBUG: {env:UserProfile}: ${env:UserProfile}"
