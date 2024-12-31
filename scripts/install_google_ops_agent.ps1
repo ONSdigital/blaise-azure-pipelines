@@ -62,6 +62,8 @@ function Check-StackdriverMonitoring {
 function Install-GoogleOpsAgent {
     Write-Host "Downloading GCP Cloud Ops Agent..."
 
+    # Start-Process powershell -Verb runAs
+
     $serviceAccountRoles = gcloud projects get-iam-policy ons-blaise-v2-dev-el47
     Write-Host "DEBUG: serviceAccountRoles: $serviceAccountRoles"
     $powershellExecutionPolicy = Get-ExecutionPolicy
@@ -108,7 +110,9 @@ function Install-GoogleOpsAgent {
         Write-Host "Google Ops Agent installed successfully."
     } catch {
         Write-Error "Failed to run the installation script. Error: $_"
-        Get-Content "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1" -Tail 20
+        $debugLogs = $Error[0] | Format-List -Property *
+        Write-Host "DEBUG: debugLogs: $debugLogs"
+        Get-Content "${env:UserProfile}\add-google-cloud-ops-agent-repo.ps1" | ForEach-Object { Write-Output "DEBUG: Executing: $_"; Invoke-Expression $_ }
     }
 }
 
