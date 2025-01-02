@@ -152,3 +152,17 @@ stages:
               steps:
                 - checkout: self
                 - template: /templates/configure_data_interfaces.yml
+      - deployment: AddWindowsUpdateCleanupTaskScheduler
+        displayName: Add a Windows Update Cleanup Task Scheduler
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: PowerShell@2
+                  inputs:
+                    filePath: $(Agent.BuildDirectory)/s/scripts/add_windows_update_cleanup_task_scheduler.ps1
