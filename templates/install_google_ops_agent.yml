@@ -3,6 +3,4 @@ steps:
   - task: PowerShell@2
     displayName: Install Google Ops Agent
     inputs:
-      targetType: 'inline'
-      script: |
-        Start-Process powershell -Verb runAs -ArgumentList "-NoExit", "-File", "$(Agent.BuildDirectory)/s/scripts/install_google_ops_agent.ps1"
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_google_ops_agent.ps1
