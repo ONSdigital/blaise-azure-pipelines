@@ -14,6 +14,11 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
 else {
     # Call function to set Windows Update Flags for Cleanup
     Set-UpdateCleanupStateFlags
-    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST
+
+    # Added for debugging purposes
+    Write-Host "Current User: $(whoami)"
+    Write-Host "Execution Policy: $(Get-ExecutionPolicy)"
+
+    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST /RU SYSTEM
     Write-Host "Task '$taskName' created successfully."
 }
