@@ -39,13 +39,13 @@ else {
     Write-Host "Current User: $(whoami)"
     Write-Host "Execution Policy: $(Get-ExecutionPolicy)"
 
-    $BLAISE_ADMINUSER = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_ADMINUSER" -Headers @{"Metadata-Flavor" = "Google" }
-    $BLAISE_ADMINPASS = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_ADMINPASS" -Headers @{"Metadata-Flavor" = "Google" }
-    $BLAISE_ADMINPASS = GetSecretValue($BLAISE_ADMINPASS)
+    $BLAISE_WINDOWS_USERNAME = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_WINDOWS_USERNAME" -Headers @{"Metadata-Flavor" = "Google" }
+    $BLAISE_WINDOWS_PASSWORD = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_WINDOWS_PASSWORD" -Headers @{"Metadata-Flavor" = "Google" }
+    $BLAISE_WINDOWS_PASSWORD = GetSecretValue($BLAISE_WINDOWS_PASSWORD)
 
-    Write-Host "$BLAISE_ADMINUSER"
-    Write-Host "$BLAISE_ADMINPASS"
+    Write-Host "$BLAISE_WINDOWS_USERNAME"
+    Write-Host "$BLAISE_WINDOWS_PASSWORD"
 
-    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST /RU $BLAISE_ADMINUSER /RP $BLAISE_ADMINPASS
+    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST /RU $BLAISE_WINDOWS_USERNAME /RP $BLAISE_WINDOWS_PASSWORD
     Write-Host "Task '$taskName' created successfully."
 }
