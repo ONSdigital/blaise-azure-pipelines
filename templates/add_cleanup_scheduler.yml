@@ -3,4 +3,4 @@ steps:
   - task: PowerShell@2
     displayName: Add cleanup scheduler
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/add_cleanup_scheduler.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/add_cleanup_scheduler.ps1
