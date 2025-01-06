@@ -24,8 +24,8 @@ function Set-UpdateCleanupStateFlags {
 }
     
 $taskName = "WindowsUpdateCleanup"  # Set the task name
-$executionTime = "22:00"            # Set the desired execution time (24-hour format)
-$executionDay = "1"                 # Set the desired execution day (1-31)
+$executionTime = "12:05"            # Set the desired execution time (24-hour format)
+$executionDay = "6"                 # Set the desired execution day (1-31)
     
 # Check if a task with the same name already exists
 if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
