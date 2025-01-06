@@ -27,18 +27,6 @@ stages:
                 - task: PowerShell@2
                   inputs:
                     filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
-      - deployment: InstallGoogleOpsAgent
-        displayName: Install Google Ops Agent
-        environment:
-          name: ${{parameters.Environment}}
-          resourceType: virtualMachine
-          tags: blaise
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - template: /templates/install_google_ops_agent.yml
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
