@@ -23,7 +23,7 @@ function Set-StateFlags {
 }
 
 $taskName = "CleanupWindowsFiles"   # Set the task name
-$executionTime = "17:20"            # Set the desired execution time (24-hour format)
+$executionTime = "17:30"            # Set the desired execution time (24-hour format)
 $executionDay = "6"                # Set the desired execution day (1-31)
     
 # Check if a task with the same name already exists
