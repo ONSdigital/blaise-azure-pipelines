@@ -40,7 +40,6 @@ stages:
                     zone: europe-west2-a
             deploy:
               steps:
-                - template: /templates/install_google_ops_agent.yml
                 - template: /templates/add_windows_firewall_rules.yml
                   parameters:
                     RuleName: Blaise
