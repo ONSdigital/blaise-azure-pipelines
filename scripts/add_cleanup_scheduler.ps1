@@ -16,13 +16,13 @@ function GetSecretValue {
     return $variable
 }
 
-function Set-UpdateCleanupStateFlags {
-    Write-Host 'Setting Update Cleanup Flag...'
+function Set-StateFlags {
+    Write-Host 'Setting State Flag...'
     Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Update Cleanup' -Name StateFlags0099 -Value 2 -Type DWord
-    Write-Host 'Update Cleanup Flag set successfully.'
+    Write-Host 'State Flags set successfully.'
 }
 
-$taskName = "WindowsUpdateCleanup"  # Set the task name
+$taskName = "CleanupWindowsFiles"   # Set the task name
 $executionTime = "22:00"            # Set the desired execution time (24-hour format)
 $executionDay = "10"                # Set the desired execution day (1-31)
     
@@ -33,8 +33,8 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
     Write-Host "Task '$taskName' successfully deleted."
 } 
 
-# Call function to set Windows Update Flags for Cleanup
-Set-UpdateCleanupStateFlags
+# Call function to set State Flags
+Set-StateFlags
 
 # Retrieve Blaise Windows Username and Password
 Write-Host "Retrieving Blaise Windows Username and Password..."
