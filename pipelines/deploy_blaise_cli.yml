@@ -32,20 +32,6 @@ stages:
                     LoggingAgent: $($env:ENV_LOGGING_AGENT)
                     MonitoringAgent: $($env:ENV_MONITORING_AGENT)
                     GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
-      - deployment: AddWindowsUpdateCleanupTaskScheduler
-        displayName: Add a Windows Update Cleanup Task Scheduler
-        environment:
-          name: ${{parameters.Environment}}
-          resourceType: virtualMachine
-          tags: blaise
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-                - task: PowerShell@2
-                  inputs:
-                    filePath: $(Agent.BuildDirectory)/s/scripts/add_windows_update_cleanup_task_scheduler.ps1
       - deployment: InstallMySqlConnector
         displayName: Install MySQL connector
         environment:
@@ -95,3 +81,4 @@ stages:
                     InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                     OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                 - template: /templates/set_windows_timezone.yml
+                - template: /templates/add_cleanup_scheduler.yml
