@@ -1,3 +1,23 @@
+function GetSecretValue {
+    param ([string]$variable)
+    
+    Write-Host "Running GetSecretValue..."
+
+    # If varValue is a secret
+    if ($variable -Like "projects/*/secrets/*") {
+        $parts = $variable -split "/"
+        $secret = $parts[3]
+
+        $secretValue = & gcloud secrets versions access latest --secret=$secret
+
+        return $secretValue
+    }
+
+    return $variable
+}
+
+
+
 function Set-UpdateCleanupStateFlags {
     Write-Host 'Enabling Update Cleanup.'
     Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Update Cleanup' -Name StateFlags0099 -Value 2 -Type DWord
@@ -18,6 +38,10 @@ else {
     # Added for debugging purposes
     Write-Host "Current User: $(whoami)"
     Write-Host "Execution Policy: $(Get-ExecutionPolicy)"
+
+    $BLAISE_ADMINUSER = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_ADMINUSER" -Headers @{"Metadata-Flavor" = "Google" }
+    $BLAISE_ADMINPASS = Invoke-RestMethod "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BLAISE_ADMINPASS" -Headers @{"Metadata-Flavor" = "Google" }
+    $BLAISE_ADMINPASS = GetSecretValue($BLAISE_ADMINPASS)
 
     Write-Host "$BLAISE_ADMINUSER"
     Write-Host "$BLAISE_ADMINPASS"
