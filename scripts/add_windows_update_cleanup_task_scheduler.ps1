@@ -19,6 +19,9 @@ else {
     Write-Host "Current User: $(whoami)"
     Write-Host "Execution Policy: $(Get-ExecutionPolicy)"
 
-    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST /RU SYSTEM
+    Write-Host "$BLAISE_ADMINUSER"
+    Write-Host "$BLAISE_ADMINPASS"
+
+    schtasks.exe /Create /SC MONTHLY /D $executionDay /TN $taskName /TR "cleanmgr.exe /sagerun:99" /ST $executionTime /RL HIGHEST /RU $BLAISE_ADMINUSER /RP $BLAISE_ADMINPASS
     Write-Host "Task '$taskName' created successfully."
 }
