@@ -51,6 +51,7 @@ stages:
                     OutboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                     InboundPorts: 80, 443, $($env:ENV_BLAISE_CONNECTION_PORT), $($env:ENV_BLAISE_REMOTE_CONNECTION_PORT)
                 - template: /templates/set_windows_timezone.yml
+                - template: /templates/add_cleanup_scheduler.yml
                 - template: /templates/set_license_key.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
