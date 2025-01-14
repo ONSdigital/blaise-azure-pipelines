@@ -48,7 +48,7 @@ if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
   $blaiseInstallArgs += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
   $blaiseInstallArgs += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
   $blaiseInstallArgs += "EVENTSERVER=$BLAISE_EVENTSERVER"
-  $blaiseInstallArgs += "coll=$BLAISE_CARISERVER"
+  $blaiseInstallArgs += "CARISERVER=$BLAISE_CARISERVER"
 }
 
 LogInfo("blaiseInstallArgs: $blaiseInstallArgs")
