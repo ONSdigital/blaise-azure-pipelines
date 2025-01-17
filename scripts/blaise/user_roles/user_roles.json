@@ -439,22 +439,22 @@
       ]
    },
    {
-      "name": "SVT_Supervisor",
+      "name": "SVT Supervisor",
       "description": "Role for survey validation team supervisors",
       "permissions": []
    },
    {
-      "name": "SVT_Editor",
+      "name": "SVT Editor",
       "description": "Role for survey validation team editors",
       "permissions": []
    },
    {
-      "name": "FRS_Research",
+      "name": "FRS Research",
       "description": "Role for family resource survey research team",
       "permissions": []
    },
    {
-      "name": "Survey_Support",
+      "name": "Survey Support",
       "description": "Role for survey support team",
       "permissions": []
    },
