@@ -459,6 +459,26 @@
       "permissions": []
    },
    {
+      "name": "SVT Supervisor",
+      "description": "Role for survey validation team supervisors",
+      "permissions": []
+   },
+   {
+      "name": "SVT Editor",
+      "description": "Role for survey validation team editors",
+      "permissions": []
+   },
+   {
+      "name": "FRS Research",
+      "description": "Role for family resource survey research team",
+      "permissions": []
+   },
+   {
+      "name": "Survey Support",
+      "description": "Role for survey support team",
+      "permissions": []
+   },
+   {
       "name": "Field Interviewer",
       "description": "Role for Field Interviewers",
       "permissions": [
