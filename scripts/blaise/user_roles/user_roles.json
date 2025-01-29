@@ -224,8 +224,8 @@
       ]
    },
    {
-      "name": "Welsh Speaker",
-      "description": "Role for Welsh speakers",
+      "name": "TO CATI Access",
+      "description": "Role for TO CATI Access",
       "permissions": [
          "CATI",
          "CATI.viewappointments",
