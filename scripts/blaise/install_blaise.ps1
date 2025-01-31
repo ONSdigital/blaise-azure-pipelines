@@ -45,10 +45,10 @@ $blaiseInstallArgs += "CATISERVER=$BLAISE_CATISERVER"
 if ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.14") {
   LogInfo("Adding additional node roles for Blaise version 5.14 or greater")
   $blaiseInstallArgs += "DASHBOARDSERVER=$BLAISE_DASHBOARDSERVER"
-  $blaiseInstallArgs += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
-  $blaiseInstallArgs += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
-  $blaiseInstallArgs += "EVENTSERVER=$BLAISE_EVENTSERVER"
-  $blaiseInstallArgs += "CARISERVER=$BLAISE_CARISERVER"
+  # $blaiseInstallArgs += "CASEMANAGEMENTSERVER=$BLAISE_CASEMANAGEMENTSERVER"
+  # $blaiseInstallArgs += "PUBLISHSERVER=$BLAISE_PUBLISHSERVER"
+  # $blaiseInstallArgs += "EVENTSERVER=$BLAISE_EVENTSERVER"
+  # $blaiseInstallArgs += "CARISERVER=$BLAISE_CARISERVER"
 }
 
 LogInfo("blaiseInstallArgs: $blaiseInstallArgs")
