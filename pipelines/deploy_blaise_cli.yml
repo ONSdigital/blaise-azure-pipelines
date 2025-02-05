@@ -45,12 +45,14 @@ stages:
                 - checkout: self
                 - template: /templates/download_build_artifact.yml
                   parameters:
-                    ${{ if notin(parameters.Environment, 'prod', 'preprod') }}:
+                    ${{ if and(notin(parameters.Environment, 'prod', 'preprod'), ne(parameters.DeployBranch, '5.14')) }}:
                       Branch: ${{parameters.DeployBranch}}
-                    ${{ if eq(parameters.Environment, 'prod') }}:
+                    ${{ if and(eq(parameters.Environment, 'prod'), ne(parameters.DeployBranch, '5.14')) }}:
                       Branch: prod
-                    ${{ if eq(parameters.Environment, 'preprod') }}:
+                    ${{ if and(eq(parameters.Environment, 'preprod'), ne(parameters.DeployBranch, '5.14')) }}:
                       Branch: preprod
+                    ${{ if eq(parameters.DeployBranch, '5.14') }}:
+                      Branch: ${{parameters.DeployBranch}}
                     ArtifactName: _BlaiseCli
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
