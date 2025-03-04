@@ -478,5 +478,10 @@
          "Appfeatures.viewsurveydetails",
          "SurveyDataAccess"
       ]
+   },
+   {
+      "name": "Survey Researcher",
+      "description": "Role for Survey Researcher",
+      "permissions": []
    }
 ]
