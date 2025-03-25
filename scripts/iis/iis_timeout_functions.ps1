@@ -1,7 +1,7 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
 function currentTimeoutValues {
-    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
+    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\BlaiseDashboard").Value
     $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
     return $currentSessionStateTimeout, $currentIdleTimeout
 }
@@ -21,7 +21,7 @@ function setTimeoutValues {
     $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
     if ($setTimeout -eq $false) {
         try {
-            Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
+            Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\BlaiseDashboard" -Name "Timeout" -Value:$expectedTimeout
         }
         catch {
             LogError("Could not set IIS session state timeout")
