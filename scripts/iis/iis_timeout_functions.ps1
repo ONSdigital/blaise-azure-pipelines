@@ -2,7 +2,7 @@
 
 function currentTimeoutValues {
     $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\BlaiseDashboard").Value
-    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
+    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseDashboardAppPool")).processModel.idleTimeout
     return $currentSessionStateTimeout, $currentIdleTimeout
 }
 
@@ -30,7 +30,7 @@ function setTimeoutValues {
             exit 1
         }
         try {
-            Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value $expectedTimeout
+            Set-ItemProperty ("IIS:\AppPools\BlaiseDashboardAppPool") -Name processModel.idleTimeout -value $expectedTimeout
         }
         catch {
             LogError("Could not set IIS idle timeout")
@@ -38,9 +38,9 @@ function setTimeoutValues {
             LogError("$($_.ScriptStackTrace)")
             exit 1
         }
-        LogInfo("IIS timeout changes made, restarting BlaiseAppPool...")
-        Restart-WebAppPool BlaiseAppPool
-        LogInfo("BlaiseAppPool has been restarted")
+        LogInfo("IIS timeout changes made, restarting BlaiseDashboardAppPool...")
+        Restart-WebAppPool BlaiseDashboardAppPool
+        LogInfo("BlaiseDashboardAppPool has been restarted")
     }
     else {
         LogInfo("IIS timeout changes already applied")
