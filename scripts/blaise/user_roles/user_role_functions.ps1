@@ -29,7 +29,6 @@ function CreateUserRole {
     )
 
     $body = $userRole | ConvertTo-Json
-    Write-Host "##### $body"
 
     Invoke-RestMethod -UseBasicParsing $restApiUrl -ContentType "application/json" -Method POST -Body $body
 }
