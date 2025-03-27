@@ -25,7 +25,6 @@ function DisableCompression {
     Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doStaticCompression" -value "false"
     Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doDynamicCompression" -value "false"
   }
-  
   LogInfo("URL Compression settings updated successfully.")
 }
 
@@ -51,7 +50,7 @@ function AddRewriteRule {
     [string] $rule
   )
 
-  $ruleExists = Test-Path "IIS:\sites\Default Web Site\$siteName\system.webServer\rewrite\outboundRules\rule[@name='$ruleName']"
+  $ruleExists = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
 
   if ($ruleExists) {
     LogInfo("Rewrite URL rule $ruleName already exists.")
@@ -82,6 +81,7 @@ function AddRewriteRule {
     $existingPreConditions = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "."
 
     if ($existingPreConditions -notmatch "NoCompression") {
+      LogInfo("Adding NoCompression preCondition to rule $ruleName...")
       Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "." -value "NoCompression"
       LogInfo("NoCompression preCondition added to $ruleName.")
     }
