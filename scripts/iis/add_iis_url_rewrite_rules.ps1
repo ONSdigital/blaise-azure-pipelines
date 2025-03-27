@@ -10,6 +10,25 @@ function CheckIfURLRewriteMsiExists {
   }
 }
 
+function DisableCompression {
+  $compressionPath = "system.webServer/urlCompression"
+  
+  # Check if urlCompression section exists
+  $existingConfig = Get-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "."
+
+  if ($existingConfig -eq $null) {
+    LogInfo("Adding urlCompression section to Web.config...")
+    New-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter "system.webServer" -name "." -value @{doStaticCompression="false"; doDynamicCompression="false"}
+  }
+  else {
+    LogInfo("Updating existing urlCompression settings...")
+    Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doStaticCompression" -value "false"
+    Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doDynamicCompression" -value "false"
+  }
+  
+  LogInfo("URL Compression settings updated successfully.")
+}
+
 function EnsureNoCompressionPreConditionExists {
     $preConditionExists = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
 
@@ -81,6 +100,7 @@ CheckIfURLRewriteMsiExists
 LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
+DisableCompression
 EnsureNoCompressionPreConditionExists
 
 AddRewriteRule -siteName "BlaiseDashboard" -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
