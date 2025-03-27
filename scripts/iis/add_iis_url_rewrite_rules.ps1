@@ -51,9 +51,9 @@ function AddRewriteRule {
     [string] $rule
   )
 
-  $existingRule = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "."
+  $ruleExists = Test-Path "IIS:\sites\Default Web Site\$siteName\system.webServer\rewrite\outboundRules\rule[@name='$ruleName']"
 
-  if ($existingRule) {
+  if ($ruleExists) {
     LogInfo("Rewrite URL rule $ruleName already exists.")
 
     # Check if the rule already has 'NoCompression' preCondition
