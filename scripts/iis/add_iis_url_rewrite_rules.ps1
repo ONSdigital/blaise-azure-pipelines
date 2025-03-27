@@ -11,21 +11,25 @@ function CheckIfURLRewriteMsiExists {
 }
 
 function EnsureNoCompressionPreConditionExists {
-    $preCondition = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+    $preConditionExists = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" `
+        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
 
-    if (!$preCondition) {
+    if ($preConditionExists -eq $null) {
         LogInfo("Creating NoCompression preCondition...")
 
-        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression" }
-        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -name "." -value @{
-            input = "{RESPONSE_CONTENT_ENCODING}"
-            pattern = "^(?!gzip|deflate)$"
-        }
+        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" `
+            -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." `
+            -value @{name = "NoCompression" }
+
+        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" `
+            -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" `
+            -name "." `
+            -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$" }
 
         LogInfo("NoCompression preCondition added successfully.")
     }
     else {
-        LogInfo("NoCompression preCondition already exists.")
+        LogInfo("NoCompression preCondition already exists. Skipping creation.")
     }
 }
 
