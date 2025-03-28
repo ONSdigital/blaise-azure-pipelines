@@ -29,17 +29,20 @@ function DisableCompression {
 }
 
 function EnsureNoCompressionPreConditionExists {
-    $preConditionExists = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+  param (
+    [string] $siteName
+  )
+  $preConditionExists = Get-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
 
-    if ($null -eq $preConditionExists) {
-        LogInfo("Creating NoCompression preCondition...")
-        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression" }
-        Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$" }
-        LogInfo("NoCompression preCondition added successfully.")
-    }
-    else {
-        LogInfo("NoCompression preCondition already exists. Skipping creation.")
-    }
+  if ($null -eq $preConditionExists) {
+      LogInfo("Creating NoCompression preCondition...")
+      Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression" }
+      Add-WebConfigurationProperty -pspath "iis:\sites\Default Web Site\$siteName" -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$" }
+      LogInfo("NoCompression preCondition added successfully.")
+  }
+  else {
+      LogInfo("NoCompression preCondition already exists. Skipping creation.")
+  }
 }
 
 function AddRewriteRule {
@@ -101,7 +104,7 @@ LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
 DisableCompression
-EnsureNoCompressionPreConditionExists
+EnsureNoCompressionPreConditionExists -siteName "BlaiseDashboard"
 
 AddRewriteRule -siteName "BlaiseDashboard" -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
 AddRewriteRule -siteName "BlaiseDashboard" -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
