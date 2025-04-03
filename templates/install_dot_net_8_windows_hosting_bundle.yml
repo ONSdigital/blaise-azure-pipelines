@@ -1,0 +1,10 @@
+---
+parameters:
+  - name: GCP_Bucket
+    displayName: Name of GCP bucket to download .NET8 Windows Hosting Bundle from
+steps:
+  - task: PowerShell@2
+    displayName: Install .NET8 Windows Hosting Bundle
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_dot_net_8_windows_hosting_bundle.ps1
+      arguments: -GCP_BUCKET ${{parameters.GCP_Bucket}}

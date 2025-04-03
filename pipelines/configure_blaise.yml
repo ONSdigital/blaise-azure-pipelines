@@ -41,6 +41,20 @@ stages:
                 - template: /templates/install_mysql_connector.yml
                   parameters:
                     GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
+      - deployment: InstallDotNet8WindowsHostingBundle
+        displayName: Install .NET 8 Windows Hosting Bundle
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_dot_net_8_windows_hosting_bundle.yml
+                  parameters:
+                    GCP_Bucket: $($env:ENV_BLAISE_GCP_BUCKET)
       - deployment: ConfigureBlaise
         displayName: Configure Blaise
         environment:
