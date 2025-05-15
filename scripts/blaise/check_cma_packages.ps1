@@ -12,7 +12,7 @@ function Update-CmaRegistry {
     )
     $Blaise = Get-BlaiseRegistryKey
     if ($Blaise.PSPath) {
-        Set-ItemProperty-Path $Blaise.PSPath -Name "CMAInstalledPackage" -Value $PackageValue
+        Set-ItemProperty -Path $Blaise.PSPath -Name "CMAInstalledPackage" -Value $PackageValue
     }
 }
 
