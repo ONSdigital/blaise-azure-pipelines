@@ -128,12 +128,15 @@ function Install-Cma-Packages {
     
         LogInfo("Removing CMA working folder '$CmaInstrumentPath'")
         Remove-Item -LiteralPath $CmaInstrumentPath -Force -Recurse
+
+        return $true
     }
     catch {
         LogError("Installing CMA packages failed")
         LogError("$($_.Exception.Message)")
         LogError("$($_.ScriptStackTrace)")
-        exit 1
+        
+        return $false
     }    
 }
 
