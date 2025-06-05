@@ -27,7 +27,7 @@ stages:
             parameters:
               BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
               BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
-          - template: /template/download_gcloud_sdk.yml
+          - template: /templates/download_gcloud_sdk.yml
           - template: /templates/download_test_questionnaire.yml
           - template: /templates/set_windows_culture.yml
           - template: /templates/download_build_artifact.yml
