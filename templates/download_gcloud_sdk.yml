@@ -1,14 +1,22 @@
 ---
-parameters:
-  BlaiseLicenseKey: ''
-  BlaiseActivationKey: ''
 steps:
   - task: PowerShell@2
-    displayName: 'Install Google Cloud SDK'
+    displayName: 'Check and Install Google Cloud SDK if needed'
     inputs:
       targetType: 'inline'
       script: |
-        Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
-        Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
-        $env:PATH += ";C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+        $gcloud = Get-Command gcloud -ErrorAction SilentlyContinue
+        if ($null -eq $gcloud) {
+            Write-Output "gcloud not found. Installing Google Cloud SDK..."
+            Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
+            Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
+            # Update PATH for current session
+            $gcloudPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+            $env:PATH += ";$gcloudPath"
+            # Confirm installation
+            gcloud --version
+        } else {
+            Write-Output "gcloud is already installed:"
+            gcloud --version
+        }
 
