@@ -107,7 +107,6 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/download_gcloud_sdk.yml
                 - template: /templates/download_cma_packages.yml
                 - template: /templates/install_cma_packages.yml
       - deployment: InstallCmaPackagesOnSingleNode
