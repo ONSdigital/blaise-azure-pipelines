@@ -23,7 +23,7 @@ stages:
           ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME: $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
         pool:
-          vmImage: windows-2019
+          vmImage: windows-latest
         steps:
           - template: /templates/set_license_key.yml
             parameters:
