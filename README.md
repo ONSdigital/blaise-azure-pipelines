@@ -28,7 +28,7 @@ Not all deployments are targeted at our VMs in GCP. Some of the integration test
 
 ```
 pool:
-  vmImage: 'windows-2025'
+  vmImage: 'windows-2019'
 ```
 
 ## Templates
