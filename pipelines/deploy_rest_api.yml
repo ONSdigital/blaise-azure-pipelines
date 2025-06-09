@@ -34,6 +34,7 @@ stages:
             preDeploy:
               steps:
                 - checkout: self
+                - template: /templates/download_gcloud_sdk.yml
                 - template: /templates/remove_vm_from_instance_group.yml
                   parameters:
                     instancegroup: restapi-group
@@ -50,7 +51,7 @@ stages:
                 - template: /templates/set_license_key.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)]
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if and(notin(parameters.Environment, 'prod', 'preprod'), ne(parameters.DeployBranch, '5.14')) }}:
