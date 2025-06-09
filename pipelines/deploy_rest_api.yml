@@ -29,7 +29,7 @@ stages:
           resourceType: virtualMachine
           tags: restapi
         strategy:
-          rolling:
+          runOnce:
             maxParallel: ${{parameters.MaxParallel}}
             preDeploy:
               steps:
