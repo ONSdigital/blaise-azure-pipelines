@@ -13,7 +13,7 @@ Azure DevOps pipeline require at least the following parameters:
 
 ## Environment deployment tags
 
-VMs (Virual Machines) are labelled with tags via a startup script when the Azure DevOps agent is registered with the VM. The VM startup scripts are stored in the [Terraform](https://github.com/ONSdigital/blaise-terraform) respository. Tags are used to target specific VMs via the YAML, the following snippet shows how to deploy to all VMs with the tag `data-entry`.
+VMs (Virtual Machines) are labelled with tags via a startup script when the Azure DevOps agent is registered with the VM. The VM startup scripts are stored in the [Terraform](https://github.com/ONSdigital/blaise-terraform) respository. Tags are used to target specific VMs via the YAML, the following snippet shows how to deploy to all VMs with the tag `data-entry`.
 
 ```
 environment:
