@@ -50,7 +50,7 @@ stages:
                 - template: /templates/set_license_key.yml
                   parameters:
                     BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
-                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)]
+                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if and(notin(parameters.Environment, 'prod', 'preprod'), ne(parameters.DeployBranch, '5.14')) }}:
