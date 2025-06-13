@@ -5,7 +5,11 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
+        Write-Host "Installing Google Cloud SDK..."
         Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
         Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
-        $env:PATH += ";C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
-
+        $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+        if (Test-Path $gcpPath) {
+            Write-Host "##vso[task.setvariable variable=PATH]$env:PATH;$gcpPath"
+            Write-Host "Added $gcpPath to PATH"
+        }
