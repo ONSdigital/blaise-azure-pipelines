@@ -1,4 +1,6 @@
 ---
+env:
+  PATH: $(PATH);C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin
 steps:
   - task: PowerShell@2
     displayName: 'Install Google Cloud SDK'
@@ -7,5 +9,4 @@ steps:
       script: |
         Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
         Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
-        $env:PATH += ";C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
 
