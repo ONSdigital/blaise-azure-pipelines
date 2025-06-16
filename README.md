@@ -13,7 +13,7 @@ Azure DevOps pipeline require at least the following parameters:
 
 ## Environment deployment tags
 
-VMs (Virual Machines) are labelled with tags via a startup script when the Azure DevOps agent is registered with the VM. The VM startup scripts are stored in the [Terraform](https://github.com/ONSdigital/blaise-terraform) respository. Tags are used to target specific VMs via the YAML, the following snippet shows how to deploy to all VMs with the tag `data-entry`.
+VMs (Virtual Machines) are labelled with tags via a startup script when the Azure DevOps agent is registered with the VM. The VM startup scripts are stored in the [Terraform](https://github.com/ONSdigital/blaise-terraform) respository. Tags are used to target specific VMs via the YAML, the following snippet shows how to deploy to all VMs with the tag `data-entry`.
 
 ```
 environment:
@@ -22,13 +22,13 @@ environment:
   tags: data-entry
 ```
 
-## Hosted environemnt deployment
+## Hosted environment deployment
 
-Not all deployments are targetted at our VMs in GCP. Somne of the integration tests for example are run from VMs hosted by Azure DevOps. Example YAML snippet:
+Not all deployments are targeted at our VMs in GCP. Some of the integration tests for example are run from VMs hosted by Azure DevOps. Example YAML snippet:
 
 ```
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
 ```
 
 ## Templates
@@ -64,7 +64,7 @@ az pipelines create --name "A name for your pipeline" --yml-path pipelines/pipel
 
 ### Via Azure DevOps web UI
 
-1. Navigate to https://dev.azure.com and login with your ONS email
+1. Navigate to <https://dev.azure.com> and login with your ONS email
 1. Go to *pipelines*
 1. Click *New pipeline*
 1. Select *GitHub (YAML)*
