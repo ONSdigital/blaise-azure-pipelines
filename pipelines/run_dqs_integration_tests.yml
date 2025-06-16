@@ -23,12 +23,13 @@ stages:
           ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_EXTERNAL_SERVER_BINDING)
           ENV_BLAISE_SERVER_HOST_NAME: $(ENV_BLAISE_EXTERNAL_SERVER_HOST_NAME)
         pool:
-          vmImage: windows-2019
+          vmImage: windows-latest
         steps:
           - template: /templates/set_license_key.yml
             parameters:
               BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
               BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
+          - template: /templates/download_gcloud_sdk.yml
           - template: /templates/download_test_questionnaire.yml
           - template: /templates/download_build_artifact.yml
             parameters:
