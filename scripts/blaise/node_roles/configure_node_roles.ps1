@@ -2,6 +2,7 @@
 . "$PSScriptRoot\node_role_functions.ps1"
 
 try {
+    exit 1 // TODO: BL - Remove this line when the script is ready for production use
     $hasCorrectRoles = Check-NodeHasCorrectRoles
     if (-not $hasCorrectRoles) {
         $roles = Get-RequiredRoles
