@@ -81,9 +81,9 @@ stages:
                 - template: /templates/configure_management_node.yml
                 - template: /templates/add_cma_serverpark.yml
       - deployment: RegisterDataEntryNodes
-        condition: eq(variables.ENV_MULTI_NODE, true)
         displayName: Register data entry node
         dependsOn: ConfigureManagementNode
+        condition: and(succeeded(), eq(variables.ENV_MULTI_NODE, true))
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -95,9 +95,9 @@ stages:
                 - checkout: self
                 - template: /templates/register_node.yml
       - deployment: InstallCmaPackagesOnMultiNode
-        condition: eq(variables.ENV_MULTI_NODE, true)
         displayName: Install CMA packages on multi node environment
         dependsOn: RegisterDataEntryNodes
+        condition: and(succeeded(), eq(variables.ENV_MULTI_NODE, true))
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
@@ -110,9 +110,9 @@ stages:
                 - template: /templates/download_cma_packages.yml
                 - template: /templates/install_cma_packages.yml
       - deployment: InstallCmaPackagesOnSingleNode
-        condition: eq(variables.ENV_MULTI_NODE, false)
         displayName: Install CMA packages on single node environment
         dependsOn: ConfigureManagementNode
+        condition: and(succeeded(), eq(variables.ENV_MULTI_NODE, false))
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
