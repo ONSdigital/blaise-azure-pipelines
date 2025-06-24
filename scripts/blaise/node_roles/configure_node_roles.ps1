@@ -19,12 +19,27 @@ try {
         }
 
         LogInfo("Restarting Blaise service")
-        try {
-            Restart-Service -Name BlaiseServices5 -ErrorAction Stop
-            LogInfo("Blaise service has been restarted")
-        }
-        catch {
-            throw "Failed to restart Blaise service: $_"
+        $maxRetries = 3
+        $delay = 5  # Initial delay in seconds
+        $attempt = 0
+        $serviceRestarted = $false
+        while ($attempt -lt $maxRetries -and -not $serviceRestarted) {
+            try {
+                Restart-Service -Name BlaiseServices5 -ErrorAction Stop
+                LogInfo("Blaise service has been restarted")
+                $serviceRestarted = $true
+            }
+            catch {
+                $attempt++
+                if ($attempt -lt $maxRetries) {
+                    LogWarning("Attempt $attempt to restart Blaise service failed. Retrying in ${delay}s...")
+                    Start-Sleep -Seconds $delay
+                    $delay *= 2
+                }
+                else {
+                    throw "Failed to restart Blaise service after $maxRetries attempts: $_"
+                }
+            }
         }
     }
     else {
