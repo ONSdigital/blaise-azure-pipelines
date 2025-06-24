@@ -70,11 +70,17 @@ function Install-Cma-With-Retry {
 
 function VerifyCmaIsInstalled{
     $Blaise = Get-BlaiseRegistryKey
-    $installedCmaPackage = $Blaise.CMAInstalledPackage
+    $installedCmaPackage = $null
 
-    if(!$installedCmaPackage){
+    if ($Blaise -and $Blaise.CMAInstalledPackage) {
+        $installedCmaPackage = $Blaise.CMAInstalledPackage
+    }
+
+    $result = $true
+
+    if(-not $installedCmaPackage){
         LogInfo("CMA is not installed")
-        Install-Cma-With-Retry -CreateDatabaseTables $true | Out-Null
+        $result = Install-Cma-With-Retry -CreateDatabaseTables $true
     } else {
         LogInfo("CMA $installedCmaPackage installed")
 
@@ -82,10 +88,13 @@ function VerifyCmaIsInstalled{
             LogInfo("CMA multi-package version already installed")
         } else {
             LogInfo("CMA multi-package version needs to be changed")
-            Install-Cma-With-Retry -CreateDatabaseTables $false | Out-Null
+            $result = Install-Cma-With-Retry -CreateDatabaseTables $false
         }
     }
 
+    if (-not $result) {
+        exit 1
+    }
 }
 
 VerifyCmaIsInstalled
