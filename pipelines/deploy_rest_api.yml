@@ -70,7 +70,7 @@ stages:
                     ServiceName: BlaiseRestApi
                     ExeName: blaise.api
                     TargetFolder: c:\BlaiseServices\BlaiseRestApi
-                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/Blaise.Api/bin/Release
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseRestApi/net48
             routeTraffic:
               steps:
                 - template: /templates/add_vm_to_instance_group.yml
