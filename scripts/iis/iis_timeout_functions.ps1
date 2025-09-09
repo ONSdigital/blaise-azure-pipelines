@@ -1,7 +1,7 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
 function currentTimeoutValues {
-	$currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
+    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
     $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
     return $currentSessionStateTimeout, $currentIdleTimeout
 }
