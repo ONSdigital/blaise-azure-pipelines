@@ -21,7 +21,7 @@ function AddRewriteRule {
     $sitePath = "iis:\sites\Default Web Site\$siteName"
 
     if (-not (Test-Path $sitePath)) {
-        LogInfo("Skipping $ruleName – site '$siteName' does not exist")
+        LogInfo("Skipping $ruleName - site '$siteName' does not exist")
         return
     }
 
@@ -71,7 +71,7 @@ $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
 
 if (-not $existingSites) {
-    LogError("Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists – failing")
+    LogError("Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists - failing")
     exit 1
 }
 
