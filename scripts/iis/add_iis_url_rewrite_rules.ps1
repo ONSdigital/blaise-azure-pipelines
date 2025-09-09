@@ -5,7 +5,7 @@ if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
     exit 1
 }
 
-Import-Module WebAdministration
+Import-Module WebAdministration -ErrorAction Stop
 
 function CheckIfUrlRewriteMsiExists {
     if (Test-Path "C:\dev\data\rewrite_url.msi") {
@@ -73,14 +73,6 @@ function AddRewriteRule {
 CheckIfUrlRewriteMsiExists
 LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
-
-LogInfo("Listing IIS sites and applications:")
-Get-ChildItem iis:\sites | ForEach-Object {
-    LogInfo("Site: $($_.Name)")
-    Get-WebApplication -Site $_.Name | ForEach-Object {
-        LogInfo("  Application: $($_.Path)")
-    }
-}
 
 $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
