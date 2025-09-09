@@ -67,6 +67,14 @@ CheckIfUrlRewriteMsiExists
 LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
+LogInfo("Listing IIS sites and applications:")
+Get-ChildItem iis:\sites | ForEach-Object {
+    LogInfo("Site: $($_.Name)")
+    Get-WebApplication -Site $_.Name | ForEach-Object {
+        LogInfo("  Application: $($_.Path)")
+    }
+}
+
 $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
 
