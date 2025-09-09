@@ -2,10 +2,10 @@
 
 function CheckIfUrlRewriteMsiExists {
     if (Test-Path "C:\dev\data\rewrite_url.msi") {
-        LogInfo "rewrite_url.msi already downloaded"
+        LogInfo("rewrite_url.msi already downloaded")
     }
     else {
-        LogInfo "Downloading rewrite_url.msi..."
+        LogInfo("Downloading rewrite_url.msi...")
         gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
     }
 }
@@ -21,7 +21,7 @@ function AddRewriteRule {
     $sitePath = "iis:\sites\Default Web Site\$siteName"
 
     if (-not (Test-Path $sitePath)) {
-        LogInfo "Skipping $ruleName – site '$siteName' does not exist"
+        LogInfo("Skipping $ruleName – site '$siteName' does not exist")
         return
     }
 
@@ -30,12 +30,12 @@ function AddRewriteRule {
         -Name "."
 
     if ($existing) {
-        LogInfo "Rewrite URL rule '$ruleName' already exists in site '$siteName'"
+        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
         return
     }
 
     try {
-        LogInfo "Adding rewrite URL rule '$ruleName' to site '$siteName'..."
+        LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
 
         Add-WebConfigurationProperty -pspath $sitePath `
             -filter "system.webServer/rewrite/outboundrules" `
@@ -53,25 +53,25 @@ function AddRewriteRule {
             -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" `
             -name "value" -value "$serverName"
 
-        LogInfo "Rewrite URL rule '$ruleName' applied to site '$siteName'"
+        LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
     }
     catch {
-        LogError "Failed to apply rewrite URL rule '$ruleName' to site '$siteName'"
-        LogError "$($_.Exception.Message)"
-        LogError "$($_.ScriptStackTrace)"
+        LogError("Failed to apply rewrite URL rule '$ruleName' to site '$siteName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
         exit 1
     }
 }
 
 CheckIfUrlRewriteMsiExists
-LogInfo "Installing rewrite_url.msi..."
+LogInfo("Installing rewrite_url.msi...")
 Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
 
 $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
 
 if (-not $existingSites) {
-    LogError "Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists – failing"
+    LogError("Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists – failing")
     exit 1
 }
 
