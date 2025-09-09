@@ -1,4 +1,4 @@
-. "$PSScriptRoot\..\logging_functions.ps1"
+﻿. "$PSScriptRoot\..\logging_functions.ps1"
 
 function CheckIfUrlRewriteMsiExists {
 	if (Test-Path "C:\dev\data\rewrite_url.msi") {
