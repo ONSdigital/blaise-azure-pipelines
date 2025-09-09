@@ -15,7 +15,7 @@ function AddRewriteRule {
         [string] $siteName,
         [string] $ruleName,
         [string] $serverName,
-        [string] $rule
+        [string] $rule,
     )
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
