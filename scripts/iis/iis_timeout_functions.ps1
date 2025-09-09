@@ -7,8 +7,18 @@ if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
 Import-Module WebAdministration -ErrorAction Stop
 
 function currentTimeoutValues {
-    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
-    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
+    param (
+        [string] $siteName,
+        [string] $appPoolName
+    )
+
+    $currentSessionStateTimeout = (Get-WebConfigurationProperty `
+        -filter system.web/sessionState `
+        -name Timeout `
+        -PSPath "IIS:\Sites\Default Web Site\$siteName").Value
+
+    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\$appPoolName")).processModel.idleTimeout
+
     return $currentSessionStateTimeout, $currentIdleTimeout
 }
 
