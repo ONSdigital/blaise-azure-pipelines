@@ -1,5 +1,12 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
+if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
+    LogError("WebAdministration module not available")
+    exit 1
+}
+
+Import-Module WebAdministration
+
 function CheckIfUrlRewriteMsiExists {
     if (Test-Path "C:\dev\data\rewrite_url.msi") {
         LogInfo("rewrite_url.msi already downloaded")
