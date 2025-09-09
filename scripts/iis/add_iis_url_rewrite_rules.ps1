@@ -1,48 +1,84 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
-function currentTimeoutValues {
-    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
-    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
-    return $currentSessionStateTimeout, $currentIdleTimeout
-}
-
-function timeoutIsSetCorrectly {
-    param (
-        [string] $currentSessionTimeout,
-        [string] $currentIdleTimeout,
-        [string] $expectedTimeout
-    )
-    ($currentSessionTimeout -eq $expectedTimeout) -and ($currentIdleTimeout -eq $expectedTimeout)
-}
-
-function setTimeoutValues {
-    [string] $expectedTimeout = "08:00:00"
-    $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
-    $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
-    if ($setTimeout -eq $false) {
-        try {
-            Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
-        }
-        catch {
-            LogError("Could not set IIS session state timeout")
-            LogError("$($_.Exception.Message)")
-            LogError("$($_.ScriptStackTrace)")
-            exit 1
-        }
-        try {
-            Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value $expectedTimeout
-        }
-        catch {
-            LogError("Could not set IIS idle timeout")
-            LogError("$($_.Exception.Message)")
-            LogError("$($_.ScriptStackTrace)")
-            exit 1
-        }
-        LogInfo("IIS timeout changes made, restarting BlaiseAppPool...")
-        Restart-WebAppPool BlaiseAppPool
-        LogInfo("BlaiseAppPool has been restarted")
+function CheckIfUrlRewriteMsiExists {
+    if (Test-Path "C:\dev\data\rewrite_url.msi") {
+        LogInfo "rewrite_url.msi already downloaded"
     }
     else {
-        LogInfo("IIS timeout changes already applied")
+        LogInfo "Downloading rewrite_url.msi..."
+        gsutil cp gs://$env:ENV_BLAISE_GCP_BUCKET/rewrite_url.msi "C:\dev\data\rewrite_url.msi"
     }
+}
+
+function AddRewriteRule {
+    param (
+        [string] $siteName,
+        [string] $ruleName,
+        [string] $serverName,
+        [string] $rule
+    )
+
+    $sitePath = "iis:\sites\Default Web Site\$siteName"
+
+    if (-not (Test-Path $sitePath)) {
+        LogInfo "Skipping $ruleName – site '$siteName' does not exist"
+        return
+    }
+
+    $existing = Get-WebConfigurationProperty -pspath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
+        -Name "."
+
+    if ($existing) {
+        LogInfo "Rewrite URL rule '$ruleName' already exists in site '$siteName'"
+        return
+    }
+
+    try {
+        LogInfo "Adding rewrite URL rule '$ruleName' to site '$siteName'..."
+
+        Add-WebConfigurationProperty -pspath $sitePath `
+            -filter "system.webServer/rewrite/outboundrules" `
+            -name "." -value @{name = $ruleName }
+
+        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" `
+            -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" `
+            -name "pattern" -value "$rule"
+
+        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" `
+            -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" `
+            -name "type" -value "Rewrite"
+
+        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" `
+            -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" `
+            -name "value" -value "$serverName"
+
+        LogInfo "Rewrite URL rule '$ruleName' applied to site '$siteName'"
+    }
+    catch {
+        LogError "Failed to apply rewrite URL rule '$ruleName' to site '$siteName'"
+        LogError "$($_.Exception.Message)"
+        LogError "$($_.ScriptStackTrace)"
+        exit 1
+    }
+}
+
+CheckIfUrlRewriteMsiExists
+LogInfo "Installing rewrite_url.msi..."
+Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
+
+$sites = @("Blaise", "BlaiseDashboard")
+$existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
+
+if (-not $existingSites) {
+    LogError "Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists – failing"
+    exit 1
+}
+
+foreach ($site in $existingSites) {
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry" `
+        -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
+
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" `
+        -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
 }
