@@ -47,7 +47,7 @@ function EnsureNoCompressionPreConditionExists {
         LogInfo("NoCompression preCondition added successfully for $siteName.")
     }
     else {
-        LogInfo("NoCompression preCondition already exists for $siteName. Skipping.")
+        LogInfo("NoCompression preCondition already exists for $siteName.")
     }
 }
 
@@ -68,41 +68,36 @@ function AddRewriteRule {
 
     $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
 
-    if ($ruleExists) {
+    if (-not $ruleExists) {
+        try {
+            LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
+
+            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
+            Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+            Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+            Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+
+            LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'.")
+        }
+        catch {
+            LogError("Failed to create rewrite URL rule '$ruleName' for site '$siteName'")
+            LogError("$($_.Exception.Message)")
+            LogError("$($_.ScriptStackTrace)")
+            exit 1
+        }
+    }
+    else {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
-
-        # Add NoCompression if missing
-        $existingPreConditions = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "."
-        if ($existingPreConditions -notmatch "NoCompression") {
-            LogInfo("Adding NoCompression preCondition to existing rule '$ruleName' in $siteName...")
-            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "." -value "NoCompression"
-            LogInfo("NoCompression preCondition added to '$ruleName'.")
-        }
-        return
     }
 
-    try {
-        LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
-
-        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
-        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
-        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
-        Set-WebConfigurationProperty -pspath "MACHINE/WEBROOT/APPHOST/Default Web Site/$siteName" -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
-
-        # Ensure NoCompression is set
-        $existingPreConditions = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "."
-        if ($existingPreConditions -notmatch "NoCompression") {
-            LogInfo("Adding NoCompression preCondition to '$ruleName' in $siteName...")
-            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "." -value "NoCompression"
-        }
-
-        LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'.")
+    $existingPreConditions = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "."
+    if ($existingPreConditions -notmatch "NoCompression") {
+        LogInfo("Attaching NoCompression preCondition to rule '$ruleName' in $siteName...")
+        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/preCondition" -name "." -value "NoCompression"
+        LogInfo("NoCompression preCondition attached to '$ruleName'.")
     }
-    catch {
-        LogError("Failed to apply rewrite URL rule '$ruleName' to site '$siteName'")
-        LogError("$($_.Exception.Message)")
-        LogError("$($_.ScriptStackTrace)")
-        exit 1
+    else {
+        LogInfo("NoCompression preCondition already attached to '$ruleName'.")
     }
 }
 
