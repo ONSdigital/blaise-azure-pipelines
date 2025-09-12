@@ -1,7 +1,7 @@
+. "$PSScriptRoot\..\logging_functions.ps1"
+
 # Needed for Blaise versions running dashboard on .NET Framework
 # Rewrites internal Blaise URLs to external URLs
-
-. "$PSScriptRoot\..\logging_functions.ps1"
 
 function CheckIfUrlRewriteMsiExists {
     If (Test-Path "C:\dev\data\rewrite_url.msi") {
