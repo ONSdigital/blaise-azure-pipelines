@@ -5,6 +5,14 @@ steps:
     inputs:
       filePath: $(Agent.BuildDirectory)/s/scripts/install_dotnet_hosting_bundle.ps1
   - task: PowerShell@2
+    displayName: Add hosts entry
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/add_hosts_entry.ps1
+  - task: PowerShell@2
+    displayName: Add local cert
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/add_local_cert.ps1
+  - task: PowerShell@2
     displayName: Add IIS URL rewrite rules
     inputs:
       filePath: $(Agent.BuildDirectory)/s/scripts/iis/add_iis_url_rewrite_rules.ps1
