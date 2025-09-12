@@ -11,20 +11,20 @@ if (-not ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.16")) {
     return
 }
 
-if (-not $env:COMPUTERNAME) {
-    LogError("Hostname not defined - cannot create cert")
+if (-not $env:ENV_BLAISE_CATI_URL) {
+    LogError("CATI URL not set - cannot create cert")
     exit 1
 }
 
 # Check if cert already exists
-$subject = "CN=$env:COMPUTERNAME"
+$subject = "CN=$env:ENV_BLAISE_CATI_URL"
 $existingCert = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object { $_.Subject -eq $subject }
 if (-not $existingCert) {
     try {
-        LogInfo("Creating new self-signed cert for $env:COMPUTERNAME...")
+        LogInfo("Creating new self-signed cert for $env:ENV_BLAISE_CATI_URL...")
 
         $cert = New-SelfSignedCertificate `
-            -DnsName $env:COMPUTERNAME `
+            -DnsName $env:ENV_BLAISE_CATI_URL `
             -CertStoreLocation "cert:\LocalMachine\My" `
             -KeyUsage DigitalSignature, KeyEncipherment `
             -FriendlyName "local cert" `
@@ -83,4 +83,4 @@ else {
     }
 }
 
-LogInfo("Cert setup complete for $hostname")
+LogInfo("Cert setup complete for $env:ENV_BLAISE_CATI_URL")
