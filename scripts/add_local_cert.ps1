@@ -73,7 +73,8 @@ if ($bindings -match $cert.Thumbprint) {
 else {
     try {
         LogInfo("Creating SSL binding on 0.0.0.0:443...")
-        netsh http add sslcert ipport=0.0.0.0:443 certhash=$cert.Thumbprint appid='{00112233-4455-6677-8899-AABBCCDDEEFF}'
+        $thumbprint = $cert.Thumbprint -replace ' ', ''
+        netsh http add sslcert ipport=0.0.0.0:443 certhash=$thumbprint appid='{00112233-4455-6677-8899-AABBCCDDEEFF}'
     }
     catch {
         LogError("Failed to create SSL binding")
