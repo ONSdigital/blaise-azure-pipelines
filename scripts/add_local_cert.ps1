@@ -11,20 +11,20 @@ if (-not ($env:ENV_BLAISE_CURRENT_VERSION -ge "5.16")) {
     return
 }
 
-if (-not $hostname) {
+if (-not $env:COMPUTERNAME) {
     LogError("Hostname not defined - cannot create cert")
     exit 1
 }
 
 # Check if cert already exists
-$subject = "CN=$hostname"
+$subject = "CN=$env:COMPUTERNAME"
 $existingCert = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object { $_.Subject -eq $subject }
 if (-not $existingCert) {
     try {
-        LogInfo("Creating new self-signed cert for $hostname...")
+        LogInfo("Creating new self-signed cert for $env:COMPUTERNAME...")
 
         $cert = New-SelfSignedCertificate `
-            -DnsName $hostname `
+            -DnsName $env:COMPUTERNAME `
             -CertStoreLocation "cert:\LocalMachine\My" `
             -KeyUsage DigitalSignature, KeyEncipherment `
             -FriendlyName "local cert" `
