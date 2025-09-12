@@ -3,7 +3,6 @@
 if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
     throw "WebAdministration module not available"
 }
-
 Import-Module WebAdministration -ErrorAction Stop
 
 function currentTimeoutValues {
