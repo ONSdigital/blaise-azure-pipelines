@@ -1,7 +1,7 @@
-. "$PSScriptRoot\..\logging_functions.ps1"
-
 # Needed for Blaise versions running dashboard on .NET
 # Allows redirected Blaise self-referential HTTPS calls to localhost to be trusted
+
+. "$PSScriptRoot\logging_functions.ps1"
 
 # Ensure all errors are terminating
 $ErrorActionPreference = "Stop"
