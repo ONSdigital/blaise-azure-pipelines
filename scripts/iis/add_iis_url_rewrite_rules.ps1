@@ -1,4 +1,3 @@
-# Needed for Blaise versions running dashboard on .NET Framework
 # Rewrites internal Blaise URLs to external URLs
 
 . "$PSScriptRoot\..\logging_functions.ps1"
