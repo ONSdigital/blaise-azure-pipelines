@@ -24,7 +24,7 @@ function Set-StateFlags {
 
 $taskName = "CleanupWindowsFiles"   # Set the task name
 $executionTime = "22:00"            # Set the desired execution time (24-hour format)
-$executionDay = "10"                 # Set the desired execution day (1-31)
+$executionDay = "10"                # Set the desired execution day (1-31)
     
 # Check if a task with the same name already exists
 if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
