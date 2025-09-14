@@ -20,7 +20,6 @@ function CheckIfUrlRewriteMsiExists {
 
 function DisableCompression {
     $compressionPath = "system.webServer/urlCompression"
-
     $existingConfig = Get-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "."
 
     if ($existingConfig -eq $null) {
@@ -32,10 +31,10 @@ function DisableCompression {
         Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doStaticCompression" -value "false"
         Set-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "doDynamicCompression" -value "false"
     }
-    LogInfo("URL Compression settings updated successfully.")
+    LogInfo("URL compression settings updated successfully")
 }
 
-function EnsureNoCompressionPreConditionExists {
+function AddNoCompressionPreCondition {
     param ([string] $siteName)
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
@@ -47,16 +46,16 @@ function EnsureNoCompressionPreConditionExists {
         LogInfo("Creating NoCompression preCondition for $siteName...")
         Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression"}
         Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
-        LogInfo("NoCompression preCondition added successfully for $siteName.")
+        LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
         $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "."
         if (-not $existingRule) {
-            LogInfo("Adding input+pattern to existing NoCompression preCondition for $siteName...")
+            LogInfo("Adding input and pattern to existing NoCompression preCondition for $siteName...")
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
         }
         else {
-            LogInfo("NoCompression preCondition already exists for $siteName with input+pattern.")
+            LogInfo("NoCompression preCondition already exists for $siteName")
         }
     }
 }
@@ -87,7 +86,7 @@ function AddRewriteRule {
             Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
             Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 
-            LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'.")
+            LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
         }
         catch {
             LogError("Failed to create rewrite URL rule '$ruleName' for site '$siteName'")
@@ -100,7 +99,6 @@ function AddRewriteRule {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
     }
 
-    # Always enforce NoCompression precondition
     $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
         -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
 
@@ -109,10 +107,10 @@ function AddRewriteRule {
         Set-WebConfigurationProperty -pspath $sitePath `
             -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
             -name "preCondition" -value "NoCompression"
-        LogInfo("NoCompression preCondition set on '$ruleName'.")
+        LogInfo("NoCompression preCondition set on '$ruleName'in $siteName")
     }
     else {
-        LogInfo("NoCompression preCondition already set on '$ruleName'.")
+        LogInfo("NoCompression preCondition already set on '$ruleName'")
     }
 }
 
@@ -131,7 +129,7 @@ if (-not $existingSites) {
 }
 
 foreach ($site in $existingSites) {
-    EnsureNoCompressionPreConditionExists -siteName $site
+    AddNoCompressionPreCondition -siteName $site
 
     AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
     AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
