@@ -1,10 +1,10 @@
 ---
 variables:
   UninstallSurveyTimeOutInSeconds: 5
-  InstrumentPath: c:\survey
+  QuestionnairePath: c:\survey
   ServerParkName: gusty
   CmaServerParkName: cma
-  InstrumentName: DST2304Z
+  QuestionnaireName: DST2304Z
   TEMP_PATH: c:\blaise\temp
   PACKAGE_EXTENSION: bpkg
   TimeZone: GMT Standard Time
