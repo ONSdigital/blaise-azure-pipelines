@@ -1,8 +1,23 @@
 . "$PSScriptRoot\..\logging_functions.ps1"
 
+if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
+    throw "WebAdministration module not available"
+}
+Import-Module WebAdministration -ErrorAction Stop
+
 function currentTimeoutValues {
-    $currentSessionStateTimeout = (Get-WebConfigurationProperty -filter system.web/sessionState -name Timeout -PSPath "IIS:\Sites\Default Web Site\Blaise").Value
-    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\BlaiseAppPool")).processModel.idleTimeout
+    param (
+        [string] $siteName,
+        [string] $appPoolName
+    )
+
+    $currentSessionStateTimeout = (Get-WebConfigurationProperty `
+        -filter system.web/sessionState `
+        -name Timeout `
+        -PSPath "IIS:\Sites\Default Web Site\$siteName").Value
+
+    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\$appPoolName")).processModel.idleTimeout
+
     return $currentSessionStateTimeout, $currentIdleTimeout
 }
 
@@ -17,32 +32,35 @@ function timeoutIsSetCorrectly {
 
 function setTimeoutValues {
     [string] $expectedTimeout = "08:00:00"
-    $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues
-    $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
-    if ($setTimeout -eq $false) {
-        try {
-            Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\Blaise" -Name "Timeout" -Value:$expectedTimeout
-        }
-        catch {
-            LogError("Could not set IIS session state timeout")
-            LogError("$($_.Exception.Message)")
-            LogError("$($_.ScriptStackTrace)")
-            exit 1
-        }
-        try {
-            Set-ItemProperty ("IIS:\AppPools\BlaiseAppPool") -Name processModel.idleTimeout -value $expectedTimeout
-        }
-        catch {
-            LogError("Could not set IIS idle timeout")
-            LogError("$($_.Exception.Message)")
-            LogError("$($_.ScriptStackTrace)")
-            exit 1
-        }
-        LogInfo("IIS timeout changes made, restarting BlaiseAppPool...")
-        Restart-WebAppPool BlaiseAppPool
-        LogInfo("BlaiseAppPool has been restarted")
+
+    $sites = @(
+        @{ SiteName = "Blaise"; AppPool = "BlaiseAppPool" },
+        @{ SiteName = "BlaiseDashboard"; AppPool = "BlaiseDashboardAppPool" }
+    )
+
+    $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$($_.SiteName)" }
+
+    if (-not $existingSites) {
+        throw "Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists"
     }
-    else {
-        LogInfo("IIS timeout changes already applied")
+
+    foreach ($site in $existingSites) {
+        $siteName = $site.SiteName
+        $appPool  = $site.AppPool
+
+        $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues -siteName $siteName -appPoolName $appPool
+        $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
+
+        if (-not $setTimeout) {
+            Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\$siteName" -Name "Timeout" -Value:$expectedTimeout
+            Set-ItemProperty ("IIS:\AppPools\$appPool") -Name processModel.idleTimeout -value $expectedTimeout
+
+            LogInfo("IIS timeout changes made, restarting $appPool...")
+            Restart-WebAppPool $appPool
+            LogInfo("$appPool has been restarted")
+        }
+        else {
+            LogInfo("IIS timeout changes already applied for $siteName / $appPool")
+        }
     }
 }
