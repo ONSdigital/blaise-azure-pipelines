@@ -9,13 +9,51 @@ steps:
     displayName: Download CMA packages
     inputs:
       targetType: inline
-      script: |-
-        Write-Host "Authenticating GCP with shared project service account"
-        gcloud config configurations delete shared-config --quiet 2>&1 | Out-Null
-        gcloud config configurations create shared-config --activate --quiet
-        gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file="$(gcpkey.secureFilePath)" --quiet
-        Write-Host "Downloading CMA multi package..."
-        gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE c:\CMA\CMA-MULTI.zip 
-        Write-Host "Reverting GCP authentication back to VM service account"
-        gcloud config configurations activate default --quiet
-        gcloud config configurations delete shared-config --quiet
+      script: |
+        try {
+          Write-Host "⚙️ Starting GCP authentication with shared project service account..."
+          # Clean up any old shared-config if present
+          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
+            Write-Host "🧹 Existing shared-config found, deleting..."
+            gcloud config configurations delete shared-config --quiet
+          } else {
+            Write-Host "✅ No existing shared-config found"
+          }
+          # Create and activate new shared-config
+          Write-Host "🆕 Creating and activating shared-config..."
+          gcloud config configurations create shared-config --activate --quiet
+          # Authenticate with service account
+          Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
+          gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file="$(gcpkey.secureFilePath)" --quiet
+          # Download CMA multi package
+          Write-Host "📦 Downloading CMA multi package..."
+          Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
+          Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
+          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          Write-Host "✅ CMA multi package downloaded successfully!"
+        }
+        catch {
+          Write-Host "🚨 ERROR during CMA package download!"
+          Write-Error "❌ Exception details: $_"
+          exit 1
+        }
+        finally {
+          Write-Host "🔁 Reverting GCP authentication back to VM service account..."
+          # Check if default config exists
+          if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
+            Write-Host "⚠️ No default configuration found, creating it now..."
+            gcloud config configurations create default --quiet
+          } else {
+            Write-Host "✅ Default configuration already exists"
+          }
+          Write-Host "🔄 Activating default configuration..."
+          gcloud config configurations activate default --quiet
+          # Delete shared-config safely
+          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
+            Write-Host "🧹 Cleaning up temporary shared-config..."
+            gcloud config configurations delete shared-config --quiet
+          } else {
+            Write-Host "✅ No shared-config left to delete"
+          }
+          Write-Host "🏁 Authentication restored to default service account"
+        }
