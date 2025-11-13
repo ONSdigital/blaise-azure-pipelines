@@ -20,7 +20,7 @@ steps:
           # Authenticate with service account
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
           gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT   --quiet
-          # WHATS GOING on
+          Write-Host "❓ What is happening..."
           gcloud auth list
           gcloud auth describe $(gcloud auth list --format="value(account)" --filter="status:ACTIVE")
           # Download test questionnaire package
