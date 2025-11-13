@@ -20,8 +20,9 @@ steps:
           gcloud config configurations create shared-config --activate --quiet
           # Authenticate with service account
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
-          gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
-          Write-Host "☑️ Whats going on"
+          # gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
+          gcloud config set auth/impersonate_service_account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
+          Write-Host "❓ What is happening..."
           gcloud auth list
           gcloud auth describe $(gcloud auth list --format="value(account)" --filter="status:ACTIVE")
           # Download CMA multi package
