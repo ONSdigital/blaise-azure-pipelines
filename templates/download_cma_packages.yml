@@ -8,6 +8,7 @@ steps:
         try {
           Write-Host "⚙️ Starting GCP authentication with shared project service account..."
           # Clean up any old shared-config if present
+          
           if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
             Write-Host "🧹 Existing shared-config found, deleting..."
             gcloud config configurations delete shared-config --quiet
@@ -20,6 +21,9 @@ steps:
           # Authenticate with service account
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
           gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
+          # WHATS GOING on
+          gcloud auth list
+          gcloud auth describe $(gcloud auth list --format="value(account)" --filter="status:ACTIVE")
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
