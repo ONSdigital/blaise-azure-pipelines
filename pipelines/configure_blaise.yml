@@ -9,9 +9,6 @@ pr: none
 variables:
   - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-permissions:
-  pipelines:
-    accessToken: write  
 stages:
   - stage: ConfigureBlaise_${{parameters.Environment}}
     displayName: Configure Blaise (${{parameters.Environment}})
@@ -105,6 +102,9 @@ stages:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
+        permissions:
+          pipelines:
+            accessToken: write
         strategy:
           runOnce:
             deploy:
@@ -120,6 +120,9 @@ stages:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
+        permissions:
+          pipelines:
+            accessToken: write
         strategy:
           runOnce:
             deploy:
