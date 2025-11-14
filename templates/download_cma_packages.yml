@@ -35,14 +35,14 @@ steps:
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
 
           $config = @{
-            "type": "external_account",
-            "audience": "$audience",
-            "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
-            "token_url": "https://sts.googleapis.com/v1/token",
-            "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken",
-            "credential_source": @{
-              "environment_id": "azure",
-              "file": "${env:AZURE_FEDERATED_TOKEN}"
+            type = "external_account"
+            audience = $audience
+            subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
+            token_url = "https://sts.googleapis.com/v1/token"
+            service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken"
+            credential_source = @{
+              environment_id = "azure"
+              file = ${env:AZURE_FEDERATED_TOKEN}
             }
           }
           $configJson = $config | ConvertTo-Json -Compress
