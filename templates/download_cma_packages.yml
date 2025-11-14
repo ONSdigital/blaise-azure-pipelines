@@ -48,10 +48,11 @@ steps:
           $configJson = $config | ConvertTo-Json -Compress
 
           $path = "$env:TEMP\gcp-wif.json"
+          $configJson = $config | ConvertTo-Json -Compress
           Set-Content -Path $path -Value $configJson
 
-          # Authenticate using WIF
-          gcloud auth login --cred-file=$path --quiet
+          # Point ADC to this WIF JSON
+          $env:GOOGLE_APPLICATION_CREDENTIALS = $path
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
