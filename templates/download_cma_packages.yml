@@ -30,6 +30,13 @@ steps:
           $env:AZURE_FEDERATED_TOKEN = "$env:TEMP\token.jwt"
           Set-Content -Path $env:AZURE_FEDERATED_TOKEN -Value $env:SYSTEM_ACCESSTOKEN
 
+          Write-Host "System access token valid or not?"
+          Write-Host "$env:SYSTEM_ACCESSTOKEN"
+
+          Write-Host "Azure federated token valid or not?"
+          Write-Host "$env:AZURE_FEDERATED_TOKEN"
+
+          
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
@@ -45,7 +52,6 @@ steps:
               file = ${env:AZURE_FEDERATED_TOKEN}
             }
           }
-          $configJson = $config | ConvertTo-Json -Compress
 
           $path = "$env:TEMP\gcp-wif.json"
           $configJson = $config | ConvertTo-Json -Compress
