@@ -9,6 +9,10 @@ steps:
     inputs:
       targetType: inline
       script: |
+        if (-not $env:SYSTEM_ACCESSTOKEN) {
+          Write-Error "OAuth token not found. Ensure token permissions are enabled."
+          exit 1
+        }
         try {
           Write-Host "⚙️ Starting GCP authentication with shared project service account..."
           # Clean up any old shared-config if present
