@@ -9,6 +9,9 @@ pr: none
 variables:
   - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
+permissions:
+      pipelines:
+        accessToken: write  
 stages:
   - stage: ConfigureBlaise_${{parameters.Environment}}
     displayName: Configure Blaise (${{parameters.Environment}})

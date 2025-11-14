@@ -1,6 +1,8 @@
 ---
 steps:
   - task: PowerShell@2
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     displayName: Download CMA packages
     inputs:
       targetType: inline
@@ -18,13 +20,38 @@ steps:
           # Create and activate new shared-config
           Write-Host "🆕 Creating and activating shared-config..."
           gcloud config configurations create shared-config --activate --quiet
-          # Authenticate with service account
+          
+          # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
-          # gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
-          gcloud config set auth/impersonate_service_account $env:ENV_SHARED_SERVICE_ACCOUNT --quiet
-          Write-Host "❓ What is happening..."
-          gcloud auth list
-          gcloud auth describe $(gcloud auth list --format="value(account)" --filter="status:ACTIVE")
+
+          # Write SYSTEM_ACCESSTOKEN to file for WIF
+          $env:AZURE_FEDERATED_TOKEN = "$env:TEMP\token.jwt"
+          Set-Content -Path $env:AZURE_FEDERATED_TOKEN -Value $env:SYSTEM_ACCESSTOKEN
+
+          # WIF external account JSON
+          $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
+          $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
+
+          $configJson = @"
+          {
+            "type": "external_account",
+            "audience": "$audience",
+            "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+            "token_url": "https://sts.googleapis.com/v1/token",
+            "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken",
+            "credential_source": {
+              "environment_id": "azure",
+              "file": "$env:AZURE_FEDERATED_TOKEN"
+            }
+          }
+          "@
+
+          $path = "$env:TEMP\gcp-wif.json"
+          Set-Content -Path $path -Value $configJson
+
+          # Authenticate using WIF
+          gcloud auth login --cred-file=$path --quiet
+
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
