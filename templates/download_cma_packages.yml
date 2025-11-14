@@ -34,19 +34,18 @@ steps:
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
 
-        $configJson = @"
-        {
-          "type": "external_account",
-          "audience": "$audience",
-          "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
-          "token_url": "https://sts.googleapis.com/v1/token",
-          "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken",
-          "credential_source": {
-            "environment_id": "azure",
-            "file": "${env:AZURE_FEDERATED_TOKEN}"
+          $config = @{
+            "type": "external_account",
+            "audience": "$audience",
+            "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+            "token_url": "https://sts.googleapis.com/v1/token",
+            "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken",
+            "credential_source": @{
+              "environment_id": "azure",
+              "file": "${env:AZURE_FEDERATED_TOKEN}"
+            }
           }
-        }
-"@
+          $configJson = $config | ConvertTo-Json -Compress
 
           $path = "$env:TEMP\gcp-wif.json"
           Set-Content -Path $path -Value $configJson
