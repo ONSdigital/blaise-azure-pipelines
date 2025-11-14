@@ -94,6 +94,18 @@ stages:
               steps:
                 - checkout: self
                 - template: /templates/register_node.yml
+      - job: DownloadCMAPackages
+        displayName: Download CMA packages via WIF
+        permissions:
+          pipelines:
+            accessToken: write
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - checkout: self
+          - template: /templates/download_cma_packages.yml
+            parameters:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
       - deployment: InstallCmaPackagesOnMultiNode
         displayName: Install CMA packages on multi node environment
         dependsOn: RegisterDataEntryNodes
@@ -107,9 +119,6 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/download_cma_packages.yml
-                  parameters:
-                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
                 - template: /templates/install_cma_packages.yml
       - deployment: InstallCmaPackagesOnSingleNode
         displayName: Install CMA packages on single node environment
@@ -124,7 +133,6 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/download_cma_packages.yml
                 - template: /templates/install_cma_packages.yml
       - deployment: ConfigureBlaisesDatabases
         displayName: Configure data interfaces
