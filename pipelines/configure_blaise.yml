@@ -102,9 +102,6 @@ stages:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
           tags: mgmt
-        permissions:
-          pipelines:
-            accessToken: write
         strategy:
           runOnce:
             deploy:
