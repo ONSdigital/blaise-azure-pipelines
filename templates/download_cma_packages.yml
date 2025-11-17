@@ -83,13 +83,25 @@ steps:
 
           Write-Host "Activate new gcloud version:"
           # ---- Locate NEW GCLOUD + GSUTIL binaries ----
-          $NewGcloud = "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
-          $NewGsutil  = "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gsutil.cmd"
+          $possiblePaths = @(
+              "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
+              "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
+              "$env:LOCALAPPDATA\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
+          )
 
-          if (-Not (Test-Path $NewGcloud)) {
+          # Find the first path that exists
+          $NewGcloud = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+          if (-not $NewGcloud) {
               Write-Error "❌ NEW gcloud binary not found! Installation failed."
               exit 1
           }
+
+          # gsutil is in the same folder
+          $NewGsutil = Join-Path (Split-Path $NewGcloud) "gsutil.cmd"
+
+          Write-Host "Using gcloud: $NewGcloud"
+          Write-Host "Using gsutil: $NewGsutil"
 
           Write-Host "✔ Using NEW gcloud binary: $NewGcloud"
           & $NewGcloud --version
