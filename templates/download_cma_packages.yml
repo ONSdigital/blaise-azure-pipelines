@@ -29,50 +29,48 @@ steps:
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
           # Write SYSTEM_ACCESSTOKEN to file for WIF
-          $env:AZURE_FEDERATED_TOKEN = "$env:TEMP\token.jwt"
-          Set-Content -Path $env:AZURE_FEDERATED_TOKEN -Value $env:SYSTEM_ACCESSTOKEN
+          $tokenFile = "$env:TEMP\token.jwt"
+          Set-Content -Path $tokenFile -Value $env:SYSTEM_ACCESSTOKEN
 
-          Write-Host "System access token valid or not?"
-          Write-Host "Token length: $($env:SYSTEM_ACCESSTOKEN.Length)"
-
-          Write-Host "Azure federated token valid or not?"
-          Write-Host "$env:AZURE_FEDERATED_TOKEN"
+          $wifJson = "$env:TEMP\gcp-wif.json"
 
           
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
 
-          $path = "$env:TEMP\gcp-wif.json"
-          $config = @{
+          $wifConfig = @{
             type = "external_account"
             audience = $audience
             subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
             token_url = "https://sts.googleapis.com/v1/token"
             service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken"
             credential_source = @{
-              environment_id = "azure"
-              file = ${env:AZURE_FEDERATED_TOKEN}
+                file = $tokenFile
+                format = @{
+                    type = "text"
+                }
             }
           }
 
           
-          $configJson = $config | ConvertTo-Json -Compress
-          Set-Content -Path $path -Value $configJson
+          # Convert to JSON
+          $configJson = $wifConfig | ConvertTo-Json -Compress
+          Set-Content -Path $wifJson -Value $configJson
 
           Write-Host "gcloud version:"
           gcloud --version
 
-          Write-Host "Downloading latest Google Cloud SDK installer..."
-          $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
+          # Write-Host "Downloading latest Google Cloud SDK installer..."
+          # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
 
-          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
 
-          Write-Host "Installing Google Cloud SDK silently..."
-          Start-Process $installer -ArgumentList "/S" -Wait
+          # Write-Host "Installing Google Cloud SDK silently..."
+          # Start-Process $installer -ArgumentList "/S" -Wait
 
-          Write-Host "New Google Cloud SDK version:"
-          gcloud --version
+          # Write-Host "New Google Cloud SDK version:"
+          # gcloud --version
 
           Write-Host "Agent Name: $env:AGENT_NAME"
           Write-Host "Agent OS: $env:AGENT_OS"
@@ -109,15 +107,10 @@ steps:
           & $NewGcloud config configurations create shared-config --quiet
           & $NewGcloud config configurations activate shared-config --quiet
 
-          # # Authenticating with WIF creds
-          # & $NewGcloud auth application-default login --cred-file="$path" --quiet
-          # & $NewGcloud auth list
-          # & $NewGcloud auth application-default print-access-token
-
           Write-Host "Point ADC to this JSON"
-          $env:GOOGLE_APPLICATION_CREDENTIALS = $path
+          $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
+          # Test access token
           $token = & "$NewGcloud" auth application-default print-access-token
-          Write-Host "🆕 Access Token working??????????????????????????????????????..."
           Write-Host "Token length: $($token.Length)"
 
           # Download CMA multi package
