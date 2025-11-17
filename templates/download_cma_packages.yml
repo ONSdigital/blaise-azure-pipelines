@@ -78,6 +78,28 @@ steps:
           Write-Host "New Google Cloud SDK version:"
           gcloud --version
 
+          Write-Host "Active gcloud version:"
+          Get-Command gcloud | Select-Object Source, Version
+
+
+          Write-Host "Agent Name: $env:AGENT_NAME"
+          Write-Host "Agent OS: $env:AGENT_OS"
+          Write-Host "Machine Name: $env:COMPUTERNAME"
+          Write-Host "Running as user: $env:USERNAME"
+
+          Write-Host "Activate new gcloud version:"
+          # ---- Locate NEW GCLOUD + GSUTIL binaries ----
+          $NewGcloud = "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
+          $NewGsutil  = "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gsutil.cmd"
+
+          if (-Not (Test-Path $NewGcloud)) {
+              Write-Error "❌ NEW gcloud binary not found! Installation failed."
+              exit 1
+          }
+
+          Write-Host "✔ Using NEW gcloud binary: $NewGcloud"
+          & $NewGcloud --version
+
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
