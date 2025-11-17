@@ -48,7 +48,7 @@ steps:
 
           $wifConfig = @{
             type = "external_account"
-            audience = "api://AzureADTokenExchange"
+            audience = $audience
             subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
             token_url = "https://sts.googleapis.com/v1/token"
             service_account_impersonation_url = $service_account_impersonation_url
