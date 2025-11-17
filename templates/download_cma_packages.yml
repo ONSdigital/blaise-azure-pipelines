@@ -38,13 +38,20 @@ steps:
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
+          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$sa:generateAccessToken"
+            
+          Write-Host "Shared SA"
+          Write-Host $sa
+          Write-Host "Impersonation URL"
+          Write-Host $service_account_impersonation_url  
+
 
           $wifConfig = @{
             type = "external_account"
             audience = $audience
             subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
             token_url = "https://sts.googleapis.com/v1/token"
-            service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$sa:generateAccessToken"
+            service_account_impersonation_url = $service_account_impersonation_url
             credential_source = @{
                 file = $tokenFile
                 format = @{
