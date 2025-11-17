@@ -38,7 +38,7 @@ steps:
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
-          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$sa:generateAccessToken"
+          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$($sa):generateAccessToken"
             
           Write-Host "Shared SA"
           Write-Host $sa
@@ -116,6 +116,7 @@ steps:
 
           Write-Host "Point ADC to this JSON"
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
+          $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
           # Test access token
           $token = & "$NewGcloud" auth application-default print-access-token
           Write-Host "Token length: $($token.Length)"
