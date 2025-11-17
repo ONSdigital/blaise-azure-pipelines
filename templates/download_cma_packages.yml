@@ -1,7 +1,7 @@
 ---
-parameters:
-  SYSTEM_ACCESSTOKEN: ''
 steps:
+  - checkout: self
+    persistCredentials: true
   - task: PowerShell@2
     env:
       SYSTEM_ACCESSTOKEN: ${{ parameters.SYSTEM_ACCESSTOKEN }}
@@ -35,7 +35,7 @@ steps:
           Set-Content -Path $env:AZURE_FEDERATED_TOKEN -Value $env:SYSTEM_ACCESSTOKEN
 
           Write-Host "System access token valid or not?"
-          Write-Host "$env:SYSTEM_ACCESSTOKEN"
+          Write-Host "Token length: $($env:SYSTEM_ACCESSTOKEN.Length)"
 
           Write-Host "Azure federated token valid or not?"
           Write-Host "$env:AZURE_FEDERATED_TOKEN"
