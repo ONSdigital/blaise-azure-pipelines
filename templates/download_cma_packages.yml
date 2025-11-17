@@ -109,12 +109,12 @@ steps:
           & $NewGcloud config configurations create shared-config --quiet
           & $NewGcloud config configurations activate shared-config --quiet
 
-          # Authenticating with WIF creds
-          & $NewGcloud auth application-default login --cred-file="$path" --quiet
-          & $NewGcloud auth list
-          & $NewGcloud auth application-default print-access-token
+          # # Authenticating with WIF creds
+          # & $NewGcloud auth application-default login --cred-file="$path" --quiet
+          # & $NewGcloud auth list
+          # & $NewGcloud auth application-default print-access-token
 
-          # Point ADC to this JSON
+          Write-Host "Point ADC to this JSON"
           $env:GOOGLE_APPLICATION_CREDENTIALS = $path
           $token = & "$NewGcloud" auth application-default print-access-token
           Write-Host "🆕 Access Token working??????????????????????????????????????..."
@@ -124,7 +124,7 @@ steps:
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          & $NewGsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          & $NewGsutil cp "gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE" "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
