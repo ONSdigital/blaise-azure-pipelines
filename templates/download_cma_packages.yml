@@ -64,11 +64,14 @@ steps:
           # Point ADC to this WIF JSON
           $env:GOOGLE_APPLICATION_CREDENTIALS = $path
 
+          Write-Host "gcloud version:"
+          gcloud --version
+
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          gcloud auth application-default login --cred-file="$path"
+          gcloud auth application-default login --cred-file="$path" --quiet
           gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
