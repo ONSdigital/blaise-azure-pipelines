@@ -43,6 +43,7 @@ steps:
           $audience = "//iam.googleapis.com/projects/ons-blaise-v2-shared/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
 
+          $path = "$env:TEMP\gcp-wif.json"
           $config = @{
             type = "external_account"
             audience = $audience
@@ -55,12 +56,9 @@ steps:
             }
           }
 
-          $path = "$env:TEMP\gcp-wif.json"
+          
           $configJson = $config | ConvertTo-Json -Compress
           Set-Content -Path $path -Value $configJson
-
-          # Point ADC to this WIF JSON
-          $env:GOOGLE_APPLICATION_CREDENTIALS = $path
 
           Write-Host "gcloud version:"
           gcloud --version
@@ -115,6 +113,12 @@ steps:
           & $NewGcloud auth application-default login --cred-file="$path" --quiet
           & $NewGcloud auth list
           & $NewGcloud auth application-default print-access-token
+
+          # Point ADC to this JSON
+          $env:GOOGLE_APPLICATION_CREDENTIALS = $path
+          $token = & "$NewGcloud" auth application-default print-access-token
+          Write-Host "🆕 Access Token working??????????????????????????????????????..."
+          Write-Host "Token length: $($token.Length)"
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
