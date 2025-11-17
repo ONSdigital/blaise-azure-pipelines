@@ -44,7 +44,7 @@ steps:
             audience = $audience
             subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
             token_url = "https://sts.googleapis.com/v1/token"
-            service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/ons-blaise-v2-shared/serviceAccounts/$sa:generateAccessToken"
+            service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$sa:generateAccessToken"
             credential_source = @{
                 file = $tokenFile
                 format = @{
