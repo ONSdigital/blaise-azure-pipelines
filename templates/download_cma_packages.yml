@@ -23,9 +23,7 @@ steps:
           } else {
             Write-Host "✅ No existing shared-config found"
           }
-          # Create and activate new shared-config
-          Write-Host "🆕 Creating and activating shared-config..."
-          gcloud config configurations create shared-config --activate --quiet
+          
           
           # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
@@ -100,15 +98,21 @@ steps:
           Write-Host "✔ Using NEW gcloud binary: $NewGcloud"
           & $NewGcloud --version
 
+          # Create and activate new shared-config
+          Write-Host "🆕 Creating and activating shared-config..."
+          & $NewGcloud config configurations create shared-config --quiet
+          & $NewGcloud config configurations activate shared-config --quiet
+
+          # Authenticating with WIF creds
+          & $NewGcloud auth application-default login --cred-file="$path" --quiet
+          & $NewGcloud auth list
+          & $NewGcloud auth application-default print-access-token
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          gcloud auth application-default login --cred-file="$path" --quiet
-          gcloud auth list
-          gcloud auth application-default print-access-token
-          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          & $NewGsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
