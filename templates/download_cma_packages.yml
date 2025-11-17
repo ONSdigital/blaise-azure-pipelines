@@ -67,11 +67,25 @@ steps:
           Write-Host "gcloud version:"
           gcloud --version
 
+          Write-Host "Downloading latest Google Cloud SDK installer..."
+          $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
+
+          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+
+          Write-Host "Installing Google Cloud SDK silently..."
+          Start-Process $installer -ArgumentList "/S" -Wait
+
+          Write-Host "New Google Cloud SDK version:"
+          gcloud --version
+
+
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
           gcloud auth application-default login --cred-file="$path" --quiet
+          gcloud auth list
+          gcloud auth application-default print-access-token
           gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
