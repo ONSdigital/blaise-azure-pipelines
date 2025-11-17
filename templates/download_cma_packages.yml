@@ -76,10 +76,6 @@ steps:
           Write-Host "New Google Cloud SDK version:"
           gcloud --version
 
-          Write-Host "Active gcloud version:"
-          Get-Command gcloud | Select-Object Source, Version
-
-
           Write-Host "Agent Name: $env:AGENT_NAME"
           Write-Host "Agent OS: $env:AGENT_OS"
           Write-Host "Machine Name: $env:COMPUTERNAME"
