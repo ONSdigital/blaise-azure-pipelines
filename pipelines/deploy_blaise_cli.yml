@@ -60,7 +60,7 @@ stages:
                 - template: /templates/copy_files.yml
                   parameters:
                     TargetFolder: c:\BlaiseServices\BlaiseCli
-                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/Blaise.Cli/bin/Release
+                    SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/bin/Release/net48
                 - template: /templates/add_windows_firewall_rules.yml
                   parameters:
                     RuleName: Blaise
