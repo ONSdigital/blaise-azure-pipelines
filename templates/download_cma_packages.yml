@@ -39,7 +39,7 @@ steps:
           Set-Content -Path $tokenFile -Value $env:SYSTEM_ACCESSTOKEN
 
           # WIF external account JSON
-          $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/ado-wif-provider"
+          $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/ado-wif-provider-2"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
           $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$($sa):generateAccessToken"
             
