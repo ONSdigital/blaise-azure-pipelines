@@ -76,8 +76,11 @@ steps:
           Write-Host "Issue ui check"
           Write-Host $payloadJson
 
-          Write-Host "Final JSON object"
-          Write-Host $wifConfig
+          Write-Host "Final JSON object (compact JSON)"
+          ($wifConfig | ConvertTo-Json -Compress)
+
+          Write-Host "Contents of gcp-wif.json:"
+          Get-Content $wifJson
 
           Write-Host "gcloud version:"
           gcloud --version
