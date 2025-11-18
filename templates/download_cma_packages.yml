@@ -38,9 +38,6 @@ steps:
           # Write SYSTEM_ACCESSTOKEN to file for WIF
           Set-Content -Path $tokenFile -Value $env:SYSTEM_ACCESSTOKEN
 
-          
-
-          
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/ado-wif-provider"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
@@ -66,6 +63,15 @@ steps:
             }
           }
 
+          # Extract payload
+          $payloadB64 = ($env:SYSTEM_ACCESSTOKEN -split "\.")[1]
+
+          # Base64 decode (URL-safe)
+          $payloadJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payloadB64.Replace('_','/').Replace('-','+').PadRight($payloadB64.Length + (4 - $payloadB64.Length % 4) % 4,'=')))
+
+          # Print
+          Write-Host "Issue ui check"
+          Write-Host $payloadJson
           
           # Convert to JSON
           $configJson = $wifConfig | ConvertTo-Json -Compress
