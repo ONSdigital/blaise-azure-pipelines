@@ -28,11 +28,17 @@ steps:
           # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
-          # Write SYSTEM_ACCESSTOKEN to file for WIF
+          $wifJson = "$env:TEMP\gcp-wif.json"
           $tokenFile = "$env:TEMP\token.jwt"
+
+          # --- CLEAN UP OLD FILES FIRST ---
+          Remove-Item $wifJson    -ErrorAction SilentlyContinue
+          Remove-Item $tokenFile  -ErrorAction SilentlyContinue
+          
+          # Write SYSTEM_ACCESSTOKEN to file for WIF
           Set-Content -Path $tokenFile -Value $env:SYSTEM_ACCESSTOKEN
 
-          $wifJson = "$env:TEMP\gcp-wif.json"
+          
 
           
           # WIF external account JSON
@@ -64,17 +70,6 @@ steps:
           # Convert to JSON
           $configJson = $wifConfig | ConvertTo-Json -Compress
           Set-Content -Path $wifJson -Value $configJson
-
-
-          # Extract payload
-          $payloadB64 = ($env:SYSTEM_ACCESSTOKEN -split "\.")[1]
-
-          # Base64 decode (URL-safe)
-          $payloadJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payloadB64.Replace('_','/').Replace('-','+').PadRight($payloadB64.Length + (4 - $payloadB64.Length % 4) % 4,'=')))
-
-          # Print
-          Write-Host "Issue ui check"
-          Write-Host $payloadJson
 
           Write-Host "Final JSON object (compact JSON)"
           ($wifConfig | ConvertTo-Json -Compress)
