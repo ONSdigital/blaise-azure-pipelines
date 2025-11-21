@@ -11,25 +11,13 @@ steps:
       targetType: inline
       script: |
         try {
-          Write-Host "⚙️ Starting GCP authentication with shared project service account..."
-          # Clean up any old shared-config if present
-          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
-            Write-Host "🧹 Existing shared-config found, deleting..."
-            gcloud config configurations delete shared-config --quiet
-          } else {
-            Write-Host "✅ No existing shared-config found"
-          }
-          # Create and activate new shared-config
-          Write-Host "🆕 Creating and activating shared-config..."
-          gcloud config configurations create shared-config --activate --quiet
-          # Authenticate with service account
-          Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
-          gcloud auth activate-service-account $env:ENV_SHARED_SERVICE_ACCOUNT --key-file="$(gcpkey.secureFilePath)" --quiet
-          # Download test questionnaire package
-          Write-Host "📦 Downloading test questionnaire package..."
-          Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg"
-          Write-Host "📁 Destination: c:\survey\$env:QuestionnaireName.bpkg"
-          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg c:\survey\$env:QuestionnaireName.bpkg
+          Write-Host "📦 Downloading test questionnaire using service account impersonation..."
+          
+          # Use the VM's service account to impersonate the shared account
+          gsutil -i $env:ENV_SHARED_SERVICE_ACCOUNT cp `
+            gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg `
+            c:\survey\$env:QuestionnaireName.bpkg
+          
           Write-Host "✅ Test questionnaire package downloaded successfully!"
         }
         catch {
