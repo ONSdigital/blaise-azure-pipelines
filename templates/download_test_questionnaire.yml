@@ -1,10 +1,5 @@
 ---
 steps:
-  - task: DownloadSecureFile@1
-    displayName: Download GCP key
-    name: gcpkey
-    inputs:
-      secureFile: ons-blaise-v2-shared-221e50eb36c7.json
   - task: PowerShell@2
     displayName: Download test questionnaire
     inputs:
@@ -13,9 +8,11 @@ steps:
         try {
           Write-Host "📦 Downloading test questionnaire using service account impersonation..."
           
-          # Use the VM's service account to impersonate the shared account
-          gsutil -i $env:ENV_SHARED_SERVICE_ACCOUNT cp `
-            gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg `
+          # Set impersonation for the current session
+          gcloud config set auth/impersonate_service_account $env:ENV_SHARED_SERVICE_ACCOUNT
+          
+          # Download using the impersonated account
+          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg `
             c:\survey\$env:QuestionnaireName.bpkg
           
           Write-Host "✅ Test questionnaire package downloaded successfully!"
