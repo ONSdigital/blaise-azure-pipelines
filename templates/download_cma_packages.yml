@@ -28,7 +28,7 @@ steps:
           # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
-          $oidcTokenUrl = "https://vsts.identity.azure.com/blaise-gcp/csharp/_apis/oidc/token"
+          $oidcTokenUrl = "https://vssps.dev.azure.com/blaise-gcp/_apis/oidc/token"
           $headers = @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" }
           $response = Invoke-RestMethod -Method Get -Uri $oidcTokenUrl -Headers $headers
           $oidcToken = $response.access_token
