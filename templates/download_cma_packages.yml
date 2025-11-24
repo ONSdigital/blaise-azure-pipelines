@@ -28,6 +28,12 @@ steps:
           # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
+          $oidcTokenUrl = "https://vsts.identity.azure.com/blaise-gcp/csharp/_apis/oidc/token"
+          $headers = @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" }
+          $response = Invoke-RestMethod -Method Get -Uri $oidcTokenUrl -Headers $headers
+          $oidcToken = $response.access_token
+
+
           $wifJson = "$env:TEMP\gcp-wif.json"
           $tokenFile = "$env:TEMP\token.jwt"
 
@@ -36,7 +42,7 @@ steps:
           Remove-Item $tokenFile  -ErrorAction SilentlyContinue
           
           # Write SYSTEM_ACCESSTOKEN to file for WIF
-          Set-Content -Path $tokenFile -Value $env:SYSTEM_ACCESSTOKEN
+          Set-Content -Path $tokenFile -Value $oidcToken
 
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2"
@@ -64,7 +70,7 @@ steps:
           }
 
           # Extract payload
-          $payloadB64 = ($env:SYSTEM_ACCESSTOKEN -split "\.")[1]
+          $payloadB64 = ($oidcToken -split "\.")[1]
 
           # Base64 decode (URL-safe)
           $payloadJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payloadB64.Replace('_','/').Replace('-','+').PadRight($payloadB64.Length + (4 - $payloadB64.Length % 4) % 4,'=')))
@@ -83,67 +89,24 @@ steps:
           Write-Host "Contents of gcp-wif.json:"
           Get-Content $wifJson
 
-          Write-Host "gcloud version:"
-          gcloud --version
-
-          # Write-Host "Downloading latest Google Cloud SDK installer..."
-          # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
-
-          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
-
-          # Write-Host "Installing Google Cloud SDK silently..."
-          # Start-Process $installer -ArgumentList "/S" -Wait
-
-          # Write-Host "New Google Cloud SDK version:"
-          # gcloud --version
-
-          Write-Host "Agent Name: $env:AGENT_NAME"
-          Write-Host "Agent OS: $env:AGENT_OS"
-          Write-Host "Machine Name: $env:COMPUTERNAME"
-          Write-Host "Running as user: $env:USERNAME"
-
-          Write-Host "Activate new gcloud version:"
-          # ---- Locate NEW GCLOUD + GSUTIL binaries ----
-          $possiblePaths = @(
-              "C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
-              "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
-              "$env:LOCALAPPDATA\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
-          )
-
-          # Find the first path that exists
-          $NewGcloud = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-
-          if (-not $NewGcloud) {
-              Write-Error "❌ NEW gcloud binary not found! Installation failed."
-              exit 1
-          }
-
-          # gsutil is in the same folder
-          $NewGsutil = Join-Path (Split-Path $NewGcloud) "gsutil.cmd"
-
-          Write-Host "Using gcloud: $NewGcloud"
-          Write-Host "Using gsutil: $NewGsutil"
-
-          Write-Host "✔ Using NEW gcloud binary: $NewGcloud"
-          & $NewGcloud --version
-
+          
           # Create and activate new shared-config
           Write-Host "🆕 Creating and activating shared-config..."
-          & $NewGcloud config configurations create shared-config --quiet
-          & $NewGcloud config configurations activate shared-config --quiet
+          & gcloud config configurations create shared-config --quiet
+          & gcloud config configurations activate shared-config --quiet
 
           Write-Host "Point ADC to this JSON"
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
+          # $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
           # Test access token
-          $token = & "$NewGcloud" auth application-default print-access-token
+          $token = & gcloud auth application-default print-access-token
           Write-Host "Token length: $($token.Length)"
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          & $NewGsutil cp "gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE" "C:\CMA\CMA-MULTI.zip"
+          & gsutil cp "gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE" "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
