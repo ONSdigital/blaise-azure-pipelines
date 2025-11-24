@@ -14,6 +14,12 @@ steps:
         try {
           Write-Host "📦 Copying test questionnaire to survey directory..."
           
+          # Ensure the survey directory exists
+          if (-not (Test-Path "c:\survey")) {
+            Write-Host "📁 Creating c:\survey directory..."
+            New-Item -Path "c:\survey" -ItemType Directory -Force | Out-Null
+          }
+          
           # The downloaded file path is in the variable $(testQuestionnaire.secureFilePath)
           Copy-Item -Path "$(testQuestionnaire.secureFilePath)" `
             -Destination "c:\survey\$env:QuestionnaireName.bpkg" `
@@ -25,24 +31,4 @@ steps:
           Write-Host "🚨 ERROR during test questionnaire package copy!"
           Write-Error "❌ Exception details: $_"
           exit 1
-        }
-        finally {
-          Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          # Check if default config exists
-          if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
-            Write-Host "⚠️ No default configuration found, creating it now..."
-            gcloud config configurations create default --quiet
-          } else {
-            Write-Host "✅ Default configuration already exists"
-          }
-          Write-Host "🔄 Activating default configuration..."
-          gcloud config configurations activate default --quiet
-          # Delete shared-config safely
-          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
-            Write-Host "🧹 Cleaning up temporary shared-config..."
-            gcloud config configurations delete shared-config --quiet
-          } else {
-            Write-Host "✅ No shared-config left to delete"
-          }
-          Write-Host "🏁 Authentication restored to default service account"
         }
