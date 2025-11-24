@@ -1,24 +1,28 @@
 ---
 steps:
+  - task: DownloadSecureFile@1
+    displayName: Download test questionnaire from Azure DevOps
+    name: testQuestionnaire
+    inputs:
+      secureFile: '$(QuestionnaireName).bpkg'
+      retryCount: 3
   - task: PowerShell@2
-    displayName: Download test questionnaire
+    displayName: Copy questionnaire to survey directory
     inputs:
       targetType: inline
       script: |
         try {
-          Write-Host "📦 Downloading test questionnaire using service account impersonation..."
+          Write-Host "📦 Copying test questionnaire to survey directory..."
           
-          # Set impersonation for the current session
-          gcloud config set auth/impersonate_service_account $env:ENV_SHARED_SERVICE_ACCOUNT
+          # The downloaded file path is in the variable $(testQuestionnaire.secureFilePath)
+          Copy-Item -Path "$(testQuestionnaire.secureFilePath)" `
+            -Destination "c:\survey\$env:QuestionnaireName.bpkg" `
+            -Force
           
-          # Download using the impersonated account
-          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg `
-            c:\survey\$env:QuestionnaireName.bpkg
-          
-          Write-Host "✅ Test questionnaire package downloaded successfully!"
+          Write-Host "✅ Test questionnaire package copied successfully!"
         }
         catch {
-          Write-Host "🚨 ERROR during test questionnaire package download!"
+          Write-Host "🚨 ERROR during test questionnaire package copy!"
           Write-Error "❌ Exception details: $_"
           exit 1
         }
