@@ -7,14 +7,11 @@ parameters:
   - name: DeployBranch
     displayName: Branch to use
     default: main
-
 trigger: none
 pr: none
-
 variables:
   - group: ${{parameters.VarGroup}}
   - template: /templates/variables.yml
-
 stages:
   - stage: DeployBlaiseCli_${{parameters.Environment}}
     displayName: Deploy Blaise CLI (${{parameters.Environment}})
@@ -32,11 +29,13 @@ stages:
             deploy:
               steps:
                 - checkout: self
-
                 - template: /templates/install_mysql_connector.yml
                   parameters:
                     GCP_Bucket: $(ENV_BLAISE_GCP_BUCKET)
-
+                - template: /templates/set_license_key.yml
+                  parameters:
+                    BlaiseLicenseKey: $(ENV_BLAISE_LICENSE_KEY)
+                    BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     Branch: ${{parameters.DeployBranch}}
@@ -44,17 +43,14 @@ stages:
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 66
-
                 - template: /templates/copy_files.yml
                   parameters:
                     TargetFolder: c:\BlaiseServices\BlaiseCli
                     SourceFolder: $(System.ArtifactsDirectory)/_BlaiseCli/Blaise.Cli/bin/Release/net48
-
                 - template: /templates/add_windows_firewall_rules.yml
                   parameters:
                     RuleName: Blaise
                     InboundPorts: 80, 443, $(ENV_BLAISE_CONNECTION_PORT), $(ENV_BLAISE_REMOTE_CONNECTION_PORT)
                     OutboundPorts: 80, 443, $(ENV_BLAISE_CONNECTION_PORT), $(ENV_BLAISE_REMOTE_CONNECTION_PORT)
-
                 - template: /templates/set_windows_timezone.yml
                 - template: /templates/add_cleanup_scheduler.yml
