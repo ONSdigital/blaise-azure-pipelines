@@ -1,27 +1,67 @@
----
+# TODO: Secure file method
+# ---
+# steps:
+#   - task: DownloadSecureFile@1
+#     displayName: Download test questionnaire from Azure DevOps
+#     name: testQuestionnaire
+#     inputs:
+#       secureFile: '$(QuestionnaireName).bpkg'
+#       retryCount: 3
+#   - task: PowerShell@2
+#     displayName: Copy questionnaire to survey directory
+#     inputs:
+#       targetType: inline
+#       script: |
+#         try {
+#           Write-Host "📦 Copying test questionnaire to survey directory..."
+          
+#           # Ensure the survey directory exists
+#           if (-not (Test-Path "c:\survey")) {
+#             Write-Host "📁 Creating c:\survey directory..."
+#             New-Item -Path "c:\survey" -ItemType Directory -Force | Out-Null
+#           }
+          
+#           # The downloaded file path is in the variable $(testQuestionnaire.secureFilePath)
+#           Copy-Item -Path "$(testQuestionnaire.secureFilePath)" `
+#             -Destination "c:\survey\$env:QuestionnaireName.bpkg" `
+#             -Force
+          
+#           Write-Host "✅ Test questionnaire package copied successfully!"
+#         }
+#         catch {
+#           Write-Host "🚨 ERROR during test questionnaire package copy!"
+#           Write-Error "❌ Exception details: $_"
+#           exit 1
+#         }
+
+trigger:
+  branches:
+    include:
+      - main
+
+resources:
+  repositories:
+    - repository: github_repo
+      type: github
+      endpoint: ONSdigital 
+      name: ONSdigital/blaise-test-questionnaire
+
 steps:
-  - task: DownloadSecureFile@1
-    displayName: Download test questionnaire from Azure DevOps
-    name: testQuestionnaire
-    inputs:
-      secureFile: '$(QuestionnaireName).bpkg'
-      retryCount: 3
+  - checkout: github_repo
   - task: PowerShell@2
-    displayName: Copy questionnaire to survey directory
+    displayName: Copy test questionnaire from GitHub
     inputs:
       targetType: inline
       script: |
         try {
-          Write-Host "📦 Copying test questionnaire to survey directory..."
+          Write-Host "📦 Copying test questionnaire from repository..."
           
-          # Ensure the survey directory exists
           if (-not (Test-Path "c:\survey")) {
             Write-Host "📁 Creating c:\survey directory..."
             New-Item -Path "c:\survey" -ItemType Directory -Force | Out-Null
           }
           
-          # The downloaded file path is in the variable $(testQuestionnaire.secureFilePath)
-          Copy-Item -Path "$(testQuestionnaire.secureFilePath)" `
+          Copy-Item -Path "$(Build.SourcesDirectory)\test-data\$env:QuestionnaireName.bpkg" `
             -Destination "c:\survey\$env:QuestionnaireName.bpkg" `
             -Force
           
