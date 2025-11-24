@@ -42,7 +42,7 @@ stages:
                     Branch: ${{parameters.DeployBranch}}
                     ArtifactName: _BlaiseCli
                     DownloadPath: $(System.ArtifactsDirectory)
-                    TargetFiles: '**'
+                    TargetFiles: '**/*.config'
                     PipelineNumber: 66
 
                 - template: /templates/copy_files.yml
