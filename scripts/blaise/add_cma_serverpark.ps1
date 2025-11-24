@@ -15,8 +15,8 @@ function ServerParkExists {
         -port:$env:ENV_BLAISE_CONNECTION_PORT `
         -user:$env:ENV_BLAISE_ADMIN_USER `
         -password:$env:ENV_BLAISE_ADMIN_PASSWORD `
-    | findstr -i "$ServerParkName"                                  
-        
+    | findstr -i "$ServerParkName"
+
     If ([string]::IsNullOrEmpty($exists)) {
         return $false
     }
@@ -55,7 +55,7 @@ try {
         LogInfo("Adding and/or configuring server park $env:CmaServerParkName")
         AddServerPark -ServerParkName:$env:CmaServerParkName
     }
-    
+
     exit 0
 }
 catch {

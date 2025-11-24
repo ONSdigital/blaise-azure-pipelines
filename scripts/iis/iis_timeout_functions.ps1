@@ -46,7 +46,7 @@ function setTimeoutValues {
 
     foreach ($site in $existingSites) {
         $siteName = $site.SiteName
-        $appPool  = $site.AppPool
+        $appPool = $site.AppPool
 
         $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues -siteName $siteName -appPoolName $appPool
         $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
