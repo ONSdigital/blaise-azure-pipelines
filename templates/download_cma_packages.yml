@@ -42,7 +42,13 @@ steps:
 
           $oidcToken = $response.oidcToken
           Write-Host "✅ OIDC Token retrieved successfully!"
-          Write-Host ("OIDC Token (plain): " + $oidcToken) -ForegroundColor Yellow
+          $parts = $oidcToken -split '\.'
+          $payload = $parts[1]
+
+          # Base64 decode payload
+          $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payload + ('=' * ((4 - $payload.Length % 4) % 4))))
+
+          Write-Host "OIDC payload: $decoded"
 
           if (-not $oidcToken) {
               Write-Error "❌ Could not fetch OIDC token"
