@@ -41,13 +41,13 @@ steps:
               }
 
           $oidcToken = $response.oidcToken
+          Write-Host "✅ OIDC Token retrieved successfully!"
+          Write-Host $oidcToken
 
           if (-not $oidcToken) {
               Write-Error "❌ Could not fetch OIDC token"
               exit 1
           }
-
-          Write-Host "✅ Got OIDC token!"
 
 
           $wifJson = "$env:TEMP\gcp-wif.json"
