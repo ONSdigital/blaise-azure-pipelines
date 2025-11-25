@@ -86,18 +86,17 @@ steps:
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
 
-          # # Create and activate new shared-config
-          # Write-Host "🆕 Creating and activating shared-config..."
-          # & gcloud config configurations create shared-config --quiet
-          # & gcloud config configurations activate shared-config --quiet
+          # Create and activate new shared-config
+          Write-Host "🆕 Creating and activating shared-config..."
+          gcloud config configurations create shared-config --activate --quiet
 
-          gcloud auth login --cred-file "$wifJson" 
+          gcloud auth login --cred-file "$wifJson" --quiet
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          & gsutil cp "gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE" "C:\CMA\CMA-MULTI.zip"
+          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
