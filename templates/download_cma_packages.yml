@@ -26,7 +26,7 @@ steps:
 
 
           Write-Host "📌 OIDC URL from Azure DevOps:"
-          $oidcUrl = "$env:SYSTEM_OIDCREQUESTURI?api-version=7.1"
+          $oidcUrl = "$(System.CollectionUri)_apis/oidc/token?api-version=7.1-preview.1"
           Write-Host $oidcUrl
 
           Write-Host "📌 Requesting OIDC token from Azure DevOps..."
