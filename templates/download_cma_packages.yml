@@ -9,10 +9,6 @@ steps:
     inputs:
       targetType: inline
       script: |
-        if (-not $env:SYSTEM_ACCESSTOKEN) {
-          Write-Error "OAuth token not found. Ensure token permissions are enabled."
-          exit 1
-        }
         try {
           Write-Host "⚙️ Starting GCP authentication with shared project service account..."
           # Clean up any old shared-config if present
@@ -28,10 +24,28 @@ steps:
           # Authenticate with service account using WIF
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
-          $oidcTokenUrl = "https://vssps.dev.azure.com/blaise-gcp/_apis/oidc/token"
-          $headers = @{ Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN" }
-          $response = Invoke-RestMethod -Method Get -Uri $oidcTokenUrl -Headers $headers
-          $oidcToken = $response.access_token
+
+          Write-Host "📌 OIDC URL from Azure DevOps:"
+          $oidcUrl = "$env:SYSTEM_OIDCREQUESTURI?api-version=7.1"
+          Write-Host $oidcUrl
+
+          Write-Host "📌 Requesting OIDC token from Azure DevOps..."
+
+          $response = Invoke-RestMethod -Method Post `
+              -Uri $oidcUrl `
+              -Headers @{
+                  "Authorization" = "Bearer $env:SYSTEM_ACCESSTOKEN"
+                  "Content-Type" = "application/json"
+              }
+
+          $oidcToken = $response.oidcToken
+
+          if (-not $oidcToken) {
+              Write-Error "❌ Could not fetch OIDC token"
+              exit 1
+          }
+
+          Write-Host "✅ Got OIDC token!"
 
 
           $wifJson = "$env:TEMP\gcp-wif.json"
@@ -69,27 +83,12 @@ steps:
             }
           }
 
-          # Extract payload
-          $payloadB64 = ($oidcToken -split "\.")[1]
-
-          # Base64 decode (URL-safe)
-          $payloadJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payloadB64.Replace('_','/').Replace('-','+').PadRight($payloadB64.Length + (4 - $payloadB64.Length % 4) % 4,'=')))
-
-          # Print
-          Write-Host "Issue ui check"
-          Write-Host $payloadJson
+          
           
           # Convert to JSON
           $configJson = $wifConfig | ConvertTo-Json -Compress
           Set-Content -Path $wifJson -Value $configJson
 
-          Write-Host "Final JSON object (compact JSON)"
-          ($wifConfig | ConvertTo-Json -Compress)
-
-          Write-Host "Contents of gcp-wif.json:"
-          Get-Content $wifJson
-
-          
           # Create and activate new shared-config
           Write-Host "🆕 Creating and activating shared-config..."
           & gcloud config configurations create shared-config --quiet
