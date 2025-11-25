@@ -49,15 +49,15 @@ steps:
           Write-Host "✅ Got OIDC token!"
 
 
-          $wifJson = "$env:TEMP\gcp-wif.json"
-          $tokenFile = "$env:TEMP\token.jwt"
+          # $wifJson = "$env:TEMP\gcp-wif.json"
+          # $tokenFile = "$env:TEMP\token.jwt"
 
-          # --- CLEAN UP OLD FILES FIRST ---
-          Remove-Item $wifJson    -ErrorAction SilentlyContinue
-          Remove-Item $tokenFile  -ErrorAction SilentlyContinue
+          # # --- CLEAN UP OLD FILES FIRST ---
+          # Remove-Item $wifJson    -ErrorAction SilentlyContinue
+          # Remove-Item $tokenFile  -ErrorAction SilentlyContinue
           
-          # Write SYSTEM_ACCESSTOKEN to file for WIF
-          Set-Content -Path $tokenFile -Value $oidcToken
+          # # Write SYSTEM_ACCESSTOKEN to file for WIF
+          # Set-Content -Path $tokenFile -Value $oidcToken
 
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2"
