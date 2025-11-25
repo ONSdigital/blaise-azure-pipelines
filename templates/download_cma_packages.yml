@@ -29,6 +29,7 @@ steps:
           $oidcUrl = "$(System.CollectionUri)_apis/oidc/token?api-version=7.1-preview.1"
           Write-Host $oidcUrl
 
+          Write-Host "SYSTEM_ACCESSTOKEN: $env:SYSTEM_ACCESSTOKEN" 
           Write-Host "📌 Requesting OIDC token from Azure DevOps..."
 
           $response = Invoke-RestMethod -Method Post `
