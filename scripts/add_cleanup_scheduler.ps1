@@ -1,6 +1,6 @@
 function GetSecretValue {
     param ([string]$variable)
-    
+
     Write-Host "Running GetSecretValue..."
 
     # If varValue is a secret
@@ -32,6 +32,15 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
     schtasks.exe /DELETE /TN $taskName /F
     Write-Host "Task '$taskName' successfully deleted."
 } 
+
+# Revoke all accounts
+gcloud auth revoke --all
+
+# Remove cached credentials
+Remove-Item -Recurse -Force "$env:USERPROFILE\.config\gcloud" -ErrorAction SilentlyContinue
+
+# Unset any env variable
+Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
 
 # Call function to set State Flags
 Set-StateFlags
