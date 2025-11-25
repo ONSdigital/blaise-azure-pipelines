@@ -91,23 +91,28 @@ steps:
             }
           }
 
+          $configJson = $wifConfig | ConvertTo-Json -Depth 10
+          Write-Host "WIF Config JSON:"
+          Write-Host $configJson
           
+          $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
-          # Convert to JSON
-          $configJson = $wifConfig | ConvertTo-Json -Compress
-          Set-Content -Path $wifJson -Value $configJson
+          gcloud auth login --cred-file "$wifJson"
 
-          # Create and activate new shared-config
-          Write-Host "🆕 Creating and activating shared-config..."
-          & gcloud config configurations create shared-config --quiet
-          & gcloud config configurations activate shared-config --quiet
+          # Test by listing storage buckets
+          gcloud auth list
 
-          Write-Host "Point ADC to this JSON"
-          $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          # $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
-          # Test access token
-          $token = & gcloud auth application-default print-access-token
-          Write-Host "Token length: $($token.Length)"
+          # # Create and activate new shared-config
+          # Write-Host "🆕 Creating and activating shared-config..."
+          # & gcloud config configurations create shared-config --quiet
+          # & gcloud config configurations activate shared-config --quiet
+
+          # Write-Host "Point ADC to this JSON"
+          # $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
+          # # $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
+          # # Test access token
+          # # $token = & gcloud auth application-default print-access-token
+          # # Write-Host "Token length: $($token.Length)"
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
