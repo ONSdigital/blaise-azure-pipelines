@@ -58,10 +58,6 @@ steps:
 
           $wifJson = "$env:TEMP\gcp-wif.json"
           $tokenFile = "$env:TEMP\token.jwt"
-
-          # --- CLEAN UP OLD FILES FIRST ---
-          Remove-Item $wifJson    -ErrorAction SilentlyContinue
-          Remove-Item $tokenFile  -ErrorAction SilentlyContinue
           
           # Write SYSTEM_ACCESSTOKEN to file for WIF
           Set-Content -Path $tokenFile -Value $oidcToken
@@ -71,12 +67,6 @@ steps:
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
           $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$($sa):generateAccessToken"
             
-          Write-Host "Shared SA"
-          Write-Host $sa
-          Write-Host "Impersonation URL"
-          Write-Host $service_account_impersonation_url  
-
-
           $wifConfig = @{
             type = "external_account"
             audience = $audience
@@ -92,27 +82,16 @@ steps:
           }
 
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
-          Write-Host "WIF Config JSON:"
-          Write-Host $configJson
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
-          gcloud auth login --cred-file "$wifJson"
-
-          # Test by listing storage buckets
-          gcloud auth list
 
           # # Create and activate new shared-config
           # Write-Host "🆕 Creating and activating shared-config..."
-          # & gcloud config configurations create shared-config --quiet
-          # & gcloud config configurations activate shared-config --quiet
+          & gcloud config configurations create shared-config --quiet
+          & gcloud config configurations activate shared-config --quiet
 
-          # Write-Host "Point ADC to this JSON"
-          # $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          # # $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Windows\TEMP\gcp-wif.json"
-          # # Test access token
-          # # $token = & gcloud auth application-default print-access-token
-          # # Write-Host "Token length: $($token.Length)"
+          gcloud auth login --cred-file "$wifJson" 
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
