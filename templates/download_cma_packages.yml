@@ -42,7 +42,7 @@ steps:
 
           $oidcToken = $response.oidcToken
           Write-Host "✅ OIDC Token retrieved successfully!"
-          Write-Host $oidcToken
+          Write-Host ("OIDC Token (plain): " + $oidcToken) -ForegroundColor Yellow
 
           if (-not $oidcToken) {
               Write-Error "❌ Could not fetch OIDC token"
