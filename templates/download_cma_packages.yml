@@ -25,6 +25,10 @@ steps:
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
 
+          # Create and activate new shared-config
+          Write-Host "🆕 Creating and activating shared-config..."
+          gcloud config configurations create shared-config --activate --quiet
+
           $serviceConnectionId = "blaise-azure-wif-connection"
 
           $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
@@ -86,9 +90,7 @@ steps:
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
 
-          # Create and activate new shared-config
-          Write-Host "🆕 Creating and activating shared-config..."
-          gcloud config configurations create shared-config --activate --quiet
+          
 
           gcloud auth login --cred-file "$wifJson" --quiet
 
