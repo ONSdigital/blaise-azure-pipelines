@@ -65,15 +65,6 @@ function CreateVariables($variableList) {
     }
 }
 
-# Revoke all accounts
-gcloud auth revoke --all
-
-# Remove cached credentials
-Remove-Item -Recurse -Force "$env:USERPROFILE\.config\gcloud" -ErrorAction SilentlyContinue
-
-# Unset any env variable
-Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
-
 LogInfo("Updating system (VM) environment variables...")
 $metadataVariables = GetMetadataVariables
 CreateVariables($metadataVariables)

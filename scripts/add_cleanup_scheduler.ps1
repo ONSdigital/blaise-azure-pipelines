@@ -22,15 +22,6 @@ function Set-StateFlags {
     Write-Host 'State Flags set successfully.'
 }
 
-# Revoke all accounts
-gcloud auth revoke --all
-
-# Remove cached credentials
-Remove-Item -Recurse -Force "$env:USERPROFILE\.config\gcloud" -ErrorAction SilentlyContinue
-
-# Unset any env variable
-Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
-
 
 $taskName = "CleanupWindowsFiles"   # Set the task name
 $executionTime = "22:00"            # Set the desired execution time (24-hour format)
