@@ -92,7 +92,9 @@ steps:
 
           
 
-          gcloud auth login --cred-file "$wifJson" --quiet
+          #gcloud auth login --cred-file "$wifJson" --quiet
+          gcloud auth application-default activate-service-account --key-file "$wifJson" --quiet
+
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
@@ -108,6 +110,8 @@ steps:
         }
         finally {
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
+          gcloud auth application-default revoke --quiet
+
           # Check if default config exists
           if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
             Write-Host "⚠️ No default configuration found, creating it now..."
