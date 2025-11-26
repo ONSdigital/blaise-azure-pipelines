@@ -89,7 +89,19 @@ steps:
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
+          Write-Host "gcloud version:"
+          gcloud --version
 
+          Write-Host "Downloading latest Google Cloud SDK installer..."
+          $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
+
+          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+
+          Write-Host "Installing Google Cloud SDK silently..."
+          Start-Process $installer -ArgumentList "/S" -Wait
+
+          Write-Host "New Google Cloud SDK version:"
+          gcloud --version
           
 
           #gcloud auth login --cred-file "$wifJson" --quiet
