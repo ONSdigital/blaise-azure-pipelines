@@ -108,6 +108,8 @@ steps:
           #gcloud auth application-default login --cred-file="$wifJson" --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
+          $token = & gcloud auth application-default print-access-token
+          Write-Host "Token length: $($token.Length)"
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
