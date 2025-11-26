@@ -93,7 +93,7 @@ steps:
           
 
           #gcloud auth login --cred-file "$wifJson" --quiet
-          gcloud auth application-default login --cred-file="$wifJson" --quiet
+          $env:GOOGLE_APPLICATION_CREDENTIALS = "$wifJson"
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
@@ -109,7 +109,7 @@ steps:
         }
         finally {
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          gcloud auth application-default revoke --quiet
+          Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
 
           # Check if default config exists
           if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
