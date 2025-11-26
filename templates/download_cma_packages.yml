@@ -114,7 +114,7 @@ steps:
           
 
           #gcloud auth login --cred-file "$wifJson" --quiet
-          #gcloud auth application-default login --cred-file="$wifJson" --quiet
+          gcloud auth application-default login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
           $token = & gcloud auth application-default print-access-token
@@ -124,7 +124,7 @@ steps:
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          gcloud storage cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          gsutil --impersonate-service-account= $sa cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
@@ -135,6 +135,8 @@ steps:
         finally {
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
           Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
+          gcloud auth application-default revoke --quiet
+
 
           # Check if default config exists
           if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
