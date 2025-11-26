@@ -38,6 +38,23 @@ else {
     
     if ($process.ExitCode -eq 0) {
         LogInfo("Installation successful")
+        
+        try {
+            $blaiseServices = @(Get-Service -Name "Blaise*" -ErrorAction SilentlyContinue)
+            if ($blaiseServices.Count -gt 0) {
+                foreach ($service in $blaiseServices) {
+                    LogInfo("Restarting service: $($service.Name)")
+                    Restart-Service -Name $service.Name
+                    LogInfo("Service $($service.Name) restarted successfully")
+                }
+            } else {
+                LogInfo("Blaise service not found...")
+            }
+        }
+        catch {
+            LogError("Failed to restart ($service.Name) service: $($_.Exception.Message)")
+            exit 1
+        }
     } else {
         LogError("Installation failed with exit code: $($process.ExitCode)")
         exit 1
