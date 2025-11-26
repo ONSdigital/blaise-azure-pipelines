@@ -89,23 +89,24 @@ steps:
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
-          Write-Host "gcloud version:"
-          gcloud --version
+          # Write-Host "gcloud version:"
+          # gcloud --version
 
-          Write-Host "Downloading latest Google Cloud SDK installer..."
-          $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
+          # Write-Host "Downloading latest Google Cloud SDK installer..."
+          # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
 
-          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
 
-          Write-Host "Installing Google Cloud SDK silently..."
-          Start-Process $installer -ArgumentList "/S" -Wait
+          # Write-Host "Installing Google Cloud SDK silently..."
+          # Start-Process $installer -ArgumentList "/S" -Wait
 
-          Write-Host "New Google Cloud SDK version:"
-          gcloud --version
+          # Write-Host "New Google Cloud SDK version:"
+          # gcloud --version
           
 
           #gcloud auth login --cred-file "$wifJson" --quiet
-          gcloud auth application-default login --cred-file="$wifJson" --quiet
+          #gcloud auth application-default login --cred-file="$wifJson" --quiet
+          $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
 
           # Download CMA multi package
@@ -122,7 +123,7 @@ steps:
         }
         finally {
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          gcloud auth application-default revoke --quiet
+          Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
 
           # Check if default config exists
           if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
