@@ -78,9 +78,6 @@ steps:
             service_account_impersonation_url = $service_account_impersonation_url
             credential_source = @{
                 file = $tokenFile
-                format = @{
-                    type = "text"
-                }
             }
           }
 
