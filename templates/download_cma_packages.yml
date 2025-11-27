@@ -129,7 +129,6 @@ steps:
           
           gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          gcloud auth activate-service-account --key-file=$wifJson
 
           gcloud auth print-identity-token --impersonate-service-account=$sa
 
