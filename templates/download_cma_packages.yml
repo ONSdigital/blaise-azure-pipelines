@@ -114,7 +114,7 @@ steps:
           
 
           #gcloud auth login --cred-file "$wifJson" --quiet
-          gcloud auth application-default login --cred-file=$wifJson --quiet
+          gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
           $token = & gcloud auth application-default print-access-token
@@ -136,6 +136,7 @@ steps:
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
           Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
           gcloud auth application-default revoke --quiet
+          gcloud auth revoke --cred-file=$wifJson --quiet
 
 
           # Check if default config exists
