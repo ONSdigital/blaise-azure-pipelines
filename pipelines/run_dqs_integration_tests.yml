@@ -18,7 +18,7 @@ resources:
   repositories:
     - repository: github_repo
       type: github
-      endpoint: ONSdigital (1) 
+      endpoint: test-github
       name: ONSdigital/blaise-test-questionnaire
 stages:
   - stage: DqsTests_${{parameters.Environment}}
