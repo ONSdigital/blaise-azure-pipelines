@@ -89,6 +89,19 @@ steps:
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
+          $parts1 = $wifJson -split '\.'
+          $payload1 = $parts1[1]
+
+          # Base64 decode payload
+          $decoded1 = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payload1 + ('=' * ((4 - $payload1.Length % 4) % 4))))
+
+          Write-Host "OIDC payload: $decoded1"
+
+          if (-not $wifJson) {
+              Write-Error "❌ Could not get STS token"
+              exit 1
+          }
+
 
           Write-Host "=== WIF JSON CONTENT START ==="
           Write-Host $configJson
