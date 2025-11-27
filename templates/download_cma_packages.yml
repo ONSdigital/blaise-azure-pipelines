@@ -128,12 +128,10 @@ steps:
           # Write-Host "New Google Cloud SDK version:"
           # gcloud --version
           
-          #gcloud auth login --cred-file=$wifJson --quiet
+          gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
           gcloud auth activate-service-account --key-file=$wifJson
 
-          gcloud auth list
-          gcloud auth application-default list
           gcloud auth print-identity-token --impersonate-service-account=$sa
 
           Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
