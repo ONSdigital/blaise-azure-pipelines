@@ -117,7 +117,8 @@ steps:
 
 
           cat $wifJson | Select-String "workforce" -CaseSensitive
-
+          Write-host (cat $wifJson | ConvertFrom-Json).type
+          Write-host (cat $wifJson | ConvertFrom-Json).service_account_impersonation_url
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
