@@ -31,8 +31,8 @@ steps:
 
           $serviceConnectionId = "blaise-azure-wif-connection"
 
-          $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
-          #$oidcUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/definitions/$($env:SYSTEM_DEFINITIONID)?api-version=4.1-preview"
+          #$oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
+          $oidcUrl = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/definitions/$($env:SYSTEM_DEFINITIONID)?api-version=4.1-preview"
 
           Write-Host "SYSTEM_ACCESSTOKEN: $env:SYSTEM_ACCESSTOKEN" 
           Write-Host "📌 Requesting OIDC token from Azure DevOps..."
@@ -109,12 +109,6 @@ steps:
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
           
-          
-
-
-          Write-Host "=== WIF JSON CONTENT START ==="
-          Write-Host $configJson
-          Write-Host "=== WIF JSON CONTENT END ==="
 
           Write-Host "File exists?  $(Test-Path $wifJson)"
           Write-Host "File size:   $((Get-Item $wifJson).Length) bytes"
