@@ -116,9 +116,13 @@ steps:
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
 
-          cat $wifJson | Select-String "workforce" -CaseSensitive
+          Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
           Write-host (cat $wifJson | ConvertFrom-Json).type
           Write-host (cat $wifJson | ConvertFrom-Json).service_account_impersonation_url
+          Write-host (cat $wifJson | ConvertFrom-Json).audience
+
+          gcloud auth print-identity-token --audiences="//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2" \
+          --impersonate-service-account=$sa
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
