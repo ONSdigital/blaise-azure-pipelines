@@ -81,26 +81,6 @@ steps:
             }
           }
 
-          # Read and parse JSON
-          $wifObject = Get-Content $wifJson | ConvertFrom-Json
-
-          # Show top-level fields
-          Write-Host "=== Top-Level Fields ==="
-          $wifObject.PSObject.Properties | ForEach-Object { Write-Host "$($_.Name): $($_.Value)" }
-
-          # Show key fields specifically
-          Write-Host "`n=== Key Fields ==="
-          Write-Host "type: $($wifObject.type)"
-          Write-Host "audience: $($wifObject.audience)"
-          Write-Host "service_account_impersonation_url: $($wifObject.service_account_impersonation_url)"
-          Write-Host "subject_token_type: $($wifObject.subject_token_type)"
-          Write-Host "token_url: $($wifObject.token_url)"
-
-          # Optional: pretty-print entire JSON safely (hide secrets)
-          Write-Host "`n=== Pretty JSON Preview (sensitive data redacted) ==="
-          $preview = $wifObject | Select-Object type, audience, service_account_impersonation_url, subject_token_type, token_url
-          $preview | ConvertTo-Json -Depth 5
-
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
           
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
@@ -124,10 +104,13 @@ steps:
           # Write-Host "New Google Cloud SDK version:"
           # gcloud --version
           
+          
+          
+          gcloud auth activate-service-account --key-file=$wifJson
+
           gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
           
-          gcloud auth activate-service-account --key-file=$wifJson
           gcloud auth print-identity-token --impersonate-service-account=$sa
 
           Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
