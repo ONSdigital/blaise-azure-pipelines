@@ -117,9 +117,6 @@ steps:
           gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
 
-          $token = & gcloud auth application-default print-access-token
-          Write-Host "Token length: $($token.Length)"
-
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
