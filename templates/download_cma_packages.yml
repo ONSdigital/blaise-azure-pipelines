@@ -157,7 +157,9 @@ steps:
         }
         finally {
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
+          if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
+              Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
+          }
           gcloud auth application-default revoke --quiet
           gcloud auth revoke --cred-file=$wifJson --quiet
 
