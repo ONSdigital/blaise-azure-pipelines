@@ -10,30 +10,14 @@ steps:
       targetType: inline
       script: |
         try {
-          Write-Host "⚙️ Starting GCP authentication with shared project service account..."
-          # Clean up any old shared-config if present
-          
-          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
-            Write-Host "🧹 Existing shared-config found, deleting..."
-            gcloud config configurations delete shared-config --quiet
-          } else {
-            Write-Host "✅ No existing shared-config found"
-          }
-          
-          
-          # Authenticate with service account using WIF
+          Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
+
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
-
-
-          # Create and activate new shared-config
-          Write-Host "🆕 Creating and activating shared-config..."
-          #gcloud config configurations create shared-config --activate --quiet
 
           $serviceConnectionId = "blaise-azure-wif-connection"
 
           $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
-          
-          Write-Host "SYSTEM_ACCESSTOKEN: $env:SYSTEM_ACCESSTOKEN" 
+           
           Write-Host "📌 Requesting OIDC token from Azure DevOps..."
 
           $response = Invoke-RestMethod -Method Post `
@@ -44,7 +28,7 @@ steps:
               }
 
           $oidcToken = $response.oidcToken
-          Write-Host "✅ OIDC Token retrieved successfully!"
+          Write-Host "✅ Azure OIDC Token retrieved successfully!"
           $parts = $oidcToken -split '\.'
           $payload = $parts[1]
 
@@ -62,10 +46,11 @@ steps:
           $wifJson = "$env:TEMP\gcp-wif.json"
           $tokenFile = "$env:TEMP\token.jwt"
           
-          # Write SYSTEM_ACCESSTOKEN to file for WIF
+          # Write Azure OIDC token to file for WIF
           Set-Content -Path $tokenFile -Value $oidcToken
 
-          # WIF external account JSON
+          # Prepare WIF external account JSON
+
           $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
           $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/$($sa):generateAccessToken"
@@ -82,13 +67,7 @@ steps:
           }
 
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
-          
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
-          
-
-          Write-Host "File exists?  $(Test-Path $wifJson)"
-          Write-Host "File size:   $((Get-Item $wifJson).Length) bytes"
-
 
           # Write-Host "gcloud version:"
           # gcloud --version
@@ -109,16 +88,7 @@ steps:
           gcloud auth login --cred-file=$env:GOOGLE_APPLICATION_CREDENTIALS --quiet
 
           # 3. Impersonate the service account
-          gcloud auth print-identity-token `
-            --impersonate-service-account=$sa `
-            --quiet
-
-          Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
-          Write-host (cat $wifJson | ConvertFrom-Json).type
-          Write-host (cat $wifJson | ConvertFrom-Json).service_account_impersonation_url
-          Write-host (cat $wifJson | ConvertFrom-Json).audience
-
-          
+          gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
@@ -150,12 +120,5 @@ steps:
           Write-Host "🔄 Activating default configuration..."
           gcloud config configurations activate default --quiet
           
-          # Delete shared-config safely
-          # if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
-          #   Write-Host "🧹 Cleaning up temporary shared-config..."
-          #   gcloud config configurations delete shared-config --quiet
-          # } else {
-          #   Write-Host "✅ No shared-config left to delete"
-          # }
           Write-Host "🏁 Authentication restored to default service account"
         }
