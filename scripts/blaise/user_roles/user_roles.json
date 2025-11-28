@@ -334,6 +334,7 @@
          "CATI.removefromdaybatch",
          "CATI.setdialednumber",
          "CATI.setoperationtimesettings",
+         "CATI.setcrewsettings",
          "CATI.setdialresult",
          "CATI.setnotes",
          "CATI.setcasedeliveryoptions",
