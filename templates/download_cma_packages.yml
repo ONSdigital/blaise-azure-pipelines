@@ -27,7 +27,7 @@ steps:
 
           # Create and activate new shared-config
           Write-Host "🆕 Creating and activating shared-config..."
-          gcloud config configurations create shared-config --activate --quiet
+          #gcloud config configurations create shared-config --activate --quiet
 
           $serviceConnectionId = "blaise-azure-wif-connection"
 
@@ -151,11 +151,11 @@ steps:
           gcloud config configurations activate default --quiet
           
           # Delete shared-config safely
-          if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
-            Write-Host "🧹 Cleaning up temporary shared-config..."
-            gcloud config configurations delete shared-config --quiet
-          } else {
-            Write-Host "✅ No shared-config left to delete"
-          }
+          # if (gcloud config configurations list --format="value(name)" | Select-String -Quiet "shared-config") {
+          #   Write-Host "🧹 Cleaning up temporary shared-config..."
+          #   gcloud config configurations delete shared-config --quiet
+          # } else {
+          #   Write-Host "✅ No shared-config left to delete"
+          # }
           Write-Host "🏁 Authentication restored to default service account"
         }
