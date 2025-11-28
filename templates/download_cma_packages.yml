@@ -68,7 +68,7 @@ steps:
           # WIF external account JSON
           $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2"
           $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
-          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/2727969180/serviceAccounts/$($sa):generateAccessToken"
+          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/$($sa):generateAccessToken"
             
           $wifConfig = @{
             type = "external_account"
@@ -109,7 +109,9 @@ steps:
           gcloud auth login --cred-file=$env:GOOGLE_APPLICATION_CREDENTIALS --quiet
 
           # 3. Impersonate the service account
-          gcloud auth application-default login print-identity-token --impersonate-service-account=$sa
+          gcloud auth print-identity-token `
+            --impersonate-service-account=$sa `
+            --quiet
 
           Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
           Write-host (cat $wifJson | ConvertFrom-Json).type
