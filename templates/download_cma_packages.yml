@@ -105,13 +105,11 @@ steps:
           # gcloud --version
           
           
-          
-          gcloud auth activate-service-account --key-file=$wifJson
-
-          gcloud auth login --cred-file=$wifJson --quiet
           $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          
-          gcloud auth print-identity-token --impersonate-service-account=$sa
+          gcloud auth login --cred-file=$env:GOOGLE_APPLICATION_CREDENTIALS --quiet
+
+          # 3. Impersonate the service account
+          gcloud auth application-default login print-identity-token --impersonate-service-account=$sa
 
           Write-host cat $wifJson | Select-String "workforce" -CaseSensitive
           Write-host (cat $wifJson | ConvertFrom-Json).type
