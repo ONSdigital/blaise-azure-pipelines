@@ -1,6 +1,8 @@
 ---
 steps:
   - task: PowerShell@2
+    env:
+      SYSTEM_ACCESSTOKEN: ${{ parameters.SYSTEM_ACCESSTOKEN }}
     displayName: Download test questionnaire
     inputs:
       targetType: inline
