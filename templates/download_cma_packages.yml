@@ -73,10 +73,10 @@ steps:
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
 
-          gcloud auth login --cred-file=$wifJson --cred-file-override --quiet
+          gcloud auth login --cred-file=$wifJson -cred-file-override --quiet
 
-          gcloud auth print-identity-token $creds --impersonate-service-account=$sa --quiet
-
+          # 3. Impersonate the service account
+          gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
