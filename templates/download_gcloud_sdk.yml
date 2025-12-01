@@ -5,11 +5,38 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        Write-Host "Installing Google Cloud SDK..."
-        Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
-        Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
-        $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
-        if (Test-Path $gcpPath) {
-            Write-Host "##vso[task.setvariable variable=PATH]$env:PATH;$gcpPath"
-            Write-Host "Added $gcpPath to PATH"
+        # Minimum required version
+        $minVersion = [Version]"363.0.0"
+
+        # Try to detect existing gcloud
+        $gcloudCmd = "gcloud"
+        $currentVersion = $null
+        try {
+            $verOutput = & $gcloudCmd --version 2>$null
+            if ($verOutput) {
+                # Parse first line for version number, e.g. "Google Cloud SDK 548.0.0"
+                $verLine = $verOutput[0]
+                if ($verLine -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
+                    $currentVersion = [Version]$matches[1]
+                    Write-Host "Detected gcloud version: $currentVersion"
+                }
+            }
+        }
+        catch {
+            Write-Host "gcloud not found."
+        }
+
+        if ($currentVersion -ge $minVersion) {
+            Write-Host "gcloud >= $minVersion already installed. Skipping installation."
+        }
+        else {
+
+          Write-Host "Installing Google Cloud SDK..."
+          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
+          Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
+          $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+          if (Test-Path $gcpPath) {
+              Write-Host "##vso[task.setvariable variable=PATH]$env:PATH;$gcpPath"
+              Write-Host "Added $gcpPath to PATH"
+          }
         }
