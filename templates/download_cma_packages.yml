@@ -11,19 +11,54 @@ steps:
       script: |
         try {
 
-          Write-Host "gcloud version:"
-          gcloud --version
+          # Write-Host "gcloud version:"
+          # gcloud --version
 
-          Write-Host "Downloading latest Google Cloud SDK installer..."
-          $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
+          # Write-Host "Downloading latest Google Cloud SDK installer..."
+          # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
 
-          Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
 
-          Write-Host "Installing Google Cloud SDK silently..."
-          Start-Process $installer -ArgumentList "/S" -Wait
+          # Write-Host "Installing Google Cloud SDK silently..."
+          # Start-Process $installer -ArgumentList "/S" -Wait
 
-          Write-Host "New Google Cloud SDK version:"
-          gcloud --version
+          # Write-Host "New Google Cloud SDK version:"
+          # gcloud --version
+
+          $ErrorActionPreference = "Stop"
+
+          # ------------------------------------------------------------
+          # 0. Persistent install directory for gcloud 548 (idempotent)
+          # ------------------------------------------------------------
+
+          $cacheRoot = "C:\gcloud-548"
+          $cacheBin  = "$cacheRoot\google-cloud-sdk\bin"
+          $cachedGcloud = "$cacheBin\gcloud.cmd"
+          $cacheZip = "$cacheRoot\google-cloud-sdk-548.zip"
+          $downloadUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-548.0.0-windows-x86_64.zip"
+
+          Write-Host "📦 Checking for cached Google Cloud SDK 548..."
+
+          # Create parent folder
+          if (!(Test-Path $cacheRoot)) {
+              New-Item -ItemType Directory -Path $cacheRoot | Out-Null
+          }
+
+          # Download if missing
+          if (!(Test-Path $cachedGcloud)) {
+              Write-Host "📥 gcloud 548 not found. Downloading..."
+              Invoke-WebRequest -Uri $downloadUrl -OutFile $cacheZip
+
+              Write-Host "📂 Extracting gcloud SDK to persistent cache..."
+              Expand-Archive -Path $cacheZip -DestinationPath $cacheRoot -Force
+
+              Write-Host "✅ gcloud 548 installed to: $cacheRoot"
+          } else {
+              Write-Host "✅ gcloud 548 found at: $cacheRoot"
+          }
+
+          Write-Host "🔧 Using cached gcloud version:"
+          & $cachedGcloud --version
 
           Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
 
@@ -84,17 +119,20 @@ steps:
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
 
-          $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          gcloud auth login --cred-file=$env:GOOGLE_APPLICATION_CREDENTIALS --quiet
+          #$env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
+          #& $cachedGcloud auth login --cred-file=$wifJson --quiet
+
+          & $cachedGcloud auth print-identity-token $creds "--impersonate-service-account=$sa" --quiet
+
 
           # 3. Impersonate the service account
-          gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
+          #gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          gcloud storage cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          & $cachedGcloud storage cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
@@ -105,9 +143,9 @@ steps:
         finally {
 
           Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
-              Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
-          }
+          # if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
+          #     Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
+          # }
 
 
           # Check if default config exists
