@@ -17,7 +17,7 @@ steps:
           # Write-Host "Downloading latest Google Cloud SDK installer..."
           # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
 
-          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile $installer
+          # Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-548.0.0-windows-x86_64.exe" -OutFile $installer
 
           # Write-Host "Installing Google Cloud SDK silently..."
           # Start-Process $installer -ArgumentList "/S" -Wait
@@ -25,61 +25,44 @@ steps:
           # Write-Host "New Google Cloud SDK version:"
           # gcloud --version
 
-          $ErrorActionPreference = "Stop"
-
-          # ------------------------------------------------------------
-          # 0. Persistent install directory for gcloud 548 (idempotent)
-          # ------------------------------------------------------------
-
           $cacheRoot = "C:\gcloud-548"
-          $cacheBin  = "$cacheRoot\google-cloud-sdk\bin"
-          $cachedGcloud = "$cacheBin\gcloud.cmd"
-          $cacheZip = "$cacheRoot\google-cloud-sdk-548.zip"
-          $downloadUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-548.0.0-windows-x86_64.zip"
+          $installerExe = "C:\gcloud-548\google-cloud-sdk-548.exe"
+          $gcloudCmd = "C:\gcloud-548\google-cloud-sdk\bin\gcloud.cmd"
+          $downloadUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-548.0.0-windows-x86_64.exe"
 
-          Write-Host "📦 Checking for cached Google Cloud SDK 548..."
-
-          # Create parent folder
+          # Ensure cache root exists
           if (!(Test-Path $cacheRoot)) {
               New-Item -ItemType Directory -Path $cacheRoot | Out-Null
           }
 
-          # Download if missing
-          if (!(Test-Path $cachedGcloud)) {
-              Write-Host "📥 gcloud 548 not found. Downloading..."
-              Invoke-WebRequest -Uri $downloadUrl -OutFile $cacheZip
+          # Install only if missing
+          if (!(Test-Path $gcloudCmd)) {
+              Write-Host "📥 Downloading Google Cloud SDK installer..."
+              Invoke-WebRequest -Uri $downloadUrl -OutFile $installerExe
 
-              Write-Host "📂 Extracting gcloud SDK to persistent cache..."
-              Expand-Archive -Path $cacheZip -DestinationPath $cacheRoot -Force
-
-              Write-Host "✅ gcloud 548 installed to: $cacheRoot"
-          } else {
-              Write-Host "✅ gcloud 548 found at: $cacheRoot"
+              Write-Host "⚙️ Installing Google Cloud SDK 548..."
+              & $installerExe /S /D=$cacheRoot | Out-Null
           }
 
-          Write-Host "🔧 Configuring Cloud SDK Python..."
-
-          # Path to embedded python inside Google Cloud SDK
-          $bpy = "$cacheRoot\google-cloud-sdk\platform\bundledpython\python.exe"
-
-          if (Test-Path $bpy) {
-              $env:CLOUDSDK_PYTHON = $bpy
-              Write-Host "🐍 Using bundled Python: $env:CLOUDSDK_PYTHON"
-          } else {
-              Write-Host "⚠️ Bundled Python not found. Checking system Python..."
-
-              $sysPython = Get-Command python.exe -ErrorAction SilentlyContinue
-
-              if ($sysPython) {
-                  $env:CLOUDSDK_PYTHON = $sysPython.Path
-                  Write-Host "🐍 Using system Python: $env:CLOUDSDK_PYTHON"
-              } else {
-                  throw "❌ Missing Python: Neither bundled nor system Python found. gcloud will not work."
-              }
+          # Validate gcloud exists
+          if (!(Test-Path $gcloudCmd)) {
+              throw "❌ gcloud installation failed. No gcloud.cmd found."
           }
 
-          Write-Host "🔧 Using cached gcloud version:"
-          & $cachedGcloud --version
+          # ------------------------------
+          # Set bundled python
+          # ------------------------------
+          $bundledPython = "C:\gcloud-548\google-cloud-sdk\platform\bundledpython\python.exe"
+
+          if (!(Test-Path $bundledPython)) {
+              throw "❌ Bundled Python unexpectedly missing. Cannot use gcloud."
+          }
+
+          $env:CLOUDSDK_PYTHON = $bundledPython
+          Write-Host "🐍 Using bundled Python: $env:CLOUDSDK_PYTHON"
+
+          Write-Host "🔧 gcloud version:"
+          & $gcloudCmd --version
 
           Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
 
