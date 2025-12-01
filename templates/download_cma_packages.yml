@@ -57,6 +57,27 @@ steps:
               Write-Host "✅ gcloud 548 found at: $cacheRoot"
           }
 
+          Write-Host "🔧 Configuring Cloud SDK Python..."
+
+          # Path to embedded python inside Google Cloud SDK
+          $bpy = "$cacheRoot\google-cloud-sdk\platform\bundledpython\python.exe"
+
+          if (Test-Path $bpy) {
+              $env:CLOUDSDK_PYTHON = $bpy
+              Write-Host "🐍 Using bundled Python: $env:CLOUDSDK_PYTHON"
+          } else {
+              Write-Host "⚠️ Bundled Python not found. Checking system Python..."
+
+              $sysPython = Get-Command python.exe -ErrorAction SilentlyContinue
+
+              if ($sysPython) {
+                  $env:CLOUDSDK_PYTHON = $sysPython.Path
+                  Write-Host "🐍 Using system Python: $env:CLOUDSDK_PYTHON"
+              } else {
+                  throw "❌ Missing Python: Neither bundled nor system Python found. gcloud will not work."
+              }
+          }
+
           Write-Host "🔧 Using cached gcloud version:"
           & $cachedGcloud --version
 
