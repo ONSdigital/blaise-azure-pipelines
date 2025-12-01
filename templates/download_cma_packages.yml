@@ -14,19 +14,6 @@ steps:
           Write-Host "gcloud version:"
           gcloud --version
 
-          # Write-Host "Downloading latest Google Cloud SDK installer..."
-          # $installer = "$env:TEMP\GoogleCloudSDKInstaller.exe"
-
-          # Invoke-WebRequest -Uri "https://storage.googleapis.com/cloud-sdk-release/google-cloud-sdk-548.0.0-windows-x86_64.zip" -OutFile $installer
-
-          # Write-Host "Installing Google Cloud SDK silently..."
-          # Start-Process $installer -ArgumentList "/S" -Wait
-
-          # Write-Host "New Google Cloud SDK version:"
-          # gcloud --version
-
-          
-
           Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
 
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
@@ -86,20 +73,16 @@ steps:
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
 
-          #$env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          #& $cachedGcloud auth login --cred-file=$wifJson --quiet
+          gcloud auth login --cred-file=$wifJson -cred-file-override --quiet
 
-          & $cachedGcloud auth print-identity-token $creds "--impersonate-service-account=$sa" --quiet
+          gcloud auth print-identity-token $creds --impersonate-service-account=$sa --quiet
 
-
-          # 3. Impersonate the service account
-          #gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
 
           # Download CMA multi package
           Write-Host "📦 Downloading CMA multi package..."
           Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE"
           Write-Host "📁 Destination: C:\CMA\CMA-MULTI.zip"
-          & $cachedGcloud storage cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
+          gcloud storage cp gs://$env:ENV_SHARED_BUCKET/$env:ENV_CMA_MULTI_PACKAGE "C:\CMA\CMA-MULTI.zip"
           Write-Host "✅ CMA multi package downloaded successfully!"
         }
         catch {
