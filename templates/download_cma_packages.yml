@@ -73,7 +73,7 @@ steps:
           $configJson = $wifConfig | ConvertTo-Json -Depth 10
           $configJson | Set-Content -Path $wifJson -Encoding UTF8
 
-          gcloud auth login --cred-file=$wifJson -cred-file-override --quiet
+          gcloud auth login --cred-file=$wifJson --quiet
 
           # 3. Impersonate the service account
           gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
