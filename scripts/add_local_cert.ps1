@@ -93,7 +93,7 @@ try {
     if ($existingBinding) {
         LogInfo("Hostname SSL binding already exists for ${env:ENV_BLAISE_CATI_URL}:443")
     } else {
-        LogInfo("Creating SSL binding for ${env:ENV_BLAISE_CATI_URL}:443...")        
+        LogInfo("Creating SSL binding for ${env:ENV_BLAISE_CATI_URL}:443...")
         New-WebBinding -Name $siteName -Protocol https -Port 443 -HostHeader $env:ENV_BLAISE_CATI_URL
         LogInfo("Hostname SSL binding created for ${env:ENV_BLAISE_CATI_URL}:443")
     }

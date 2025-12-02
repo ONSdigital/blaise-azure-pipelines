@@ -62,7 +62,7 @@ function Get-RequiredRoles {
     } else {
         [Environment]::GetEnvironmentVariable("ENV_BLAISE_ROLES", "Machine")
     }
-    
+
     if ([string]::IsNullOrEmpty($roleServerShouldHave)) {
         Write-Host "ENV_BLAISE_ROLES environment variable is not set"
         return $null
