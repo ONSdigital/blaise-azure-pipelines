@@ -2,7 +2,7 @@
 
 $newDataInterfaceCreated = , $false
 $newDataInterfaceRegistered = , $false
-    
+
 # audittrail
 $audit_db_file_path = "D:\Blaise5\Settings\audittraildb.badi"
 $newDataInterfaceCreated += CreateDataInterfaceFile -filePath $audit_db_file_path -applicationType audittrail
