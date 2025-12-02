@@ -1,6 +1,6 @@
-BeforeAll { 
+BeforeAll {
     . "$PSScriptRoot\node_role_functions.ps1"
-    
+
     # Mock Get-CurrentNodeRoles
     Mock Get-CurrentNodeRoles {
         return @"
@@ -14,7 +14,7 @@ BeforeAll {
 -----------------------------
 "@
     }
-    
+
     # Mock $env:ENV_BLAISE_ROLES
     $env:ENV_BLAISE_ROLES = "web,data,admin"
 }
