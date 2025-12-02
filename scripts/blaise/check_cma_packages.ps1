@@ -3,7 +3,7 @@
 
 function Get-BlaiseRegistryKey {
     return Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" |
-        Where-Object { $_.DisplayName -match 'blaise' } 
+        Where-Object { $_.DisplayName -match 'blaise' }
 }
 
 function Update-CmaRegistry {
@@ -33,7 +33,7 @@ function Update-CmaRegistry {
         }
     }
 
-    LogError("Failed to update CMA registry after $maxAttempts attempts.  CMA registry NOT updated")
+    LogError("Failed to update CMA registry after $maxAttempts attempts. CMA registry NOT updated")
     return $false
 }
 
