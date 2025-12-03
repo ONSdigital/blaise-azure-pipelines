@@ -97,7 +97,7 @@ steps:
           # -----------------------------
 
           Write-Host "🔑 Revoking WIF account: $sa"
-          & gcloud auth revoke $sa --quiet 2>$null
+          & gcloud auth revoke $sa --quiet 2>$null || $true
           
           # -----------------------------
           # 2️⃣ Clear all credential artifacts
