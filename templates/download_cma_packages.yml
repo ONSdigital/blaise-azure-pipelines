@@ -97,7 +97,11 @@ steps:
           # -----------------------------
 
           Write-Host "🔑 Revoking WIF account: $sa"
-          & gcloud auth revoke $sa --quiet 2>$null || $true
+          try {
+            & gcloud auth revoke $account --quiet 2>$null
+          } catch {
+            Write-Host "⚠️ Ignoring non-zero exit from gcloud auth revoke (expected for service accounts)"
+          }
           
           # -----------------------------
           # 2️⃣ Clear all credential artifacts
