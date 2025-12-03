@@ -11,16 +11,13 @@ steps:
       script: |
         try {
 
-          Write-Host "gcloud version:"
-          gcloud --version
-
           Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
 
           Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
 
           $serviceConnectionId = "blaise-azure-wif-connection"
 
-          $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
+          $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?api-version=7.2-preview.1"
            
           Write-Host "📌 Requesting OIDC token from Azure DevOps..."
 
