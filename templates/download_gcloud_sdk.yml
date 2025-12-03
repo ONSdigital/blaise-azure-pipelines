@@ -36,3 +36,6 @@ steps:
               Write-Host "Added $gcpPath to PATH"
           }
         }
+        else {
+          Write-Host "Skipping gcloud sdk installation, required version already exists... "
+        }
