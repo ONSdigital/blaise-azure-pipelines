@@ -26,11 +26,7 @@ steps:
             Write-Host "gcloud not found."
         }
 
-        if ($currentVersion -ge $minVersion) {
-            Write-Host "gcloud >= $minVersion already installed. Skipping installation."
-        }
-        else {
-
+        if (($currentVersion -eq $null) -or ($currentVersion -lt $minVersion)) {
           Write-Host "Installing Google Cloud SDK..."
           Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
           Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
