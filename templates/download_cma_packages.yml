@@ -92,13 +92,44 @@ steps:
         }
         finally {
 
-          Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          # if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
-          #     Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
-          # }
+          # -----------------------------
+          # 1️⃣ Revoke the WIF account (if present)
+          # -----------------------------
+
+          Write-Host "🔑 Revoking WIF account: $sa"
+          & gcloud auth revoke $sa --quiet 2>$null
+          
+          # -----------------------------
+          # 2️⃣ Clear all credential artifacts
+          # -----------------------------
+
+          $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
+          $paths = @(
+              "$gcloudDir\credentials.db",
+              "$gcloudDir\application_default_credentials.json",
+              "$gcloudDir\configurations\*.tmp",
+              "$gcloudDir\legacy_credentials"
+          )
+
+          Write-Host "🧽 Removing residual credential files..."
+          foreach ($p in $paths) {
+              Remove-Item $p -Recurse -Force -ErrorAction SilentlyContinue
+          }
+
+          # -----------------------------
+          # 3️⃣ Clear GOOGLE_APPLICATION_CREDENTIALS env override
+          # -----------------------------
+          if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
+              Write-Host "♻️ Clearing GOOGLE_APPLICATION_CREDENTIALS override..."
+              Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
+          }
 
 
-          # Check if default config exists
+          # -----------------------------
+          # 4️⃣ Ensure 'default' config exists & activate it
+          # -----------------------------
+          Write-Host "🔧 Ensuring 'default' gcloud config exists..."
+
           if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
             Write-Host "⚠️ No default configuration found, creating it now..."
             gcloud config configurations create default --quiet
@@ -107,6 +138,22 @@ steps:
           }
           Write-Host "🔄 Activating default configuration..."
           gcloud config configurations activate default --quiet
-          
           Write-Host "🏁 Authentication restored to default service account"
+          
+          # -----------------------------
+          # 5️⃣ Final validation
+          # -----------------------------
+          Write-Host "📡 Testing access token (should be metadata server)..."
+
+          $token = gcloud auth print-access-token 2>$null
+
+          if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
+              Write-Host "✅ SUCCESS: VM is now using the metadata server service account"
+          } else {
+              Write-Host "❌ ERROR: Token retrieval failed. gcloud may still be misconfigured."
+              Write-Host "👉 Try restarting gcloud or reloading the VM's metadata service."
+          }
+
+          Write-Host "✨ Cleanup complete."
+          
         }
