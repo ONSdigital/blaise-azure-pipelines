@@ -87,11 +87,13 @@ try {
 
     Write-Host "✅ $FileName downloaded successfully!"
 }
+
 catch {
     Write-Host "🚨 ERROR during $FileName download!"
     Write-Error "❌ Exception details: $_"
     exit 1
 }
+
 finally {
     # ----------------------------------------------------------
     # Cleanup / Reset gcloud
@@ -134,8 +136,7 @@ finally {
     $token = gcloud auth print-access-token 2>$null
     if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
         Write-Host "✅ VM now using metadata service account"
-    }
-    else {
+    } else {
         Write-Host "❌ Token retrieval failed — metadata SA not active"
     }
 
