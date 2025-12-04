@@ -13,5 +13,5 @@ steps:
         -SystemAccessToken "$(System.AccessToken)"
         -SharedServiceAccount "$(ENV_SHARED_SERVICE_ACCOUNT)"
         -SharedBucket "$(ENV_SHARED_BUCKET)"
-        -CmaMultiPackage "$(ENV_CMA_MULTI_PACKAGE)"
+        -FileName "$(ENV_CMA_MULTI_PACKAGE)"
         -DestinationPath "C:\CMA\CMA-MULTI.zip"
