@@ -64,7 +64,7 @@ try {
         service_account_impersonation_url = $impersonationUrl;
         credential_source = @{
             file = $tokenFile;
-        }
+        };
     }
 
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
