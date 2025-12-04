@@ -9,7 +9,7 @@ param(
     [string] $SharedBucket,
 
     [Parameter(Mandatory = $true)]
-    [string] $FileName
+    [string] $FileName,
 
     [Parameter(Mandatory = $true)]
     [string] $DestinationPath
