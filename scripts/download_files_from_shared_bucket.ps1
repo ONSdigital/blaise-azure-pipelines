@@ -98,12 +98,7 @@ finally {
     # ----------------------------------------------------------
 
     Write-Host "🔑 Revoking service account impersonation: $SharedServiceAccount"
-    try {
-        & gcloud auth revoke $SharedServiceAccount --quiet 2>$null
-    }
-    catch {
-        Write-Host "⚠️ SA revoke returned non-zero (ignored)"
-    }
+    gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
     Write-Host "🧽 Cleaning residual credential files..."
 
