@@ -28,13 +28,6 @@ steps:
 
           $oidcToken = $response.oidcToken
           Write-Host "✅ Azure OIDC Token retrieved successfully!"
-          $parts = $oidcToken -split '\.'
-          $payload = $parts[1]
-
-          # Base64 decode payload
-          $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payload + ('=' * ((4 - $payload.Length % 4) % 4))))
-
-          Write-Host "OIDC payload: $decoded"
 
           if (-not $oidcToken) {
               Write-Error "❌ Could not fetch OIDC token"
@@ -93,7 +86,7 @@ steps:
 
           Write-Host "🔑 Revoking WIF account: $sa"
           try {
-            & gcloud auth revoke $account --quiet 2>$null
+            & gcloud auth revoke $sa --quiet 2>$null
           } catch {
             Write-Host "⚠️ Ignoring non-zero exit from gcloud auth revoke (expected for service accounts)"
           }
@@ -143,6 +136,9 @@ steps:
           # 5️⃣ Final validation
           # -----------------------------
           Write-Host "📡 Testing access token (should be metadata server)..."
+
+          $active_account = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+          Write-host "Active service account: $active_account"
 
           $token = gcloud auth print-access-token 2>$null
 
