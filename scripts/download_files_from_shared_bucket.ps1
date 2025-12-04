@@ -16,16 +16,16 @@ param(
 )
 
 try {
-    Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
+    Write-Host "[INFO] Starting GCP authentication with WIF using SA impersonation..."
 
     # ----------------------------------------------------------
     # 1. Retrieve Azure DevOps OIDC Token
     # ----------------------------------------------------------
 
-    Write-Host "🔐 Authenticating with service account $SharedServiceAccount"
+    Write-Host "[AUTH] Authenticating with service account $SharedServiceAccount"
 
     $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?api-version=7.2-preview.1"
-    Write-Host "📌 Requesting OIDC token from Azure DevOps..."
+    Write-Host "[INFO] Requesting OIDC token from Azure DevOps..."
 
     $response = Invoke-RestMethod -Method Post `
         -Uri $oidcUrl `
@@ -35,10 +35,10 @@ try {
         }
 
     $oidcToken = $response.oidcToken
-    Write-Host "✅ Azure OIDC Token retrieved successfully!"
+    Write-Host "[OK] Azure OIDC Token retrieved successfully!"
 
     if (-not $oidcToken) {
-        Write-Error "❌ Could not fetch OIDC token"
+        Write-Error "[ERROR] Could not fetch OIDC token"
         exit 1
     }
 
@@ -69,27 +69,27 @@ try {
 
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
 
-    Write-Host "🔑 Logging in with WIF credential file..."
+    Write-Host "[AUTH] Logging in with WIF credential file..."
     gcloud auth login --cred-file=$wifJson --quiet
 
-    Write-Host "🔄 Impersonating service account for token..."
+    Write-Host "[INFO] Impersonating service account for token..."
     gcloud auth print-identity-token --impersonate-service-account=$SharedServiceAccount --quiet
 
     # ----------------------------------------------------------
     # 3. Download CMA Package
     # ----------------------------------------------------------
 
-    Write-Host "📦 Downloading $FileName..."
-    Write-Host "🌐 Source: gs://$SharedBucket/$FileName"
-    Write-Host "📁 Destination: $DestinationPath"
+    Write-Host "[INFO] Downloading $FileName..."
+    Write-Host "[INFO] Source: gs://$SharedBucket/$FileName"
+    Write-Host "[INFO] Destination: $DestinationPath"
 
     gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
 
-    Write-Host "✅ $FileName downloaded successfully!"
+    Write-Host "[OK] $FileName downloaded successfully!"
 }
 catch {
-    Write-Host "🚨 ERROR during $FileName download!"
-    Write-Error "❌ Exception details: $_"
+    Write-Host "[ERROR] ERROR during $FileName download!"
+    Write-Error "[ERROR] Exception details: $_"
     exit 1
 }
 finally {
@@ -97,10 +97,10 @@ finally {
     # Cleanup / Reset gcloud
     # ----------------------------------------------------------
 
-    Write-Host "🔑 Revoking service account impersonation: $SharedServiceAccount"
+    Write-Host "[AUTH] Revoking service account impersonation: $SharedServiceAccount"
     gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
-    Write-Host "🧽 Cleaning residual credential files..."
+    Write-Host "[CLEANUP] Cleaning residual credential files..."
 
     $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
     $paths = @(
@@ -115,28 +115,28 @@ finally {
     }
 
     if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
-        Write-Host "♻️ Cleaning GOOGLE_APPLICATION_CREDENTIALS override..."
+        Write-Host "[CLEANUP] Cleaning GOOGLE_APPLICATION_CREDENTIALS override..."
         Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
     }
 
-    Write-Host "🔧 Ensuring 'default' gcloud config exists..."
+    Write-Host "[CONFIG] Ensuring 'default' gcloud config exists..."
     if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
         gcloud config configurations create default --quiet
     }
 
-    Write-Host "🔄 Activating default configuration..."
+    Write-Host "[CONFIG] Activating default configuration..."
     gcloud config configurations activate default --quiet
 
-    Write-Host "📡 Validating access token (should come from metadata)..."
+    Write-Host "[INFO] Validating access token (should come from metadata)..."
     $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
     Write-Host "Active account: $active"
 
     $token = gcloud auth print-access-token 2>$null
     if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-        Write-Host "✅ VM now using metadata service account"
+        Write-Host "[OK] VM now using metadata service account"
     } else {
-        Write-Host "❌ Token retrieval failed — metadata SA not active"
+        Write-Host "[ERROR] Token retrieval failed - metadata SA not active"
     }
 
-    Write-Host "✨ Cleanup complete."
+    Write-Host "[DONE] Cleanup complete."
 }
