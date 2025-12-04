@@ -63,8 +63,8 @@ try {
         token_url = "https://sts.googleapis.com/v1/token";
         service_account_impersonation_url = $impersonationUrl;
         credential_source = @{
-            file = $tokenFile;
-        };
+            file = $tokenFile
+        }
     }
 
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
@@ -87,13 +87,11 @@ try {
 
     Write-Host "✅ $FileName downloaded successfully!"
 }
-
 catch {
     Write-Host "🚨 ERROR during $FileName download!"
     Write-Error "❌ Exception details: $_"
     exit 1
 }
-
 finally {
     # ----------------------------------------------------------
     # Cleanup / Reset gcloud
