@@ -57,13 +57,13 @@ try {
     $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/$SharedServiceAccount:generateAccessToken"
 
     $wifConfig = @{
-        type = "external_account"
-        audience = $audience
-        subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
-        token_url = "https://sts.googleapis.com/v1/token"
-        service_account_impersonation_url = $impersonationUrl
+        type = "external_account";
+        audience = $audience;
+        subject_token_type = "urn:ietf:params:oauth:token-type:jwt";
+        token_url = "https://sts.googleapis.com/v1/token";
+        service_account_impersonation_url = $impersonationUrl;
         credential_source = @{
-            file = $tokenFile
+            file = $tokenFile;
         }
     }
 
