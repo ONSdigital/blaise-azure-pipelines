@@ -36,15 +36,12 @@ function Get-AzureOidcToken {
 }
 
 function Reset-GcloudToDefault {
-    param([string]$DefaultSA)
-    
     LogInfo("Resetting gcloud to VM default service account...")
 
-    # Remove WIF credential files
+    # Remove WIF credential files only
     $filesToRemove = @(
         (Join-Path $env:TEMP "gcp-wif.json"),
-        (Join-Path $env:TEMP "token.jwt"),
-        (Join-Path $env:APPDATA "gcloud\application_default_credentials.json")
+        (Join-Path $env:TEMP "token.jwt")
     )
     
     foreach ($file in $filesToRemove) {
@@ -60,40 +57,16 @@ function Reset-GcloudToDefault {
         LogInfo("Cleared GOOGLE_APPLICATION_CREDENTIALS")
     }
 
-    # Clean gcloud credential store
-    $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
-    $credPaths = @(
-        "$gcloudDir\credentials.db",
-        "$gcloudDir\access_tokens.db",
-        "$gcloudDir\legacy_credentials"
-    )
-    foreach ($p in $credPaths) {
-        Remove-Item $p -Recurse -Force -ErrorAction SilentlyContinue
-    }
+    # Unset the account config to force VM metadata service usage
+    & gcloud config unset account --quiet 2>$null
+    LogInfo("Unset gcloud account config")
 
-    # Ensure default configuration exists and is active
-    $hasDefault = gcloud config configurations list --format="value(name)" 2>$null | Select-String -Quiet "default"
-    if (-not $hasDefault) {
-        gcloud config configurations create default --quiet 2>$null
-    }
-    gcloud config configurations activate default --quiet 2>$null
-
-    # Set account to VM default if provided
-    if ($DefaultSA) {
-        gcloud config set account $DefaultSA --quiet 2>$null
-        LogInfo("Set active account to: $DefaultSA")
-    } else {
-        # Unset account to force metadata service usage
-        gcloud config unset account --quiet 2>$null
-        LogInfo("Unset account config - will use VM metadata service")
-    }
-
-    # Verify
-    $activeAccount = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+    # Verify current state
+    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
     if ($activeAccount) {
-        LogInfo("Active account: $activeAccount")
+        LogInfo("Active account after reset: $activeAccount")
     } else {
-        LogInfo("No explicit active account - using VM metadata service")
+        LogInfo("No explicit active account - will use VM metadata service")
     }
 }
 
