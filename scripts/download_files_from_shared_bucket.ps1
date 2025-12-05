@@ -32,6 +32,7 @@ function Get-AzureOidcToken {
 
     if (-not $response.oidcToken) {
         LogError("Could not fetch OIDC token from Azure DevOps")
+        throw "Could not fetch OIDC token from Azure DevOps"
     }
     
     LogInfo("Azure OIDC Token retrieved successfully!")
@@ -40,12 +41,7 @@ function Get-AzureOidcToken {
 
 try {
     LogInfo("Starting GCP authentication with WIF using SA impersonation...")
-
-    # ----------------------------------------------------------
-    # 1. Retrieve Azure DevOps OIDC Token
-    # ----------------------------------------------------------
-
-    LogInfo("Authenticating with shared service account")
+    LogInfo("Authenticating with shared service account: $SharedServiceAccount")
 
     $oidcToken = Get-AzureOidcToken
 
@@ -56,10 +52,7 @@ try {
     # Write Azure token to disk
     Set-Content -Path $tokenFile -Value $oidcToken
 
-    # ----------------------------------------------------------
-    # 2. Build WIF Config JSON
-    # ----------------------------------------------------------
-
+    # Build WIF Config JSON
     $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-auth-provider"
     $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SharedServiceAccount}:generateAccessToken"
 
@@ -83,10 +76,7 @@ try {
         $null = & gcloud config set project $Project --quiet 2>&1
     }
 
-    # ----------------------------------------------------------
-    # 3. Download File from Shared Bucket
-    # ----------------------------------------------------------
-
+    # Download File from Shared Bucket
     LogInfo("Downloading $FileName...")
     LogInfo("Source: gs://$SharedBucket/$FileName")
     LogInfo("Destination: $DestinationPath")
@@ -104,8 +94,5 @@ catch {
     exit 1
 }
 finally {
-    # ----------------------------------------------------------
-    # Cleanup / Reset active account to VM default
-    # ----------------------------------------------------------
     & "$PSScriptRoot\reset_gcloud_account.ps1"
 }
