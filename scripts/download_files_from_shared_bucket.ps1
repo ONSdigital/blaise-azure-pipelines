@@ -143,12 +143,12 @@ finally {
     $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
     Write-Host "Active account: $active"
 
-    $token = gcloud auth print-access-token 2>$null
-    if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-        Write-Host "✅ VM now using metadata service account"
-    } else {
-        Write-Host "❌ Token retrieval failed — metadata SA not active"
-    }
+    # $token = gcloud auth print-access-token 2>$null
+    # if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
+    #     Write-Host "✅ VM now using metadata service account"
+    # } else {
+    #     Write-Host "❌ Token retrieval failed — metadata SA not active"
+    # }
 
     Write-Host "✨ Cleanup complete."
 }
