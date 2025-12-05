@@ -71,7 +71,7 @@ try {
     # ----------------------------------------------------------
 
     $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-auth-provider"
-    $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/'$SharedServiceAccount':generateAccessToken"
+    $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SharedServiceAccount}:generateAccessToken"
 
     $wifConfig = @{
         type                              = 'external_account'
