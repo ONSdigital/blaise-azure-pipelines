@@ -12,23 +12,23 @@ steps:
       script: |
         $DefaultServiceAccount = "${{ parameters.DefaultServiceAccount }}"
         
-        Write-Host "🔄 Resetting gcloud authentication to: $DefaultServiceAccount"
+        Write-Host "🔄 Resetting gcloud authentication to VM default: $DefaultServiceAccount"
         
         if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
           Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
           Write-Host "✅ Removed GOOGLE_APPLICATION_CREDENTIALS environment variable"
         }
         
-        Write-Host "🔐 Revoking non-default credentials..."
+        Write-Host "🔐 Revoking non-default service account credentials..."
         $accounts = & gcloud auth list --format="value(account)" 2>$null
         foreach ($account in $accounts) {
           if ($account -eq $DefaultServiceAccount) {
-            Write-Host "  Keeping: $account"
-          } elseif ($account -match "\.gserviceaccount\.com$") {
-            Write-Host "  Skipping GCE account: $account"
-          } else {
+            Write-Host "  Keeping VM default: $account"
+          } elseif ($account -match "\.gserviceaccount\.com$" -and $account -ne $DefaultServiceAccount) {
             Write-Host "  Revoking: $account"
             & gcloud auth revoke $account --quiet 2>$null
+          } else {
+            Write-Host "  Skipping: $account"
           }
         }
         
@@ -39,7 +39,7 @@ steps:
         }
         & gcloud config configurations activate default --quiet
         
-        Write-Host "🔧 Setting default account to: $DefaultServiceAccount"
+        Write-Host "🔧 Setting active account to: $DefaultServiceAccount"
         & gcloud config set account $DefaultServiceAccount --quiet
         
         $filesToRemove = @(
@@ -58,11 +58,9 @@ steps:
         $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
         
         if ($activeAccount -eq $DefaultServiceAccount) {
-          Write-Host "✅ Active account: $activeAccount"
-        } elseif ($activeAccount) {
-          Write-Host "⚠️ Active account: $activeAccount (expected: $DefaultServiceAccount)"
+          Write-Host "✅ Active account set to VM default: $activeAccount"
         } else {
-          Write-Host "ℹ️ Using VM default service account via compute metadata"
+          Write-Host "✅ gcloud will use VM metadata service for: $DefaultServiceAccount"
         }
         
-        Write-Host "🏁 Reset complete"
+        Write-Host "🏁 Reset to VM default service account complete"
