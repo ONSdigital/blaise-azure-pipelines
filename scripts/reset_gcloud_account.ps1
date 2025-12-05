@@ -70,7 +70,7 @@ if ($DefaultServiceAccount) {
     $null = & gcloud config set account $DefaultServiceAccount --quiet 2>&1
     LogInfo("Set active account to: $DefaultServiceAccount")
 } else {
-    $null = & gcloud config unset account --quiet 2>&1
+    $null = & gcloud config unset account --quiet 2>&$null
     LogInfo("Unset account config - will use VM metadata service")
 }
 
