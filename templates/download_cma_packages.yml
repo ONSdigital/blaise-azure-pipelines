@@ -7,7 +7,7 @@ steps:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       targetType: filePath
-      filePath: $(Agent.BuildDirectory)/s/scripts/download_files_from_shared_bucket.ps1
+      filePath: $(Agent.BuildDirectory)/sad/scripts/download_files_from_shared_bucket.ps1
       arguments: >
         -SystemAccessToken "$(System.AccessToken)"
         -SharedServiceAccount "$(ENV_SHARED_SERVICE_ACCOUNT)"
