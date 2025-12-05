@@ -18,19 +18,9 @@ param(
 . "$PSScriptRoot\logging_functions.ps1"
 
 function Get-AzureOidcToken {
-    $oidcUrl = @(
-        $env:SYSTEM_COLLECTIONURI,
-        $env:SYSTEM_TEAMPROJECTID,
-        "/_apis/distributedtask/hubs/",
-        $env:SYSTEM_HOSTTYPE,
-        "/plans/",
-        $env:SYSTEM_PLANID,
-        "/jobs/",
-        $env:SYSTEM_JOBID,
-        "/oidctoken?api-version=7.2-preview.1"
-    ) -join ""
+    $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?api-version=7.2-preview.1"
     
-    LogInfo("📌 Requesting OIDC token from Azure DevOps...")
+    LogInfo("Requesting OIDC token from Azure DevOps...")
     
     $response = Invoke-RestMethod -Method Post -Uri $oidcUrl -Headers @{
         "Authorization" = "Bearer $SystemAccessToken"
