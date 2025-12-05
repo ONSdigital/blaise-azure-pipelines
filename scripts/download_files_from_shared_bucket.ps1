@@ -13,6 +13,9 @@ param(
 
     [Parameter(Mandatory = $true)]
     [string] $DestinationPath
+
+    [Parameter(Mandatory = $false)]
+    [string] $Project = ""
 )
 
 . "$PSScriptRoot\logging_functions.ps1"
@@ -73,6 +76,12 @@ try {
 
     LogInfo("Logging in with WIF credential file...")
     & gcloud auth login --cred-file=$wifJson --quiet
+
+    # Set project if provided
+    if ($Project) {
+        LogInfo("Setting project to: $Project")
+        $null = & gcloud config set project $Project --quiet 2>&1
+    }
 
     # ----------------------------------------------------------
     # 3. Download File from Shared Bucket
