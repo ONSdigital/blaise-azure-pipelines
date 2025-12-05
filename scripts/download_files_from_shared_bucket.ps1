@@ -28,10 +28,10 @@ function Get-AzureOidcToken {
     }
 
     if (-not $response.oidcToken) {
-        LogError("❌ Could not fetch OIDC token from Azure DevOps")
+        LogError("Could not fetch OIDC token from Azure DevOps")
     }
     
-    LogInfo("✅ Azure OIDC Token retrieved successfully!")
+    LogInfo("Azure OIDC Token retrieved successfully!")
     return $response.oidcToken
 }
 
@@ -48,13 +48,13 @@ function Get-AzureOidcToken {
 # }
 
 try {
-    LogInfo("⚙️ Starting GCP authentication with WIF using SA impersonation...")
+    LogInfo("Starting GCP authentication with WIF using SA impersonation...")
 
     # ----------------------------------------------------------
     # 1. Retrieve Azure DevOps OIDC Token
     # ----------------------------------------------------------
 
-    LogInfo("🔐 Authenticating with shared service account")
+    LogInfo("Authenticating with shared service account")
 
     $oidcToken = Get-AzureOidcToken
 
@@ -104,7 +104,7 @@ try {
 }
 
 catch {
-    LogInfo("🚨 ERROR during file download!")
+    LogInfo("ERROR during file download!")
     # Write-Error "Exception details: $_"
     exit 1
 }
@@ -114,7 +114,7 @@ finally {
     # Cleanup / Reset gcloud
     # ----------------------------------------------------------
 
-    LogInfo("🔑 Revoking shared service account impersonation")
+    LogInfo("Revoking shared service account impersonation")
 
     gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
@@ -137,7 +137,7 @@ finally {
         Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
     }
 
-    LogInfo("🔧 Ensuring default gcloud config exists...")
+    LogInfo("Ensuring default gcloud config exists...")
     if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
         gcloud config configurations create default --quiet
     }
