@@ -10,6 +10,7 @@ steps:
     inputs:
       targetType: inline
       script: |
+        $ErrorActionPreference = "Continue"
         $DefaultServiceAccount = "${{ parameters.DefaultServiceAccount }}"
         
         Write-Host "🔄 Resetting gcloud authentication to VM default: $DefaultServiceAccount"
@@ -20,27 +21,31 @@ steps:
         }
         
         Write-Host "🔐 Revoking non-default service account credentials..."
-        $accounts = & gcloud auth list --format="value(account)" 2>$null
+        $accounts = & gcloud auth list --format="value(account)" 2>&1 | 
+          Where-Object { $_ -notmatch "^(WARNING|ERROR):" } |
+          ForEach-Object { $_.Trim().Trim("'") }
+        
         foreach ($account in $accounts) {
+          if (-not $account) { continue }
           if ($account -eq $DefaultServiceAccount) {
             Write-Host "  Keeping VM default: $account"
           } elseif ($account -match "\.gserviceaccount\.com$" -and $account -ne $DefaultServiceAccount) {
             Write-Host "  Revoking: $account"
-            & gcloud auth revoke $account --quiet 2>$null
+            $null = & gcloud auth revoke $account --quiet 2>&1
           } else {
             Write-Host "  Skipping: $account"
           }
         }
         
         Write-Host "🔄 Activating default configuration..."
-        $hasDefault = & gcloud config configurations list --format="value(name)" 2>$null | Select-String -Quiet "default"
+        $hasDefault = & gcloud config configurations list --format="value(name)" 2>&1 | Select-String -Quiet "default"
         if (-not $hasDefault) {
-          & gcloud config configurations create default --quiet 2>$null
+          $null = & gcloud config configurations create default --quiet 2>&1
         }
-        & gcloud config configurations activate default --quiet
+        $null = & gcloud config configurations activate default --quiet 2>&1
         
         Write-Host "🔧 Setting active account to: $DefaultServiceAccount"
-        & gcloud config set account $DefaultServiceAccount --quiet
+        $null = & gcloud config set account $DefaultServiceAccount --quiet 2>&1
         
         $filesToRemove = @(
           "$env:APPDATA\gcloud\application_default_credentials.json",
@@ -55,7 +60,8 @@ steps:
         }
         
         Write-Host "📋 Verifying configuration..."
-        $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+        $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>&1 | 
+          Where-Object { $_ -notmatch "^(WARNING|ERROR):" }
         
         if ($activeAccount -eq $DefaultServiceAccount) {
           Write-Host "✅ Active account set to VM default: $activeAccount"
