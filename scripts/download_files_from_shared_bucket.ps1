@@ -12,7 +12,7 @@ param(
     [string] $FileName,
 
     [Parameter(Mandatory = $true)]
-    [string] $DestinationPath
+    [string] $DestinationPath,
 
     [Parameter(Mandatory = $false)]
     [string] $Project = ""
