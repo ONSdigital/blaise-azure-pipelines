@@ -62,7 +62,8 @@ function Reset-GcloudToDefault {
     LogInfo("Unset gcloud account config")
 
     # Verify current state
-    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>&1 | Where-Object { $_ -notmatch "^(WARNING|ERROR):" }
+    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>&1 | 
+        Where-Object { $_ -notmatch "^(WARNING|ERROR|Unset):" -and $_ -match "@" }
     if ($activeAccount) {
         LogInfo("Active account after reset: $activeAccount")
     } else {
