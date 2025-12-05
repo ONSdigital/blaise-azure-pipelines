@@ -1,110 +1,19 @@
 ---
+parameters:
+  - name: SYSTEM_ACCESSTOKEN
+    type: string
+
 steps:
   - task: PowerShell@2
     env:
       SYSTEM_ACCESSTOKEN: ${{ parameters.SYSTEM_ACCESSTOKEN }}
     displayName: Download test questionnaire
     inputs:
-      targetType: inline
-      script: |
-        try {
-          Write-Host "⚙️ Starting GCP authentication with shared project service account..."
-          
-          
-          Write-Host "⚙️ Starting GCP authentication with WIF using SA impersonation..."
-
-          Write-Host "🔐 Authenticating with service account $env:ENV_SHARED_SERVICE_ACCOUNT"
-
-          $serviceConnectionId = "blaise-azure-wif-connection"
-
-          $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?serviceConnectionId=$serviceConnectionId&api-version=7.2-preview.1"
-           
-          Write-Host "📌 Requesting OIDC token from Azure DevOps..."
-
-          $response = Invoke-RestMethod -Method Post `
-              -Uri $oidcUrl `
-              -Headers @{
-                  "Authorization" = "Bearer $env:SYSTEM_ACCESSTOKEN"
-                  "Content-Type" = "application/json"
-              }
-
-          $oidcToken = $response.oidcToken
-          Write-Host "✅ Azure OIDC Token retrieved successfully!"
-          $parts = $oidcToken -split '\.'
-          $payload = $parts[1]
-
-          # Base64 decode payload
-          $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payload + ('=' * ((4 - $payload.Length % 4) % 4))))
-
-          Write-Host "OIDC payload: $decoded"
-
-          if (-not $oidcToken) {
-              Write-Error "❌ Could not fetch OIDC token"
-              exit 1
-          }
-
-
-          $wifJson = "$env:TEMP\gcp-wif.json"
-          $tokenFile = "$env:TEMP\token.jwt"
-          
-          # Write Azure OIDC token to file for WIF
-          Set-Content -Path $tokenFile -Value $oidcToken
-
-          # Prepare WIF external account JSON
-
-          $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-provider-2"
-          $sa = $env:ENV_SHARED_SERVICE_ACCOUNT
-          $service_account_impersonation_url = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/$($sa):generateAccessToken"
-            
-          $wifConfig = @{
-            type = "external_account"
-            audience = $audience
-            subject_token_type = "urn:ietf:params:oauth:token-type:jwt"
-            token_url = "https://sts.googleapis.com/v1/token"
-            service_account_impersonation_url = $service_account_impersonation_url
-            credential_source = @{
-                file = $tokenFile
-            }
-          }
-
-          $configJson = $wifConfig | ConvertTo-Json -Depth 10
-          $configJson | Set-Content -Path $wifJson -Encoding UTF8
-
-          $env:GOOGLE_APPLICATION_CREDENTIALS = $wifJson
-          gcloud auth login --cred-file=$env:GOOGLE_APPLICATION_CREDENTIALS --quiet
-
-          # 3. Impersonate the service account
-          gcloud auth print-identity-token --impersonate-service-account=$sa --quiet
-
-          # Download test questionnaire package
-          Write-Host "📦 Downloading test questionnaire package..."
-          Write-Host "🌐 Source: gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg"
-          Write-Host "📁 Destination: c:\survey\$env:QuestionnaireName.bpkg"
-          gsutil cp gs://$env:ENV_SHARED_BUCKET/$env:QuestionnaireName.bpkg c:\survey\$env:QuestionnaireName.bpkg
-          Write-Host "✅ Test questionnaire package downloaded successfully!"
-        }
-        catch {
-          Write-Host "🚨 ERROR during test questionnaire package download!"
-          Write-Error "❌ Exception details: $_"
-          exit 1
-        }
-        finally {
-        
-          Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
-              Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
-          }
-
-          Write-Host "🔁 Reverting GCP authentication back to VM service account..."
-          # Check if default config exists
-          if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
-            Write-Host "⚠️ No default configuration found, creating it now..."
-            gcloud config configurations create default --quiet
-          } else {
-            Write-Host "✅ Default configuration already exists"
-          }
-          Write-Host "🔄 Activating default configuration..."
-          gcloud config configurations activate default --quiet
-
-          Write-Host "🏁 Authentication restored to default service account"
-        }
+      targetType: filePath
+      filePath: $(Agent.BuildDirectory)/s/scripts/download_files_from_shared_bucket.ps1
+      arguments: >-
+        -SystemAccessToken "$env:SYSTEM_ACCESSTOKEN"
+        -SharedServiceAccount "$(ENV_SHARED_SERVICE_ACCOUNT)"
+        -SharedBucket "$(ENV_SHARED_BUCKET)"
+        -FileName "$(QuestionnaireName).bpkg"
+        -DestinationPath "c:\survey\$(QuestionnaireName).bpkg"
