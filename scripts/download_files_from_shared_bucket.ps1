@@ -35,17 +35,17 @@ function Get-AzureOidcToken {
     return $response.oidcToken
 }
 
-function CheckDefaultServiceAccountActivation {
-    LogInfo("Validating access token, should come from metadata...")
-    $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
-    LogInfo("Active account: $active")
-    $token = gcloud auth print-access-token 2>$null
-    if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-        LogInfo("VM now using metadata service account")
-    } else {
-        LogInfo("Token retrieval failed — metadata SA not active")
-    }
-}
+# function CheckDefaultServiceAccountActivation {
+#     LogInfo("Validating access token, should come from metadata...")
+#     $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+#     LogInfo("Active account: $active")
+#     $token = gcloud auth print-access-token 2>$null
+#     if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
+#         LogInfo("VM now using metadata service account")
+#     } else {
+#         LogInfo("Token retrieval failed metadata SA not active")
+#     }
+# }
 
 try {
     LogInfo("⚙️ Starting GCP authentication with WIF using SA impersonation...")
@@ -54,7 +54,7 @@ try {
     # 1. Retrieve Azure DevOps OIDC Token
     # ----------------------------------------------------------
 
-    LogInfo("🔐 Authenticating with service account $SharedServiceAccount")
+    LogInfo("🔐 Authenticating with shared service account")
 
     $oidcToken = Get-AzureOidcToken
 
@@ -100,11 +100,11 @@ try {
 
     gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
 
-    LogInfo("$FileName downloaded successfully!")
+    LogInfo("File downloaded successfully!")
 }
 
 catch {
-    LogInfo("🚨 ERROR during $FileName download!")
+    LogInfo("🚨 ERROR during file download!")
     # Write-Error "Exception details: $_"
     exit 1
 }
@@ -114,7 +114,8 @@ finally {
     # Cleanup / Reset gcloud
     # ----------------------------------------------------------
 
-    LogInfo("🔑 Revoking service account impersonation: $SharedServiceAccount")
+    LogInfo("🔑 Revoking shared service account impersonation")
+
     gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
     LogInfo("Cleaning residual credential files...")
@@ -143,8 +144,6 @@ finally {
 
     LogInfo("Activating default configuration...")
     gcloud config configurations activate default --quiet
-
-    CheckDefaultServiceAccountActivation
 
     LogInfo("Cleanup complete.")
 }
