@@ -58,11 +58,11 @@ function Reset-GcloudToDefault {
     }
 
     # Unset the account config to force VM metadata service usage
-    & gcloud config unset account --quiet 2>$null
+    $null = & gcloud config unset account --quiet 2>&1
     LogInfo("Unset gcloud account config")
 
     # Verify current state
-    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>&1 | Where-Object { $_ -notmatch "^(WARNING|ERROR):" }
     if ($activeAccount) {
         LogInfo("Active account after reset: $activeAccount")
     } else {
