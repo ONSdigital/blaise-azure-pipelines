@@ -108,7 +108,6 @@ try {
 
     $oidcToken = Get-AzureOidcToken
 
-
     # Prepare locations for ephemeral files
     $wifJson = Join-Path $env:TEMP "gcp-wif.json"
     $tokenFile = Join-Path $env:TEMP "token.jwt"
@@ -135,30 +134,28 @@ try {
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
 
     LogInfo("Logging in with WIF credential file...")
-    gcloud auth login --cred-file=$wifJson --quiet
-
-    LogInfo("Impersonating service account for token...")
-    gcloud auth print-identity-token --impersonate-service-account=$SharedServiceAccount --quiet
+    & gcloud auth login --cred-file=$wifJson --quiet
 
     # ----------------------------------------------------------
-    # 3. Download CMA Package
+    # 3. Download File from Shared Bucket
     # ----------------------------------------------------------
 
     LogInfo("Downloading $FileName...")
     LogInfo("Source: gs://$SharedBucket/$FileName")
     LogInfo("Destination: $DestinationPath")
 
-    gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
+    & gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Download failed with exit code $LASTEXITCODE"
+    }
 
     LogInfo("File downloaded successfully!")
 }
-
 catch {
-    LogInfo("ERROR during file download!")
-    # Write-Error "Exception details: $_"
+    LogError("ERROR during file download: $_")
     exit 1
 }
-
 finally {
     # ----------------------------------------------------------
     # Cleanup / Reset active account to VM default
