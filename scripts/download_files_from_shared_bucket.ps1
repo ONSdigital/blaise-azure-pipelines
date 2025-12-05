@@ -35,15 +35,65 @@ function Get-AzureOidcToken {
     return $response.oidcToken
 }
 
-function CheckDefaultServiceAccountActivation {
-    LogInfo("Validating access token, should come from metadata...")
-    $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
-    LogInfo("Active account: $($active)")
-    $token = gcloud auth print-access-token 2>$null
-    if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-        LogInfo("VM now using metadata service account")
+function Reset-GcloudToDefault {
+    param([string]$DefaultSA)
+    
+    LogInfo("Resetting gcloud to VM default service account...")
+
+    # Remove WIF credential files
+    $filesToRemove = @(
+        (Join-Path $env:TEMP "gcp-wif.json"),
+        (Join-Path $env:TEMP "token.jwt"),
+        (Join-Path $env:APPDATA "gcloud\application_default_credentials.json")
+    )
+    
+    foreach ($file in $filesToRemove) {
+        if (Test-Path $file) {
+            Remove-Item $file -Force -ErrorAction SilentlyContinue
+            LogInfo("Removed: $file")
+        }
+    }
+
+    # Remove GOOGLE_APPLICATION_CREDENTIALS if set
+    if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
+        Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
+        LogInfo("Cleared GOOGLE_APPLICATION_CREDENTIALS")
+    }
+
+    # Clean gcloud credential store
+    $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
+    $credPaths = @(
+        "$gcloudDir\credentials.db",
+        "$gcloudDir\access_tokens.db",
+        "$gcloudDir\legacy_credentials"
+    )
+    foreach ($p in $credPaths) {
+        Remove-Item $p -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    # Ensure default configuration exists and is active
+    $hasDefault = gcloud config configurations list --format="value(name)" 2>$null | Select-String -Quiet "default"
+    if (-not $hasDefault) {
+        gcloud config configurations create default --quiet 2>$null
+    }
+    gcloud config configurations activate default --quiet 2>$null
+
+    # Set account to VM default if provided
+    if ($DefaultSA) {
+        gcloud config set account $DefaultSA --quiet 2>$null
+        LogInfo("Set active account to: $DefaultSA")
     } else {
-        LogInfo("Token retrieval failed metadata SA not active")
+        # Unset account to force metadata service usage
+        gcloud config unset account --quiet 2>$null
+        LogInfo("Unset account config - will use VM metadata service")
+    }
+
+    # Verify
+    $activeAccount = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+    if ($activeAccount) {
+        LogInfo("Active account: $activeAccount")
+    } else {
+        LogInfo("No explicit active account - using VM metadata service")
     }
 }
 
@@ -111,40 +161,8 @@ catch {
 
 finally {
     # ----------------------------------------------------------
-    # Cleanup / Reset gcloud
+    # Cleanup / Reset active account to VM default
     # ----------------------------------------------------------
-
-    LogInfo("Revoking shared service account impersonation")
-
-    gcloud auth revoke $SharedServiceAccount --quiet 2>$null
-
-    LogInfo("Cleaning residual credential files...")
-
-    $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
-    $paths = @(
-        "$gcloudDir\credentials.db",
-        "$gcloudDir\application_default_credentials.json",
-        "$gcloudDir\configurations\*.tmp",
-        "$gcloudDir\legacy_credentials"
-    )
-
-    foreach ($p in $paths) {
-        Remove-Item $p -Recurse -Force -ErrorAction SilentlyContinue
-    }
-
-    if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
-        LogInfo("Cleaning GOOGLE_APPLICATION_CREDENTIALS override...")
-        Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
-    }
-
-    LogInfo("Ensuring default gcloud config exists...")
-    if (-not (gcloud config configurations list --format="value(name)" | Select-String -Quiet "default")) {
-        gcloud config configurations create default --quiet
-    }
-
-    LogInfo("Activating default configuration...")
-    gcloud config configurations activate default --quiet
-    
-    CheckDefaultServiceAccountActivation
+    Reset-GcloudToDefault
     LogInfo("Cleanup complete.")
 }
