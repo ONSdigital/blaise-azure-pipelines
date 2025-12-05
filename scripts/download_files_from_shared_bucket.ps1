@@ -35,17 +35,17 @@ function Get-AzureOidcToken {
     return $response.oidcToken
 }
 
-# function CheckDefaultServiceAccountActivation {
-#     LogInfo("Validating access token, should come from metadata...")
-#     $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
-#     LogInfo("Active account: $active")
-#     $token = gcloud auth print-access-token 2>$null
-#     if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-#         LogInfo("VM now using metadata service account")
-#     } else {
-#         LogInfo("Token retrieval failed metadata SA not active")
-#     }
-# }
+function CheckDefaultServiceAccountActivation {
+    LogInfo("Validating access token, should come from metadata...")
+    $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+    LogInfo("Active account: $($active)")
+    $token = gcloud auth print-access-token 2>$null
+    if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
+        LogInfo("VM now using metadata service account")
+    } else {
+        LogInfo("Token retrieval failed metadata SA not active")
+    }
+}
 
 try {
     LogInfo("Starting GCP authentication with WIF using SA impersonation...")
@@ -144,6 +144,7 @@ finally {
 
     LogInfo("Activating default configuration...")
     gcloud config configurations activate default --quiet
-
+    
+    CheckDefaultServiceAccountActivation
     LogInfo("Cleanup complete.")
 }

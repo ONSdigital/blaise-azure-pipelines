@@ -1,0 +1,68 @@
+---
+parameters:
+  - name: DefaultServiceAccount
+    type: string
+    displayName: Default service account to reset to
+
+steps:
+  - task: PowerShell@2
+    displayName: Reset gcloud to VM service account
+    inputs:
+      targetType: inline
+      script: |
+        $DefaultServiceAccount = "${{ parameters.DefaultServiceAccount }}"
+        
+        Write-Host "🔄 Resetting gcloud authentication to: $DefaultServiceAccount"
+        
+        if (Test-Path Env:\GOOGLE_APPLICATION_CREDENTIALS) {
+          Remove-Item Env:\GOOGLE_APPLICATION_CREDENTIALS
+          Write-Host "✅ Removed GOOGLE_APPLICATION_CREDENTIALS environment variable"
+        }
+        
+        Write-Host "🔐 Revoking non-default credentials..."
+        $accounts = & gcloud auth list --format="value(account)" 2>$null
+        foreach ($account in $accounts) {
+          if ($account -eq $DefaultServiceAccount) {
+            Write-Host "  Keeping: $account"
+          } elseif ($account -match "\.gserviceaccount\.com$") {
+            Write-Host "  Skipping GCE account: $account"
+          } else {
+            Write-Host "  Revoking: $account"
+            & gcloud auth revoke $account --quiet 2>$null
+          }
+        }
+        
+        Write-Host "🔄 Activating default configuration..."
+        $hasDefault = & gcloud config configurations list --format="value(name)" 2>$null | Select-String -Quiet "default"
+        if (-not $hasDefault) {
+          & gcloud config configurations create default --quiet 2>$null
+        }
+        & gcloud config configurations activate default --quiet
+        
+        Write-Host "🔧 Setting default account to: $DefaultServiceAccount"
+        & gcloud config set account $DefaultServiceAccount --quiet
+        
+        $filesToRemove = @(
+          "$env:APPDATA\gcloud\application_default_credentials.json",
+          "$env:TEMP\gcp-wif.json",
+          "$env:TEMP\token.jwt"
+        )
+        foreach ($file in $filesToRemove) {
+          if (Test-Path $file) {
+            Remove-Item $file -Force
+            Write-Host "✅ Removed: $file"
+          }
+        }
+        
+        Write-Host "📋 Verifying configuration..."
+        $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+        
+        if ($activeAccount -eq $DefaultServiceAccount) {
+          Write-Host "✅ Active account: $activeAccount"
+        } elseif ($activeAccount) {
+          Write-Host "⚠️ Active account: $activeAccount (expected: $DefaultServiceAccount)"
+        } else {
+          Write-Host "ℹ️ Using VM default service account via compute metadata"
+        }
+        
+        Write-Host "🏁 Reset complete"
