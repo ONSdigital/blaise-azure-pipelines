@@ -44,14 +44,14 @@ function Get-AzureOidcToken {
 }
 
 function CheckDefaultServiceAccountActivation {
-    Write-Host ":satellite_antenna: Validating access token (should come from metadata)..."
+    Write-Host "Validating access token (should come from metadata)..."
     $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
     Write-Host "Active account: $active"
     # $token = gcloud auth print-access-token 2>$null
     # if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-    #     Write-Host "✅ VM now using metadata service account"
+    #     Write-Host "VM now using metadata service account"
     # } else {
-    #     Write-Host "❌ Token retrieval failed — metadata SA not active"
+    #     Write-Host "Token retrieval failed — metadata SA not active"
     # }
 }
 
@@ -91,28 +91,28 @@ try {
 
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
 
-    Write-Host "🔑 Logging in with WIF credential file..."
+    Write-Host "Logging in with WIF credential file..."
     gcloud auth login --cred-file=$wifJson --quiet
 
-    Write-Host "🔄 Impersonating service account for token..."
+    Write-Host "Impersonating service account for token..."
     gcloud auth print-identity-token --impersonate-service-account=$SharedServiceAccount --quiet
 
     # ----------------------------------------------------------
     # 3. Download CMA Package
     # ----------------------------------------------------------
 
-    Write-Host "📦 Downloading $FileName..."
-    Write-Host "🌐 Source: gs://$SharedBucket/$FileName"
-    Write-Host "📁 Destination: $DestinationPath"
+    Write-Host "Downloading $FileName..."
+    Write-Host "Source: gs://$SharedBucket/$FileName"
+    Write-Host "Destination: $DestinationPath"
 
     gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
 
-    Write-Host "✅ $FileName downloaded successfully!"
+    Write-Host "$FileName downloaded successfully!"
 }
 
 catch {
     Write-Host "🚨 ERROR during $FileName download!"
-    # Write-Error "❌ Exception details: $_"
+    Write-Error "Exception details: $_"
     exit 1
 }
 
@@ -124,7 +124,7 @@ finally {
     # Write-Host "🔑 Revoking service account impersonation: $SharedServiceAccount"
     gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
-    Write-Host "🧽 Cleaning residual credential files..."
+    Write-Host "Cleaning residual credential files..."
 
     $gcloudDir = Join-Path $env:USERPROFILE ".config\gcloud"
     $paths = @(
@@ -139,7 +139,7 @@ finally {
     }
 
     if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
-        Write-Host "♻️ Cleaning GOOGLE_APPLICATION_CREDENTIALS override..."
+        Write-Host "Cleaning GOOGLE_APPLICATION_CREDENTIALS override..."
         Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
     }
 
@@ -148,10 +148,10 @@ finally {
         gcloud config configurations create default --quiet
     }
 
-    Write-Host "🔄 Activating default configuration..."
+    Write-Host "Activating default configuration..."
     gcloud config configurations activate default --quiet
 
     CheckDefaultServiceAccountActivation
 
-    Write-Host "✨ Cleanup complete."
+    Write-Host "Cleanup complete."
 }
