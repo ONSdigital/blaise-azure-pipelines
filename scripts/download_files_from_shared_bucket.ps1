@@ -35,42 +35,6 @@ function Get-AzureOidcToken {
     return $response.oidcToken
 }
 
-function Reset-GcloudToDefault {
-    LogInfo("Resetting gcloud to VM default service account...")
-
-    # Remove WIF credential files only
-    $filesToRemove = @(
-        (Join-Path $env:TEMP "gcp-wif.json"),
-        (Join-Path $env:TEMP "token.jwt")
-    )
-    
-    foreach ($file in $filesToRemove) {
-        if (Test-Path $file) {
-            Remove-Item $file -Force -ErrorAction SilentlyContinue
-            LogInfo("Removed: $file")
-        }
-    }
-
-    # Remove GOOGLE_APPLICATION_CREDENTIALS if set
-    if ($env:GOOGLE_APPLICATION_CREDENTIALS) {
-        Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS -ErrorAction SilentlyContinue
-        LogInfo("Cleared GOOGLE_APPLICATION_CREDENTIALS")
-    }
-
-    # Unset the account config to force VM metadata service usage
-    $null = & gcloud config unset account --quiet 2>&1
-    LogInfo("Unset gcloud account config")
-
-    # Verify current state
-    $activeAccount = & gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>&1 | 
-        Where-Object { $_ -notmatch "^(WARNING|ERROR|Unset):" -and $_ -match "@" }
-    if ($activeAccount) {
-        LogInfo("Active account after reset: $activeAccount")
-    } else {
-        LogInfo("No explicit active account - will use VM metadata service")
-    }
-}
-
 try {
     LogInfo("Starting GCP authentication with WIF using SA impersonation...")
 
@@ -134,6 +98,5 @@ finally {
     # ----------------------------------------------------------
     # Cleanup / Reset active account to VM default
     # ----------------------------------------------------------
-    Reset-GcloudToDefault
-    LogInfo("Cleanup complete.")
+    & "$PSScriptRoot\reset_gcloud_account.ps1"
 }
