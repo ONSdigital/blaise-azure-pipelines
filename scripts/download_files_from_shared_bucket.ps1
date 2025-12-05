@@ -44,15 +44,15 @@ function Get-AzureOidcToken {
 }
 
 function CheckDefaultServiceAccountActivation {
-    # Write-Host ":satellite_antenna: Validating access token (should come from metadata)..."
-    # $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
-    # Write-Host "Active account: $active"
-    $token = gcloud auth print-access-token 2>$null
-    if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
-        Write-Host ":white_check_mark: VM now using metadata service account"
-    } else {
-        Write-Host ":x: Token retrieval failed — metadata SA not active"
-    }
+    Write-Host ":satellite_antenna: Validating access token (should come from metadata)..."
+    $active = gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null
+    Write-Host "Active account: $active"
+    # $token = gcloud auth print-access-token 2>$null
+    # if ($LASTEXITCODE -eq 0 -and $token.Length -gt 100) {
+    #     Write-Host "✅ VM now using metadata service account"
+    # } else {
+    #     Write-Host "❌ Token retrieval failed — metadata SA not active"
+    # }
 }
 
 try {
@@ -112,7 +112,7 @@ try {
 
 catch {
     Write-Host "🚨 ERROR during $FileName download!"
-    Write-Error "❌ Exception details: $_"
+    # Write-Error "❌ Exception details: $_"
     exit 1
 }
 
@@ -121,7 +121,7 @@ finally {
     # Cleanup / Reset gcloud
     # ----------------------------------------------------------
 
-    Write-Host "🔑 Revoking service account impersonation: $SharedServiceAccount"
+    # Write-Host "🔑 Revoking service account impersonation: $SharedServiceAccount"
     gcloud auth revoke $SharedServiceAccount --quiet 2>$null
 
     Write-Host "🧽 Cleaning residual credential files..."
@@ -152,6 +152,6 @@ finally {
     gcloud config configurations activate default --quiet
 
     CheckDefaultServiceAccountActivation
-    
+
     Write-Host "✨ Cleanup complete."
 }
