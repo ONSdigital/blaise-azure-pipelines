@@ -20,4 +20,3 @@ steps:
         -SharedBucket "$(ENV_SHARED_BUCKET)"
         -FileName "$(QuestionnaireName).bpkg"
         -DestinationPath "c:\survey\$(QuestionnaireName).bpkg"
-        -Project "${{ parameters.Project }}"
