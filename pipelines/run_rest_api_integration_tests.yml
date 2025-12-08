@@ -28,6 +28,7 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
                 - template: /templates/download_gcloud_sdk.yml
                 - template: /templates/download_test_questionnaire.yml
                   parameters:
