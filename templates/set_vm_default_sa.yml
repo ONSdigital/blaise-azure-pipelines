@@ -9,5 +9,5 @@ steps:
     displayName: Reset gcloud to VM service account
     inputs:
       targetType: filePath
-      filePath: $(Build.SourcesDirectory)/scripts/reset_gcloud_account.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/reset_gcloud_account.ps1
       arguments: -DefaultServiceAccount "${{ parameters.DefaultServiceAccount }}"
