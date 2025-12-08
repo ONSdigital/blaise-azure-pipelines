@@ -1,5 +1,6 @@
 function GetSecretValue {
     param ([string]$variable)
+    
     Write-Host "Running GetSecretValue..."
 
     # If varValue is a secret
