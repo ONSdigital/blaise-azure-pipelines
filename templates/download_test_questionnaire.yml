@@ -1,15 +1,13 @@
 ---
 parameters:
   - name: SYSTEM_ACCESSTOKEN
+    displayName: Access token for WIF authentication
     type: string
-  - name: Project
-    type: string
-    default: "ons-blaise-v2-shared"
 
 steps:
   - task: PowerShell@2
     env:
-      SYSTEM_ACCESSTOKEN: ${{ parameters.SYSTEM_ACCESSTOKEN }}
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     displayName: Download test questionnaire
     inputs:
       targetType: filePath
