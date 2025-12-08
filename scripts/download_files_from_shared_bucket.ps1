@@ -9,13 +9,18 @@ param(
     [string] $SharedBucket,
 
     [Parameter(Mandatory = $true)]
-    [string] $FileName,
+    [string[]] $FileName,
 
     [Parameter(Mandatory = $true)]
-    [string] $DestinationPath
+    [string[]] $DestinationPath   
 )
 
-. "$PSScriptRoot\logging_functions.ps1"
+. "$PSScriptRoot\functions\logging_functions.ps1"
+
+if ($FileName.Count -ne $DestinationPath.Count) {
+    LogError("The number of filenames and destination paths must match.")
+    exit 1
+}
 
 function Get-AzureOidcToken {
     $oidcUrl = "$($env:SYSTEM_COLLECTIONURI)$($env:SYSTEM_TEAMPROJECTID)/_apis/distributedtask/hubs/$($env:SYSTEM_HOSTTYPE)/plans/$($env:SYSTEM_PLANID)/jobs/$($env:SYSTEM_JOBID)/oidctoken?api-version=7.2-preview.1"
@@ -67,15 +72,21 @@ try {
     LogInfo("Logging in with WIF credential file...")
     & gcloud auth login --cred-file=$wifJson --quiet
 
-    # Download File from Shared Bucket
-    LogInfo("Downloading $FileName...")
-    LogInfo("Source: gs://$SharedBucket/$FileName")
-    LogInfo("Destination: $DestinationPath")
+    for ($i = 0; $i -lt $FileName.Count; $i++) {
+        
+        $file = $FileName[$i]
+        $dest = $DestinationPath[$i]
 
-    & gcloud storage cp "gs://$SharedBucket/$FileName" $DestinationPath
+        LogInfo("Downloading $file...")
+        LogInfo("Source: gs://$SharedBucket/$file")
+        LogInfo("Destination: $dest")
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "Download failed with exit code $LASTEXITCODE"
+        & gcloud storage cp "gs://$SharedBucket/$file" $dest
+        
+        if ($LASTEXITCODE -ne 0) {
+            throw "Download failed with exit code $LASTEXITCODE"
+        }
+        
     }
 
     LogInfo("File downloaded successfully!")
