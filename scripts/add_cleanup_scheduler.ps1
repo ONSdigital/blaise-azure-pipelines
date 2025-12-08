@@ -1,6 +1,6 @@
 function GetSecretValue {
     param ([string]$variable)
-
+    
     Write-Host "Running GetSecretValue..."
 
     # If varValue is a secret
@@ -22,7 +22,6 @@ function Set-StateFlags {
     Write-Host 'State Flags set successfully.'
 }
 
-
 $taskName = "CleanupWindowsFiles"   # Set the task name
 $executionTime = "22:00"            # Set the desired execution time (24-hour format)
 $executionDay = "10"                # Set the desired execution day (1-31)
@@ -33,7 +32,6 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
     schtasks.exe /DELETE /TN $taskName /F
     Write-Host "Task '$taskName' successfully deleted."
 } 
-
 
 # Call function to set State Flags
 Set-StateFlags
