@@ -42,12 +42,6 @@ function Get-AzureOidcToken {
 try {
     LogInfo("Starting GCP authentication with WIF using SA impersonation...")
     LogInfo("Authenticating with shared service account: $SharedServiceAccount")
-    
-    # Set project if provided
-    if ($Project) {
-        LogInfo("Setting project to: $Project")
-        $null = & gcloud config set project $Project --quiet 2>&1
-    }
 
     $oidcToken = Get-AzureOidcToken
 
@@ -76,6 +70,12 @@ try {
     LogInfo("Logging in with WIF credential file...")
     & gcloud auth login --cred-file=$wifJson --quiet
 
+    # Set project if provided
+    if ($Project) {
+        LogInfo("Setting project to: $Project")
+        $null = & gcloud config set project $Project --quiet 2>&1
+    }
+    
     # Download File from Shared Bucket
     LogInfo("Downloading $FileName...")
     LogInfo("Source: gs://$SharedBucket/$FileName")
