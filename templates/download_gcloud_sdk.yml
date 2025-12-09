@@ -8,22 +8,29 @@ steps:
         # Minimum required version
         $minVersion = [Version]"363.0.0"
 
-        # Try to detect existing gcloud
-        $gcloudCmd = "gcloud"
-        $currentVersion = $null
-        try {
-            $verOutput = & $gcloudCmd --version 2>$null
-            if ($verOutput) {
-                # Parse first line for version number, e.g. "Google Cloud SDK 548.0.0"
-                $verLine = $verOutput[0]
-                if ($verLine -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
-                    $currentVersion = [Version]$matches[1]
-                    Write-Host "Detected gcloud version: $currentVersion"
-                }
-            }
+        # Expected path of gcloud binary
+        $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+        $gcloudExe = Join-Path $gcpPath "gcloud.cmd"
+
+        if (Test-Path $gcloudExe) {
+        Write-Host "Found gcloud at expected location: $gcloudExe"
+
+        # Add gcloud path for this session
+        $env:PATH = "$env:PATH;$gcpPath"
+
+          try {
+              $verOutput = & $gcloudExe --version 2>$null
+              if ($verOutput -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
+                  $currentVersion = [Version]$matches[1]
+                  Write-Host "Detected installed gcloud version: $currentVersion"
+              }
+          }
+          catch {
+              Write-Host "Failed to check gcloud version. Will reinstall."
+          }
         }
-        catch {
-            Write-Host "gcloud not found."
+        else {
+            Write-Host "gcloud not found in expected location."
         }
 
         if (($currentVersion -eq $null) -or ($currentVersion -lt $minVersion)) {
