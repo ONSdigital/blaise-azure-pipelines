@@ -10,7 +10,7 @@ steps:
 
         # Expected path of gcloud binary
         $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
-        $gcloudExe = Join-Path $gcpPath "gcloud.cmd"
+        $gcloudExe = Join-Path $gcpPath "gcloud.exe"
 
         if (Test-Path $gcloudExe) {
         Write-Host "Found gcloud at expected location: $gcloudExe"
