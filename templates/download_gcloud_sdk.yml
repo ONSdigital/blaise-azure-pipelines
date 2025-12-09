@@ -15,9 +15,6 @@ steps:
         if (Test-Path $gcloudExe) {
         Write-Host "Found gcloud at expected location: $gcloudExe"
 
-        # Add gcloud path for this session
-        $env:PATH = "$env:PATH;$gcpPath"
-
           try {
               $verOutput = & $gcloudExe --version 2>$null
               if ($verOutput -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
