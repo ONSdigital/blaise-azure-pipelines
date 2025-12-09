@@ -15,7 +15,7 @@ param(
     [string[]] $DestinationPath   
 )
 
-. "$PSScriptRoot\functions\logging_functions.ps1"
+. "$PSScriptRoot\logging_functions.ps1"
 
 if ($FileName.Count -ne $DestinationPath.Count) {
     LogError("The number of filenames and destination paths must match.")
