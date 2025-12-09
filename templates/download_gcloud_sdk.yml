@@ -21,6 +21,9 @@ steps:
                   $currentVersion = [Version]$matches[1]
                   Write-Host "Detected installed gcloud version: $currentVersion"
               }
+              else{
+                Write-Host "Output: $verOutput"
+              }
           }
           catch {
               Write-Host "Failed to check gcloud version. Will reinstall."
