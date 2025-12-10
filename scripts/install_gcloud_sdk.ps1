@@ -26,6 +26,7 @@ if (Test-Path $gcloudExe) {
     }
     
     try {
+        $env:CLOUDSDK_COMPONENT_MANAGER_DISABLE_UPDATE_CHECK = "1"
         $verOutput = & $gcloudExe version 2>&1 | Out-String
         Write-Host "Raw version output: $verOutput"
         
