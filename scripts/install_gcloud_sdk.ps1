@@ -14,7 +14,9 @@ if (Test-Path $gcloudExe) {
     Write-Host "Found gcloud at expected location: $gcloudExe"
     
     # Set bundled Python path if it exists
-    $pythonExe = Join-Path (Split-Path $GCPPath) "platform" "bundledpython" "python.exe"
+    $sdkRoot = Split-Path $GCPPath
+    $platformPath = Join-Path $sdkRoot "platform"
+    $pythonExe = Join-Path $platformPath "bundledpython\python.exe"
     if (Test-Path $pythonExe) {
         $env:CLOUDSDK_PYTHON = $pythonExe
     }
