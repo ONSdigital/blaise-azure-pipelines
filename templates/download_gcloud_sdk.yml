@@ -11,7 +11,7 @@ steps:
         # Expected path of gcloud binary
         $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
         $gcloudExe = Join-Path $gcpPath "gcloud.cmd"
-        $pythonExe = Join-Path $gcpRoot "platform\bundledpython\python.exe"
+        $pythonExe = Join-Path $gcpPath "platform\bundledpython\python.exe"
 
         if (Test-Path $gcloudExe) {
         Write-Host "Found gcloud at expected location: $gcloudExe"
