@@ -24,7 +24,6 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/download_gcloud_sdk.yml #temp
                 - task: PowerShell@2
                   inputs:
                     filePath: $(Agent.BuildDirectory)/s/scripts/update_system_environment_variables.ps1
