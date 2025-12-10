@@ -18,17 +18,23 @@ if (Test-Path $gcloudExe) {
     $platformPath = Join-Path $sdkRoot "platform"
     $pythonExe = Join-Path $platformPath "bundledpython\python.exe"
     if (Test-Path $pythonExe) {
+        Write-Host "Setting CLOUDSDK_PYTHON to: $pythonExe"
         $env:CLOUDSDK_PYTHON = $pythonExe
+    }
+    else {
+        Write-Host "Warning: Bundled Python not found at: $pythonExe"
     }
     
     try {
-        $verOutput = & $gcloudExe version --format="value(version)" 2>&1
-        if ($verOutput -match "^(\d+\.\d+\.\d+)$") {
+        $verOutput = & $gcloudExe version 2>&1 | Out-String
+        Write-Host "Raw version output: $verOutput"
+        
+        if ($verOutput -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
             $currentSDKVersion = [Version]$matches[1]
             Write-Host "Detected installed gcloud version: $currentSDKVersion"
         }
         else {
-            Write-Host "Unexpected version output: $verOutput"
+            Write-Host "Could not parse version from output"
         }
     }
     catch {
