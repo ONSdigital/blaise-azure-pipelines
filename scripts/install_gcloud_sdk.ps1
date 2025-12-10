@@ -6,36 +6,38 @@ param(
     [string] $SDKMinVersion
 )
 
-# Minimum required version
-$minVersion = [Version]"$SDKMinVersion"
-
-# Expected path of gcloud binary
+$minSDKVersion = [Version]$SDKMinVersion
 $gcloudExe = Join-Path $GCPPath "gcloud.cmd"
-$pythonExe = Join-Path $GCPPath "platform\bundledpython\python.exe"
+$currentSDKVersion = $null
 
 if (Test-Path $gcloudExe) {
-Write-Host "Found gcloud at expected location: $gcloudExe"
-    # Ensure gcloud can find Python
-    $env:CLOUDSDK_PYTHON = $pythonExe
+    Write-Host "Found gcloud at expected location: $gcloudExe"
+    
+    # Set bundled Python path if it exists
+    $pythonExe = Join-Path (Split-Path $GCPPath) "platform" "bundledpython" "python.exe"
+    if (Test-Path $pythonExe) {
+        $env:CLOUDSDK_PYTHON = $pythonExe
+    }
+    
     try {
-        $verOutput = & gcloud --version 2>$null
-        if ($verOutput -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
-            $currentVersion = [Version]$matches[1]
-            Write-Host "Detected installed gcloud version: $currentVersion"
+        $verOutput = & $gcloudExe version --format="value(version)" 2>&1
+        if ($verOutput -match "^(\d+\.\d+\.\d+)$") {
+            $currentSDKVersion = [Version]$matches[1]
+            Write-Host "Detected installed gcloud version: $currentSDKVersion"
         }
-        else{
-        Write-Host "Output: $verOutput"
+        else {
+            Write-Host "Unexpected version output: $verOutput"
         }
     }
     catch {
-        Write-Host "Failed to check gcloud version. Will reinstall."
+        Write-Host "Failed to check gcloud version: $_"
     }
 }
 else {
-    Write-Host "gcloud not found in expected location."
+    Write-Host "gcloud not found at: $gcloudExe"
 }
 
-if (($currentVersion -eq $null) -or ($currentVersion -lt $minVersion)) {
+if (($null -eq $currentSDKVersion) -or ($currentSDKVersion -lt $minSDKVersion)) {
     Write-Host "Installing Google Cloud SDK..."
     Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
     Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
