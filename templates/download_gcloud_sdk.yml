@@ -18,7 +18,7 @@ steps:
           # Ensure gcloud can find Python
           $env:CLOUDSDK_PYTHON = $pythonExe
           try {
-              $verOutput = & $gcloudExe --version 2>$null
+              $verOutput = & gcloud --version 2>$null
               if ($verOutput -match "Google Cloud SDK (\d+\.\d+\.\d+)") {
                   $currentVersion = [Version]$matches[1]
                   Write-Host "Detected installed gcloud version: $currentVersion"
