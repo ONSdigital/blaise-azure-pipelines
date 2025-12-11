@@ -11,6 +11,6 @@ steps:
     displayName: Run tests
     inputs:
       command: test
-      projects: '**/${{parameters.TestSolutionName}}/${{parameters.TestSolutionName}}.csproj'
-      arguments: --no-build
+      projects: '**/${{parameters.TestSolutionName}}.csproj'
+      arguments: --no-build -- --stoponerror
     continueOnError: false
