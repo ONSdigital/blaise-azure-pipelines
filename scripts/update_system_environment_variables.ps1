@@ -16,7 +16,7 @@ function UpdateEnvironmentalVariable {
     $envValue = [System.Environment]::GetEnvironmentVariable($varName, [System.EnvironmentVariableTarget]::Machine)
 
     if ($envValue -eq $secretValue) {
-        Write-Host  "Values are the same, no need to update secrets."
+        Write-Host "Values are the same, no need to update secrets."
     }
     elseif ($envValue -eq "" -or $null -eq $envValue) {
         Write-Host "Environmental Variable not set, setting to secret value."
@@ -25,8 +25,8 @@ function UpdateEnvironmentalVariable {
     elseif ($envValue -ne "" -and $null -ne $envValue -and $secretValue -ne "" -and $null -ne $secretValue) {
         # If Environmental values are updated, secret values should be updated
         Write-Host "Environmental Variable is set to a different value than secret, updating secret value"
-        
-        $tempFile = New-TemporaryFile   
+
+        $tempFile = New-TemporaryFile
 
         # Create a UTF8 encoding without BOM
         $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
