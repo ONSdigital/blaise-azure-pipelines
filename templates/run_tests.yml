@@ -7,10 +7,25 @@ parameters:
   - name: TestName
     displayName: Test name
 steps:
-  - task: DotNetCoreCLI@2
+  - task: VisualStudioTestPlatformInstaller@1
+    displayName: Install Visual Studio test platform
+    inputs:
+      packageFeedSelector: nugetOrg
+      versionSelector: latestPreRelease
+  - task: VSTest@2
     displayName: Run tests
     inputs:
-      command: test
-      projects: '**/${{parameters.TestSolutionName}}.csproj'
-      arguments: --no-build
+      searchFolder: $(System.ArtifactsDirectory)
+      testAssemblyVer2: |
+        **\${{parameters.TestSolutionName}}\**\${{parameters.TestSolutionName}}.dll
+        !**\obj\**
+      runSettingsFile: '$(System.ArtifactsDirectory)\${{parameters.ArtifactName}}\.runsettings'
+      resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+      runOnlyImpactedTests: false
+      uiTests: true
+      vsTestVersion: toolsInstaller
+      runInParallel: false
+      runTestsInIsolation: false
+      codeCoverageEnabled: false
+      testRunTitle: ${{parameters.TestName}}
     continueOnError: false
