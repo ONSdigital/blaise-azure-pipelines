@@ -3,6 +3,7 @@ parameters:
   - name: TAG
     displayName: VM tag to identify sdk update route
     type: string
+    default: ''
     
 steps:
   - task: PowerShell@2
