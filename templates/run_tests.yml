@@ -12,5 +12,5 @@ steps:
     inputs:
       command: test
       projects: '**/${{parameters.TestSolutionName}}/${{parameters.TestSolutionName}}.csproj'
-      arguments: --no-build -- --stoponerror
+      arguments: --no-build
     continueOnError: false
