@@ -1,14 +1,9 @@
 ---
-parameters:
-  - name: SYSTEM_ACCESSTOKEN
-    displayName: Access token for WIF authentication
-    type: string
-
 steps:
   - task: PowerShell@2
+    displayName: Download test questionnaire
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    displayName: Download test questionnaire
     inputs:
       targetType: filePath
       filePath: $(Agent.BuildDirectory)/s/scripts/download_files_from_shared_bucket.ps1

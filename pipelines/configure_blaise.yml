@@ -128,9 +128,9 @@ stages:
               steps:
                 - checkout: self
                 - template: /templates/download_gcloud_sdk.yml
-                - template: /templates/download_cma_packages.yml
                   parameters:
-                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                    TAG: mgmt
+                - template: /templates/download_cma_packages.yml
                 - template: /templates/install_cma_packages.yml
       - deployment: ConfigureBlaisesDatabases
         displayName: Configure data interfaces
