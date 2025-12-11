@@ -110,9 +110,10 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                - template: /templates/download_cma_packages.yml
+                - template: /templates/download_gcloud_sdk.yml
                   parameters:
-                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                    TAG: mgmt
+                - template: /templates/download_cma_packages.yml
                 - template: /templates/install_cma_packages.yml
       - deployment: InstallCmaPackagesOnSingleNode
         displayName: Install CMA packages on single node environment
