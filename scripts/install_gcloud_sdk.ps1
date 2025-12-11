@@ -11,7 +11,7 @@ param(
 
 $currentSDKVersion = $null
 
-if (TAG -eq "mgmt") {
+if ($TAG -eq "mgmt") {
     $minSDKVersion = [Version]$SDKMinVersion
     $gcloudExe = Join-Path $GCPPath "gcloud.cmd"
     
