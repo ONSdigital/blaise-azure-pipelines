@@ -19,8 +19,8 @@ steps:
       testAssemblyVer2: |
         **\${{parameters.TestSolutionName}}\**\${{parameters.TestSolutionName}}.dll
         !**\obj\**
-      runSettingsFile: '$(System.ArtifactsDirectory)\${{parameters.ArtifactName}}\.runsettings'
       resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+      otherConsoleOptions: --blame-hang-timeout 2m
       runOnlyImpactedTests: false
       uiTests: true
       vsTestVersion: toolsInstaller
