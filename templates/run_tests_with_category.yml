@@ -3,7 +3,7 @@ parameters:
   - name: TestSolutionName
     displayName: Test solution name
   - name: ArtifactName
-    displayName: Artifac mame
+    displayName: Artifact name
   - name: TestName
     displayName: Test name
   - name: TestCategory

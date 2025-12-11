@@ -43,10 +43,12 @@ stages:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.DQS.Tests.Behaviour
+                  ArtifactName: _BlaiseIntegrationTests
                   TestName: DQS smoke tests
                   TestCategory: smoke
           - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.DQS.tests.Behaviour
+                  ArtifactName: _BlaiseIntegrationTests
                   TestName: DQS regression tests

@@ -41,10 +41,12 @@ stages:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.TOBI.Tests.Behaviour
+                  ArtifactName: _BlaiseIntegrationTests
                   TestName: TOBI smoke tests
                   TestCategory: smoke
           - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.TOBI.tests.Behaviour
+                  ArtifactName: _BlaiseIntegrationTests
                   TestName: TOBI regression tests
