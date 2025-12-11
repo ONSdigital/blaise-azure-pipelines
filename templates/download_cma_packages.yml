@@ -1,9 +1,4 @@
 ---
-parameters:
-  - name: SYSTEM_ACCESSTOKEN
-    displayName: Access token for WIF authentication
-    type: string
-
 steps:
   - checkout: self
     persistCredentials: true

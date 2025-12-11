@@ -29,8 +29,6 @@ stages:
               BlaiseActivationKey: $(ENV_BLAISE_ACTIVATION_CODE)
           - template: /templates/download_gcloud_sdk.yml
           - template: /templates/download_test_questionnaire.yml
-            parameters:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           - template: /templates/download_build_artifact.yml
             parameters:
               Branch: ${{parameters.IntegrationTestsBranch}}

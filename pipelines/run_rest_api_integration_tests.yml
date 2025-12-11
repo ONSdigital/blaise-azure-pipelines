@@ -31,8 +31,6 @@ stages:
                 - checkout: self
                 - template: /templates/download_gcloud_sdk.yml
                 - template: /templates/download_test_questionnaire.yml
-                  parameters:
-                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
                 - template: /templates/download_build_artifact.yml
                   parameters:
                     ${{ if and(notin(parameters.Environment, 'prod', 'preprod'), ne(parameters.DeployBranch, '5.14')) }}:
