@@ -3,7 +3,7 @@ param(
     [string] $GCPPath,
 
     [Parameter(Mandatory = $true)]
-    [string] $SDKMinVersion
+    [string] $SDKMinVersion,
 
     [Parameter(Mandatory = $false)]
     [string] $TAG
