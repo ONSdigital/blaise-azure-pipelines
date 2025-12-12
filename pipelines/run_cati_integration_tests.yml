@@ -40,12 +40,10 @@ stages:
               - template: /templates/run_tests_with_category.yml
                 parameters:
                   TestSolutionName: Blaise.CATI.Tests.Behaviour
-                  ArtifactName: _BlaiseIntegrationTests
                   TestName: CATI smoke tests
                   TestCategory: smoke
           - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
                   TestSolutionName: Blaise.CATI.Tests.Behaviour
-                  ArtifactName: _BlaiseIntegrationTests
                   TestName: CATI regression tests

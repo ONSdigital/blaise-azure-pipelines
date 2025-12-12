@@ -2,8 +2,6 @@
 parameters:
   - name: TestSolutionName
     displayName: Test solution name
-  - name: ArtifactName
-    displayName: Artifact name
   - name: TestName
     displayName: Test name
 steps:
@@ -14,13 +12,14 @@ steps:
       versionSelector: latestPreRelease
   - task: VSTest@2
     displayName: Run tests
+    timeoutInMinutes: 20
+    continueOnError: false
     inputs:
       searchFolder: $(System.ArtifactsDirectory)
       testAssemblyVer2: |
         **\${{parameters.TestSolutionName}}\**\${{parameters.TestSolutionName}}.dll
         !**\obj\**
       resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
-      otherConsoleOptions: --blame-hang-timeout 2m
       runOnlyImpactedTests: false
       uiTests: true
       vsTestVersion: toolsInstaller
@@ -28,4 +27,3 @@ steps:
       runTestsInIsolation: false
       codeCoverageEnabled: false
       testRunTitle: ${{parameters.TestName}}
-    continueOnError: false
