@@ -12,7 +12,7 @@ steps:
       versionSelector: latestPreRelease
   - task: VSTest@2
     displayName: Run tests
-    timeoutInMinutes: 20
+    timeoutInMinutes: 30
     continueOnError: false
     inputs:
       searchFolder: $(System.ArtifactsDirectory)
