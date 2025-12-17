@@ -35,10 +35,10 @@ else {
 
     LogInfo("Installing $installerFileName...")
     $process = Start-Process msiexec.exe -Wait -ArgumentList "/I `"$localInstallerPath`" /quiet /norestart" -PassThru
-    
+
     if ($process.ExitCode -eq 0) {
         LogInfo("Installation successful")
-        
+
         try {
             $blaiseServices = @(Get-Service -Name "Blaise*" -ErrorAction SilentlyContinue)
             if ($blaiseServices.Count -gt 0) {

@@ -48,5 +48,5 @@ stages:
           - ${{ if ne(parameters.Environment, 'prod') }}:
               - template: /templates/run_tests.yml
                 parameters:
-                  TestSolutionName: Blaise.DQS.tests.Behaviour
+                  TestSolutionName: Blaise.DQS.Tests.Behaviour
                   TestName: DQS regression tests

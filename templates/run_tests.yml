@@ -12,12 +12,14 @@ steps:
       versionSelector: latestPreRelease
   - task: VSTest@2
     displayName: Run tests
+    timeoutInMinutes: 30
+    continueOnError: false
     inputs:
       searchFolder: $(System.ArtifactsDirectory)
       testAssemblyVer2: |
         **\${{parameters.TestSolutionName}}\**\${{parameters.TestSolutionName}}.dll
         !**\obj\**
-        resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
+      resultsFolder: '$(System.DefaultWorkingDirectory)\TestResults'
       runOnlyImpactedTests: false
       uiTests: true
       vsTestVersion: toolsInstaller
@@ -25,4 +27,3 @@ steps:
       runTestsInIsolation: false
       codeCoverageEnabled: false
       testRunTitle: ${{parameters.TestName}}
-    continueOnError: false
