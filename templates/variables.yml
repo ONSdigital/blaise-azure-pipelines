@@ -1,6 +1,5 @@
 ---
 variables:
-  UninstallSurveyTimeOutInSeconds: 5
   QuestionnairePath: c:\survey
   ServerParkName: gusty
   CmaServerParkName: cma
