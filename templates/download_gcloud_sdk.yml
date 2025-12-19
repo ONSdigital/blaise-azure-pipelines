@@ -1,15 +1,17 @@
 ---
+parameters:
+  - name: TAG
+    displayName: VM tag to identify sdk update route
+    type: string
+    default: ''
+    
 steps:
   - task: PowerShell@2
     displayName: 'Install Google Cloud SDK'
     inputs:
-      targetType: 'inline'
-      script: |
-        Write-Host "Installing Google Cloud SDK..."
-        Invoke-WebRequest -Uri "https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe" -OutFile "GoogleCloudSDKInstaller.exe"
-        Start-Process -Wait -FilePath ".\GoogleCloudSDKInstaller.exe" -ArgumentList "/S"
-        $gcpPath = "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
-        if (Test-Path $gcpPath) {
-            Write-Host "##vso[task.setvariable variable=PATH]$env:PATH;$gcpPath"
-            Write-Host "Added $gcpPath to PATH"
-        }
+      targetType: 'filePath'
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_gcloud_sdk.ps1
+      arguments: >
+        -GCPPath "C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin"
+        -SDKMinVersion "363.0.0"
+        -TAG "${{ parameters.TAG }}"
