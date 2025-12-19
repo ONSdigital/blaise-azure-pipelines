@@ -1,0 +1,13 @@
+---
+parameters:
+  - name: DefaultServiceAccount
+    type: string
+    displayName: Default service account to reset to
+
+steps:
+  - task: PowerShell@2
+    displayName: Reset gcloud to VM service account
+    inputs:
+      targetType: filePath
+      filePath: $(Agent.BuildDirectory)/s/scripts/reset_gcloud_account.ps1
+      arguments: -DefaultServiceAccount "${{ parameters.DefaultServiceAccount }}"
