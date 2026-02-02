@@ -15,7 +15,7 @@ steps:
   - task: PowerShell@2
     displayName: Add IIS URL rewrite rules
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/iis/add_iis_url_rewrite_rules.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/iis/configure_iis.ps1
   - task: PowerShell@2
     displayName: Increase IIS timeout
     inputs:

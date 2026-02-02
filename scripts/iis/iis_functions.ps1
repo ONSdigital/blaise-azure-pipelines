@@ -1,12 +1,4 @@
-# Rewrites internal Blaise URLs to external URLs
-
 . "$PSScriptRoot\..\logging_functions.ps1"
-
-if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
-    LogError("WebAdministration module not available")
-    exit 1
-}
-Import-Module WebAdministration -ErrorAction Stop
 
 function CheckIfUrlRewriteMsiExists {
     if (Test-Path "C:\dev\data\rewrite_url.msi") {
@@ -107,30 +99,79 @@ function AddRewriteRule {
         Set-WebConfigurationProperty -pspath $sitePath `
             -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
             -name "preCondition" -value "NoCompression"
-        LogInfo("NoCompression preCondition set on '$ruleName'in $siteName")
+        LogInfo("NoCompression preCondition set on '$ruleName' in $siteName")
     }
     else {
         LogInfo("NoCompression preCondition already set on '$ruleName'")
     }
 }
 
-CheckIfUrlRewriteMsiExists
-LogInfo("Installing rewrite_url.msi...")
-Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /quiet'
+function RemoveWebDav {
+    param ([string] $siteName)
+    $sitePath = "IIS:\Sites\Default Web Site\$siteName"
 
-DisableCompression
+    LogInfo("Removing WebDAV from $siteName...")
 
-$sites = @("Blaise", "BlaiseDashboard")
-$existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
+    $moduleFilter = "system.webServer/modules/add[@name='WebDAVModule']"
+    if (Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/modules" -name "collection" | Where-Object { $_.name -eq "WebDAVModule" }) {
+        Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/modules" -name "collection" -AtElement @{name="WebDAVModule"}
+    }
 
-if (-not $existingSites) {
-    LogError("Neither 'Blaise' nor 'BlaiseDashboard' IIS site exists - failing")
-    exit 1
+    if (Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" | Where-Object { $_.name -eq "WebDAV" }) {
+        Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" -AtElement @{name="WebDAV"}
+    }
+
+    $aspNetCoreHandler = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" | Where-Object { $_.name -eq "aspNetCore" }
+    if ($null -eq $aspNetCoreHandler) {
+        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" -value @{name='aspNetCore'; path='*'; verb='*'; modules='AspNetCoreModuleV2'}
+    }
 }
 
-foreach ($site in $existingSites) {
-    AddNoCompressionPreCondition -siteName $site
+function currentTimeoutValues {
+    param (
+        [string] $siteName,
+        [string] $appPoolName
+    )
 
-    AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
+    $currentSessionStateTimeout = (Get-WebConfigurationProperty `
+        -filter system.web/sessionState `
+        -name Timeout `
+        -PSPath "IIS:\Sites\Default Web Site\$siteName").Value
+
+    $currentIdleTimeout = (Get-ItemProperty ("IIS:\AppPools\$appPoolName")).processModel.idleTimeout
+
+    return $currentSessionStateTimeout, $currentIdleTimeout
+}
+
+function timeoutIsSetCorrectly {
+    param (
+        [string] $currentSessionTimeout,
+        [string] $currentIdleTimeout,
+        [string] $expectedTimeout
+    )
+    ($currentSessionTimeout -eq $expectedTimeout) -and ($currentIdleTimeout -eq $expectedTimeout)
+}
+
+function setTimeout {
+    param (
+        [string] $siteName,
+        [string] $appPool
+    )
+
+    [string] $expectedTimeout = "08:00:00"
+
+    $currentSessionStateTimeout, $currentIdleTimeout = currentTimeoutValues -siteName $siteName -appPoolName $appPool
+    $setTimeout = timeoutIsSetCorrectly -currentSessionTimeout $currentSessionStateTimeout -currentIdleTimeout $currentIdleTimeout -expectedTimeout $expectedTimeout
+
+    if (-not $setTimeout) {
+        Set-WebConfigurationProperty system.web/sessionState "IIS:\Sites\Default Web Site\$siteName" -Name "Timeout" -Value:$expectedTimeout
+        Set-ItemProperty ("IIS:\AppPools\$appPool") -Name processModel.idleTimeout -value $expectedTimeout
+
+        LogInfo("IIS timeout changes made, restarting $appPool...")
+        Restart-WebAppPool $appPool
+        LogInfo("$appPool has been restarted")
+    }
+    else {
+        LogInfo("IIS timeout changes already applied for $siteName / $appPool")
+    }
 }
