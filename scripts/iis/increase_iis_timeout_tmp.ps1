@@ -2,7 +2,7 @@
 . "$PSScriptRoot\iis_timeout_functions.ps1"
 
 try {
-    setTimeoutValues
+    setTimeout
 }
 catch {
     LogError("Error checking/updating IIS timeouts")
