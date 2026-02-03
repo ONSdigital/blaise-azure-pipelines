@@ -13,13 +13,9 @@ steps:
     inputs:
       filePath: $(Agent.BuildDirectory)/s/scripts/add_local_cert.ps1
   - task: PowerShell@2
-    displayName: Add IIS URL rewrite rules
+    displayName: Configure IIS
     inputs:
       filePath: $(Agent.BuildDirectory)/s/scripts/iis/configure_iis.ps1
-  - task: PowerShell@2
-    displayName: Increase IIS timeout
-    inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/iis/increase_iis_timeout.ps1
   - task: PowerShell@2
     displayName: Configure serverpark
     inputs:
