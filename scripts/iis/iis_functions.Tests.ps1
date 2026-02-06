@@ -1,7 +1,7 @@
 BeforeAll {
     Mock Get-Module { @{ Name = "WebAdministration" } }
     Mock Import-Module { }
-    . "$PSScriptRoot\iis_timeout_functions.ps1"
+    . "$PSScriptRoot\iis_functions.ps1"
     Mock LogInfo { }
 }
 
