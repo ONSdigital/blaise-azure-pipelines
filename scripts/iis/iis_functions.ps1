@@ -120,11 +120,6 @@ function RemoveWebDav {
     if (Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" | Where-Object { $_.name -eq "WebDAV" }) {
         Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" -AtElement @{name="WebDAV"}
     }
-
-    $aspNetCoreHandler = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" | Where-Object { $_.name -eq "aspNetCore" }
-    if ($null -eq $aspNetCoreHandler) {
-        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/handlers" -name "collection" -value @{name='aspNetCore'; path='*'; verb='*'; modules='AspNetCoreModuleV2'}
-    }
 }
 
 function currentTimeoutValues {
