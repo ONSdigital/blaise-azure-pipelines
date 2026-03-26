@@ -81,6 +81,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
+                - template: /templates/enable_gc_server.yml
                 - template: /templates/configure_management_node.yml
                 - template: /templates/add_cma_serverpark.yml
       - deployment: RegisterDataEntryNodes
@@ -96,6 +97,7 @@ stages:
             deploy:
               steps:
                 - checkout: self
+                - template: /templates/enable_gc_server.yml
                 - template: /templates/register_node.yml
       - deployment: InstallCmaPackagesOnMultiNode
         displayName: Install CMA packages on multi node environment
