@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Enable gcServer in config
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/enable_gc_server.ps1
