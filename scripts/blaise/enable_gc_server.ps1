@@ -20,12 +20,12 @@ function Ensure-GCServerEnabled {
         if ($gcServerNode) {
             # Already present, check if enabled is true
             if ($gcServerNode.enabled -eq "true") {
-                LogInfo("<gcServer enabled=\"true\"/> already present in $ConfigFilePath")
+                LogInfo('<gcServer enabled="true"/> already present in {0}' -f $ConfigFilePath)
                 return $false
             } else {
                 $gcServerNode.enabled = "true"
                 $xml.Save($ConfigFilePath)
-                LogInfo("Updated <gcServer> to enabled=\"true\" in $ConfigFilePath")
+                LogInfo('Updated <gcServer> to enabled="true" in {0}' -f $ConfigFilePath)
                 return $true
             }
         } else {
@@ -34,13 +34,13 @@ function Ensure-GCServerEnabled {
             $gcServerElem.SetAttribute("enabled", "true")
             $runtimeNode.AppendChild($gcServerElem) | Out-Null
             $xml.Save($ConfigFilePath)
-            LogInfo("Added <gcServer enabled=\"true\"/> to $ConfigFilePath")
+            LogInfo('Added <gcServer enabled="true"/> to {0}' -f $ConfigFilePath)
             return $true
         }
     } catch {
-        LogError("Error updating <gcServer> in $ConfigFilePath")
-        LogError("$($_.Exception.Message)")
-        LogError("$($_.ScriptStackTrace)")
+        LogError('Error updating <gcServer> in {0}' -f $ConfigFilePath)
+        LogError($($_.Exception.Message))
+        LogError($($_.ScriptStackTrace))
         exit 1
     }
 }
