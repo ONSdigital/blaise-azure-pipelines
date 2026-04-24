@@ -55,7 +55,7 @@ try {
     Set-Content -Path $tokenFile -Value $oidcToken
 
     # Build WIF Config JSON
-    $audience = "//iam.googleapis.com/projects/2727969180/locations/global/workloadIdentityPools/azure-devops-identity-pool/providers/azure-wif-auth-provider"
+    $audience = "//iam.googleapis.com/projects/894295524217/locations/global/workloadIdentityPools/azdo-identity-pool/providers/azdo-identity-provider"
     $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SharedServiceAccount}:generateAccessToken"
 
     $wifConfig = @{
