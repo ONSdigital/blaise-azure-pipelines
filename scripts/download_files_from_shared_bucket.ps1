@@ -54,6 +54,8 @@ try {
     # Write Azure token to disk
     Set-Content -Path $tokenFile -Value $oidcToken
 
+    LogInfo("BENTODO: Getting Shared project number from ENV: $env:ENV_BLAISE_SHARED_PROJECT_NUMBER")
+
     # Build WIF Config JSON
     $audience = "//iam.googleapis.com/projects/$env:ENV_BLAISE_SHARED_PROJECT_NUMBER/locations/global/workloadIdentityPools/azdo-identity-pool/providers/azdo-identity-provider"
     $impersonationUrl = "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SharedServiceAccount}:generateAccessToken"
