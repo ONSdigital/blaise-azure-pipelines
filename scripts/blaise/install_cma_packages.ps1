@@ -121,7 +121,7 @@ function Install-Cma-Packages {
         Install-PackageViaServerManager -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\CMA.bpkg"
 
         # Install remaining CMA instruments using Blaise CLI for MySQL data interface database configuration
-        $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging'
+        $InstrumentList = 'CMA_Attempts', 'CMA_ContactInfo', 'CMA_Launcher', 'CMA_Logging', 'CMA_ClientInfo'
         foreach ($Instrument in $InstrumentList) {
             Install-PackageViaBlaiseCli -ServerParkName $CmaServerParkName -FilePath "$CmaInstrumentPath\$Instrument.bpkg" -CreateDatabaseTables $CreateDatabaseTables
         }
