@@ -57,7 +57,8 @@ function AddNoCompressionPreCondition {
         }
         elseif ($ruleWithInput.pattern -ne $rule.pattern) {
             LogInfo("Updating NoCompression condition for ${siteName}: $($rule.label)")
-            Set-WebConfigurationProperty -pspath $sitePath -filter "$preConditionFilter/add[@input='$($rule.input)']" -name "pattern" -value $rule.pattern
+            Remove-WebConfigurationProperty -pspath $sitePath -filter "$preConditionFilter/add" -name "." -AtElement @{input = $rule.input}
+            Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern}
         }
         else {
             LogInfo("NoCompression condition already exists for ${siteName}: $($rule.label)")
