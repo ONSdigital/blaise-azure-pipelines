@@ -47,16 +47,20 @@ function AddNoCompressionPreCondition {
     )
 
     foreach ($rule in $requiredRules) {
-        $hasRule = $existingRules | Where-Object {
-            $_.input -eq $rule.input -and $_.pattern -eq $rule.pattern
-        }
+        $ruleWithInput = $existingRules | Where-Object {
+            $_.input -eq $rule.input
+        } | Select-Object -First 1
 
-        if (-not $hasRule) {
-            LogInfo("Adding NoCompression condition for $siteName: $($rule.label)")
+        if (-not $ruleWithInput) {
+            LogInfo("Adding NoCompression condition for ${siteName}: $($rule.label)")
             Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern}
         }
+        elseif ($ruleWithInput.pattern -ne $rule.pattern) {
+            LogInfo("Updating NoCompression condition for ${siteName}: $($rule.label)")
+            Set-WebConfigurationProperty -pspath $sitePath -filter "$preConditionFilter/add[@input='$($rule.input)']" -name "pattern" -value $rule.pattern
+        }
         else {
-            LogInfo("NoCompression condition already exists for $siteName: $($rule.label)")
+            LogInfo("NoCompression condition already exists for ${siteName}: $($rule.label)")
         }
     }
 
