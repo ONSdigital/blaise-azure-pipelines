@@ -30,26 +30,37 @@ function AddNoCompressionPreCondition {
     param ([string] $siteName)
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
+    $preConditionFilter = "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']"
 
-    $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+    $preCondition = Get-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -Name "."
 
     if ($null -eq $preCondition) {
         LogInfo("Creating NoCompression preCondition for $siteName...")
         Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression"}
-        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
-        LogInfo("NoCompression preCondition added successfully for $siteName")
     }
-    else {
-        $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "."
-        if (-not $existingRule) {
-            LogInfo("Adding input and pattern to existing NoCompression preCondition for $siteName...")
-            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
+
+    $existingRules = @(Get-WebConfigurationProperty -pspath $sitePath -filter "$preConditionFilter/add" -Name "." -ErrorAction SilentlyContinue)
+    $requiredRules = @(
+        @{ input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate|br).*$"; label = "response encoding is not compressed" },
+        @{ input = "{RESPONSE_CONTENT_TYPE}"; pattern = "^(text/|application/(json|javascript|xml|x-www-form-urlencoded)|application/xhtml\+xml)"; label = "response type is text" },
+        @{ input = "{REQUEST_URI}"; pattern = "^(?!.*_blazor).*$"; label = "request is not Blazor realtime endpoint" }
+    )
+
+    foreach ($rule in $requiredRules) {
+        $hasRule = $existingRules | Where-Object {
+            $_.input -eq $rule.input -and $_.pattern -eq $rule.pattern
+        }
+
+        if (-not $hasRule) {
+            LogInfo("Adding NoCompression condition for $siteName: $($rule.label)")
+            Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern}
         }
         else {
-            LogInfo("NoCompression preCondition already exists for $siteName")
+            LogInfo("NoCompression condition already exists for $siteName: $($rule.label)")
         }
     }
+
+    LogInfo("NoCompression preCondition ensured for $siteName")
 }
 
 function AddRewriteRule {
