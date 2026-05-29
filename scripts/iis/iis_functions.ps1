@@ -56,9 +56,16 @@ function AddNoCompressionPreCondition {
             Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern}
         }
         elseif ($ruleWithInput.pattern -ne $rule.pattern) {
-            LogInfo("Updating NoCompression condition for ${siteName}: $($rule.label)")
-            Remove-WebConfigurationProperty -pspath $sitePath -filter "$preConditionFilter/add" -name "." -AtElement @{input = $rule.input}
-            Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern}
+            try {
+                LogInfo("Updating NoCompression condition for ${siteName}: $($rule.label)")
+                Remove-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -AtElement @{input = $rule.input} -ErrorAction Stop
+                Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $rule.input; pattern = $rule.pattern} -ErrorAction Stop
+            }
+            catch {
+                # Keep legacy condition when IIS provider rejects in-place updates on existing environments.
+                LogInfo("Keeping existing NoCompression condition for ${siteName}: $($rule.label)")
+                LogInfo("Reason: $($_.Exception.Message)")
+            }
         }
         else {
             LogInfo("NoCompression condition already exists for ${siteName}: $($rule.label)")
