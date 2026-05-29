@@ -14,6 +14,8 @@ Start-Process msiexec.exe -Wait -ArgumentList '/I C:\dev\data\rewrite_url.msi /q
 
 DisableCompression
 
+$encodedServerName = "https%3a%2f%2f$env:ENV_BLAISE_CATI_URL"
+
 $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
 
@@ -25,7 +27,9 @@ if (-not $existingSites) {
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
     AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt[^/]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry encoded" -serverName $encodedServerName -rule "http%3a%2f%2fblaise-gusty-data[^%]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt encoded" -serverName $encodedServerName -rule "http%3a%2f%2fblaise-gusty-mgmt[^%]*"
     RemoveWebDav -siteName $site
 
     $appPool = "$($site)AppPool"
