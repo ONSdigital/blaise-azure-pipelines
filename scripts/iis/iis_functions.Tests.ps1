@@ -130,12 +130,12 @@ describe "AddRewriteRule" {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']" -and $name -eq "preCondition"
         } { "NoCompression" }
 
-        AddRewriteRule -siteName "Blaise" -ruleName "Blaise mgmt location header" -serverName "https://survey.example.com{R:2}" -rule "^https?://blaise-gusty-mgmt(:\\d+)?(.*)$" -serverVariable "RESPONSE_Location" -preCondition ""
+        AddRewriteRule -siteName "Blaise" -ruleName "Blaise mgmt location header" -serverName "https://survey.example.com{R:2}" -rule "^https?://blaise-gusty-mgmt(:\\d+)?(.*)$" -serverVariable "RESPONSE_LOCATION" -preCondition ""
 
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']/match" -and
             $name -eq "serverVariable" -and
-            $value -eq "RESPONSE_Location"
+            $value -eq "RESPONSE_LOCATION"
         }
 
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
