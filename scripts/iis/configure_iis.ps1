@@ -26,10 +26,10 @@ if (-not $existingSites) {
 
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
-    AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt[^/]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise data entry encoded" -serverName $encodedServerName -rule "http%3a%2f%2fblaise-gusty-data[^%]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt encoded" -serverName $encodedServerName -rule "http%3a%2f%2fblaise-gusty-mgmt[^%]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?://blaise-gusty-data[^/]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?://blaise-gusty-mgmt[^/]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry encoded" -serverName $encodedServerName -rule "https?%3a%2f%2fblaise-gusty-data[^%]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt encoded" -serverName $encodedServerName -rule "https?%3a%2f%2fblaise-gusty-mgmt[^%]*"
     RemoveWebDav -siteName $site
 
     $appPool = "$($site)AppPool"
