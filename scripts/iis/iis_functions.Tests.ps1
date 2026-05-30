@@ -55,6 +55,11 @@ describe "AddRewriteRule" {
             $value -eq "https?://blaise-gusty-mgmt[^/]*"
         }
 
+        Assert-MockCalled Set-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "serverVariable"
+        }
+
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/action" -and
             $name -eq "type" -and
@@ -93,6 +98,11 @@ describe "AddRewriteRule" {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
             $name -eq "pattern" -and
             $value -eq "https?://blaise-gusty-mgmt[^/]*"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "serverVariable"
         }
 
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {

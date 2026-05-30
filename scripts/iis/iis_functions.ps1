@@ -114,16 +114,21 @@ function AddRewriteRule {
     }
 
     $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "."
+    $hasExpectedServerVariable = -not [string]::IsNullOrWhiteSpace($serverVariable)
     $expectedServerVariable = ""
 
-    if (-not [string]::IsNullOrWhiteSpace($serverVariable)) {
+    if ($hasExpectedServerVariable) {
         $expectedServerVariable = $serverVariable
     }
 
     try {
         $applyRuleDefinition = {
             Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "pattern" -value "$rule"
-            Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable" -value "$expectedServerVariable"
+
+            if ($hasExpectedServerVariable) {
+                Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable" -value "$expectedServerVariable"
+            }
+
             Set-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type" -value "Rewrite"
             Set-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value" -value "$serverName"
         }
@@ -144,9 +149,12 @@ function AddRewriteRule {
         $appliedActionValue = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value")
 
         $ruleNeedsRebuild = ($appliedPattern -ne $rule) -or
-            ($appliedServerVariable -ne $expectedServerVariable) -or
             ($appliedActionType -ne "Rewrite") -or
             ($appliedActionValue -ne $serverName)
+
+        if ($hasExpectedServerVariable) {
+            $ruleNeedsRebuild = $ruleNeedsRebuild -or ($appliedServerVariable -ne $expectedServerVariable)
+        }
 
         if ($ruleNeedsRebuild) {
             LogInfo("Rule '$ruleName' was not in expected state after update, rebuilding it...")
