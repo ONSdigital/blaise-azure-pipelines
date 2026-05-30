@@ -55,6 +55,18 @@ describe "AddRewriteRule" {
             $value -eq "https?://blaise-gusty-mgmt[^/]*"
         }
 
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "filterByTags" -and
+            $value -eq "None"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "customTags" -and
+            $value -eq ""
+        }
+
         Assert-MockCalled Set-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
             $name -eq "serverVariable"
@@ -98,6 +110,18 @@ describe "AddRewriteRule" {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
             $name -eq "pattern" -and
             $value -eq "https?://blaise-gusty-mgmt[^/]*"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "filterByTags" -and
+            $value -eq "None"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt']/match" -and
+            $name -eq "customTags" -and
+            $value -eq ""
         }
 
         Assert-MockCalled Set-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
@@ -147,6 +171,11 @@ describe "AddRewriteRule" {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']/match" -and
             $name -eq "serverVariable" -and
             $value -eq "RESPONSE_LOCATION"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']/match" -and
+            $name -eq "filterByTags"
         }
 
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {

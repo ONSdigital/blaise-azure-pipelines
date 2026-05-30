@@ -115,7 +115,10 @@ function AddRewriteRule {
 
     $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "."
     $hasExpectedServerVariable = -not [string]::IsNullOrWhiteSpace($serverVariable)
+    $hasExpectedBodyScanConfig = -not $hasExpectedServerVariable
     $expectedServerVariable = ""
+    $expectedFilterByTags = "None"
+    $expectedCustomTags = ""
 
     if ($hasExpectedServerVariable) {
         $expectedServerVariable = $serverVariable
@@ -127,6 +130,11 @@ function AddRewriteRule {
 
             if ($hasExpectedServerVariable) {
                 Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable" -value "$expectedServerVariable"
+            }
+
+            if ($hasExpectedBodyScanConfig) {
+                Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "filterByTags" -value "$expectedFilterByTags"
+                Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "customTags" -value "$expectedCustomTags"
             }
 
             Set-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type" -value "Rewrite"
@@ -145,6 +153,8 @@ function AddRewriteRule {
 
         $appliedPattern = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "pattern")
         $appliedServerVariable = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable")
+        $appliedFilterByTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "filterByTags")
+        $appliedCustomTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "customTags")
         $appliedActionType = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type")
         $appliedActionValue = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value")
 
@@ -154,6 +164,12 @@ function AddRewriteRule {
 
         if ($hasExpectedServerVariable) {
             $ruleNeedsRebuild = $ruleNeedsRebuild -or ($appliedServerVariable -ne $expectedServerVariable)
+        }
+
+        if ($hasExpectedBodyScanConfig) {
+            $ruleNeedsRebuild = $ruleNeedsRebuild -or
+                ($appliedFilterByTags -ne $expectedFilterByTags) -or
+                ($appliedCustomTags -ne $expectedCustomTags)
         }
 
         if ($ruleNeedsRebuild) {
