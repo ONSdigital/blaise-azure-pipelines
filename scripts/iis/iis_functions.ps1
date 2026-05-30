@@ -30,25 +30,24 @@ function AddNoCompressionPreCondition {
     param ([string] $siteName)
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
+    $preConditionFilter = "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']"
+    $expectedInput = "{RESPONSE_CONTENT_ENCODING}"
+    $expectedPattern = "^(|identity)$"
 
     $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+        -filter $preConditionFilter -Name "."
 
     if ($null -eq $preCondition) {
         LogInfo("Creating NoCompression preCondition for $siteName...")
         Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression"}
-        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
+        Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedInput; pattern = $expectedPattern}
         LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
-        $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "."
-        if (-not $existingRule) {
-            LogInfo("Adding input and pattern to existing NoCompression preCondition for $siteName...")
-            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
-        }
-        else {
-            LogInfo("NoCompression preCondition already exists for $siteName")
-        }
+        # Reconcile existing NoCompression entries so this script remains idempotent across old deployments.
+        Remove-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -ErrorAction SilentlyContinue
+        Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedInput; pattern = $expectedPattern}
+        LogInfo("NoCompression preCondition refreshed for $siteName")
     }
 }
 
