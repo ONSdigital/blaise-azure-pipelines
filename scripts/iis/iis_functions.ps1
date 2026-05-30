@@ -57,7 +57,9 @@ function AddRewriteRule {
         [string] $siteName,
         [string] $ruleName,
         [string] $serverName = "https://$env:ENV_BLAISE_CATI_URL",
-        [string] $rule
+        [string] $rule,
+        [string] $serverVariable = "",
+        [string] $preCondition = "NoCompression"
     )
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
@@ -67,18 +69,15 @@ function AddRewriteRule {
         return
     }
 
-    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
+    $ruleFilter = "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']"
+    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "."
 
     if (-not $ruleExists) {
         try {
             LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
 
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
-
-            LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
+            LogInfo("Rewrite URL rule '$ruleName' created in site '$siteName'")
         }
         catch {
             LogError("Failed to create rewrite URL rule '$ruleName' for site '$siteName'")
@@ -88,21 +87,46 @@ function AddRewriteRule {
         }
     }
     else {
-        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
+        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName', ensuring it has expected settings")
+    }
+
+    try {
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern" -value "$rule"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "ignoreCase" -value "true"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable" -value "$serverVariable"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "type" -value "Rewrite"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value" -value "$serverName"
+        LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
+    }
+    catch {
+        LogError("Failed to configure rewrite URL rule '$ruleName' for site '$siteName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
     }
 
     $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
+        -filter $ruleFilter -name "preCondition"
 
-    if ($existingPreCondition -ne "NoCompression") {
-        LogInfo("Setting NoCompression preCondition on rule '$ruleName' in $siteName...")
-        Set-WebConfigurationProperty -pspath $sitePath `
-            -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
-            -name "preCondition" -value "NoCompression"
-        LogInfo("NoCompression preCondition set on '$ruleName' in $siteName")
+    if ([string]::IsNullOrWhiteSpace($preCondition)) {
+        if (-not [string]::IsNullOrWhiteSpace($existingPreCondition)) {
+            LogInfo("Removing preCondition from rule '$ruleName' in $siteName...")
+            Set-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "preCondition" -value ""
+            LogInfo("preCondition removed from '$ruleName' in $siteName")
+        }
+        else {
+            LogInfo("No preCondition set on '$ruleName', no changes required")
+        }
     }
     else {
-        LogInfo("NoCompression preCondition already set on '$ruleName'")
+        if ($existingPreCondition -ne $preCondition) {
+            LogInfo("Setting $preCondition preCondition on rule '$ruleName' in $siteName...")
+            Set-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "preCondition" -value $preCondition
+            LogInfo("$preCondition preCondition set on '$ruleName' in $siteName")
+        }
+        else {
+            LogInfo("$preCondition preCondition already set on '$ruleName'")
+        }
     }
 }
 
