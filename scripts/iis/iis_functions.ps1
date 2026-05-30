@@ -92,26 +92,26 @@ function AddRewriteRule {
 
     $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
 
-    if (-not $ruleExists) {
-        try {
+    try {
+        if (-not $ruleExists) {
             LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
-
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+        }
+        else {
+            LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName', ensuring expected configuration...")
+        }
 
-            LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
-        }
-        catch {
-            LogError("Failed to create rewrite URL rule '$ruleName' for site '$siteName'")
-            LogError("$($_.Exception.Message)")
-            LogError("$($_.ScriptStackTrace)")
-            exit 1
-        }
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+
+        LogInfo("Rewrite URL rule '$ruleName' ensured on site '$siteName'")
     }
-    else {
-        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
+    catch {
+        LogError("Failed to apply rewrite URL rule '$ruleName' for site '$siteName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
     }
 
     $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
