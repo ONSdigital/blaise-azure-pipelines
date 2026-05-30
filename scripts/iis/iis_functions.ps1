@@ -86,15 +86,48 @@ function AddRewriteRule {
     )
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
+    $ruleFilter = "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']"
+    $matchFilter = "$ruleFilter/match"
+    $actionFilter = "$ruleFilter/action"
+
+    function GetConfigString {
+        param ([object] $value)
+
+        if ($null -eq $value) {
+            return ""
+        }
+
+        if ($value -is [string]) {
+            return $value
+        }
+
+        if ($value.PSObject -and $value.PSObject.Properties["Value"]) {
+            return [string] $value.Value
+        }
+
+        return [string] $value
+    }
 
     if (-not (Test-Path $sitePath)) {
         LogInfo("Skipping $ruleName - site '$siteName' does not exist")
         return
     }
 
-    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
+    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "."
+    $expectedServerVariable = ""
+
+    if (-not [string]::IsNullOrWhiteSpace($serverVariable)) {
+        $expectedServerVariable = $serverVariable
+    }
 
     try {
+        $applyRuleDefinition = {
+            Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "pattern" -value "$rule"
+            Set-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable" -value "$expectedServerVariable"
+            Set-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type" -value "Rewrite"
+            Set-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value" -value "$serverName"
+        }
+
         if (-not $ruleExists) {
             LogInfo("Adding rewrite URL rule '$ruleName' to site '$siteName'...")
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
@@ -103,14 +136,28 @@ function AddRewriteRule {
             LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName', ensuring expected configuration...")
         }
 
-        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+        & $applyRuleDefinition
 
-        if (-not [string]::IsNullOrWhiteSpace($serverVariable)) {
-            Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "serverVariable" -value "$serverVariable"
+        $appliedPattern = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "pattern")
+        $appliedServerVariable = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable")
+        $appliedActionType = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type")
+        $appliedActionValue = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value")
+
+        $ruleNeedsRebuild = ($appliedPattern -ne $rule) -or
+            ($appliedServerVariable -ne $expectedServerVariable) -or
+            ($appliedActionType -ne "Rewrite") -or
+            ($appliedActionValue -ne $serverName)
+
+        if ($ruleNeedsRebuild) {
+            LogInfo("Rule '$ruleName' was not in expected state after update, rebuilding it...")
+
+            if (Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name ".") {
+                Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -AtElement @{name = $ruleName}
+            }
+
+            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
+            & $applyRuleDefinition
         }
-
-        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
-        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 
         LogInfo("Rewrite URL rule '$ruleName' ensured on site '$siteName'")
     }
@@ -122,13 +169,13 @@ function AddRewriteRule {
     }
 
     $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
+        -filter $ruleFilter -name "preCondition"
 
     if (-not [string]::IsNullOrWhiteSpace($preCondition)) {
         if ($existingPreCondition -ne $preCondition) {
             LogInfo("Setting $preCondition preCondition on rule '$ruleName' in $siteName...")
             Set-WebConfigurationProperty -pspath $sitePath `
-                -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
+                -filter $ruleFilter `
                 -name "preCondition" -value "$preCondition"
             LogInfo("$preCondition preCondition set on '$ruleName' in $siteName")
         }
@@ -140,7 +187,7 @@ function AddRewriteRule {
         if (-not [string]::IsNullOrWhiteSpace($existingPreCondition)) {
             LogInfo("Clearing preCondition on '$ruleName' in $siteName...")
             Set-WebConfigurationProperty -pspath $sitePath `
-                -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" `
+                -filter $ruleFilter `
                 -name "preCondition" -value ""
             LogInfo("preCondition cleared on '$ruleName' in $siteName")
         }
