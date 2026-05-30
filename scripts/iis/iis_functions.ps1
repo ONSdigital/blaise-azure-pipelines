@@ -130,6 +130,63 @@ function AddRewriteRule {
     }
 }
 
+function AddInboundHostRedirectRule {
+    param (
+        [string] $ruleName,
+        [string] $hostPattern,
+        [string] $targetHost = "$env:ENV_BLAISE_CATI_URL"
+    )
+
+    $sitePath = "IIS:\Sites\Default Web Site"
+
+    if (-not (Test-Path $sitePath)) {
+        LogError("IIS site 'Default Web Site' does not exist")
+        exit 1
+    }
+
+    $ruleFilter = "system.webServer/rewrite/rules/rule[@name='$ruleName']"
+    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "."
+
+    if (-not $ruleExists) {
+        try {
+            LogInfo("Adding inbound redirect rule '$ruleName'...")
+            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules" -name "." -value @{name = $ruleName; stopProcessing = "true"}
+            Add-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/conditions" -name "." -value @{input = "{HTTP_HOST}"; pattern = $hostPattern}
+            LogInfo("Inbound redirect rule '$ruleName' created")
+        }
+        catch {
+            LogError("Failed to create inbound redirect rule '$ruleName'")
+            LogError("$($_.Exception.Message)")
+            LogError("$($_.ScriptStackTrace)")
+            exit 1
+        }
+    }
+    else {
+        LogInfo("Inbound redirect rule '$ruleName' already exists, ensuring expected settings")
+    }
+
+    try {
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "url" -value "(.*)"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter" -name "stopProcessing" -value "true"
+
+        Remove-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/conditions" -name "." -ErrorAction SilentlyContinue
+        Add-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/conditions" -name "." -value @{input = "{HTTP_HOST}"; pattern = $hostPattern}
+
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "type" -value "Redirect"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "url" -value "https://$targetHost/{R:1}"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "appendQueryString" -value "true"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "redirectType" -value "Found"
+
+        LogInfo("Inbound redirect rule '$ruleName' applied")
+    }
+    catch {
+        LogError("Failed to configure inbound redirect rule '$ruleName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
+    }
+}
+
 function RemoveWebDav {
     param ([string] $siteName)
     $sitePath = "IIS:\Sites\Default Web Site\$siteName"

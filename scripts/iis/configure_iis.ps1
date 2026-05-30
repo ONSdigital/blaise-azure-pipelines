@@ -26,6 +26,9 @@ if (-not $existingSites) {
     exit 1
 }
 
+# Safety net for any leaked redirects to internal Blaise hosts.
+AddInboundHostRedirectRule -ruleName "Blaise internal host redirect" -hostPattern '^blaise-[^\.]+-(mgmt|data)$'
+
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
 
