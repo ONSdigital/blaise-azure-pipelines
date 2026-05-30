@@ -120,4 +120,28 @@ describe "AddRewriteRule" {
         Assert-MockCalled Add-WebConfigurationProperty -Times 0
         Assert-MockCalled Set-WebConfigurationProperty -Times 0
     }
+
+    it "should set response header match and clear precondition when requested" {
+        Mock Get-WebConfigurationProperty -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']" -and $name -eq "."
+        } { @{ name = "Blaise mgmt location header" } }
+
+        Mock Get-WebConfigurationProperty -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']" -and $name -eq "preCondition"
+        } { "NoCompression" }
+
+        AddRewriteRule -siteName "Blaise" -ruleName "Blaise mgmt location header" -serverName "https://survey.example.com{R:2}" -rule "^https?://blaise-gusty-mgmt(:\\d+)?(.*)$" -serverVariable "RESPONSE_Location" -preCondition ""
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']/match" -and
+            $name -eq "serverVariable" -and
+            $value -eq "RESPONSE_Location"
+        }
+
+        Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']" -and
+            $name -eq "preCondition" -and
+            $value -eq ""
+        }
+    }
 }
