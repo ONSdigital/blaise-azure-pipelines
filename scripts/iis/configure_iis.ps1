@@ -28,9 +28,12 @@ foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
     AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?://blaise-gusty-data[^/]*"
     AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?://blaise-gusty-mgmt[^/]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry escaped" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?:\\/\\/blaise-gusty-data[^\s\"']*"
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt escaped" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?:\\/\\/blaise-gusty-mgmt[^\s\"']*"
     AddRewriteRule -siteName $site -ruleName "Blaise data entry encoded" -serverName $encodedServerName -rule "https?%3a%2f%2fblaise-gusty-data[^%]*"
     AddRewriteRule -siteName $site -ruleName "Blaise mgmt encoded" -serverName $encodedServerName -rule "https?%3a%2f%2fblaise-gusty-mgmt[^%]*"
     AddRewriteRule -siteName $site -ruleName "Blaise localhost" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?://(localhost|127\.0\.0\.1)(:\d+)?"
+    AddRewriteRule -siteName $site -ruleName "Blaise localhost escaped" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "https?:\\/\\/(localhost|127\.0\.0\.1)(:\d+)?"
     AddRewriteRule -siteName $site -ruleName "Blaise localhost encoded" -serverName $encodedServerName -rule "https?%3a%2f%2f(localhost|127\.0\.0\.1)(%3a\d+)?"
     AddRewriteRule -siteName $site -ruleName "Blaise data entry location header" -serverName "https://$env:ENV_BLAISE_CATI_URL{R:2}" -rule "^https?://blaise-gusty-data(:\d+)?(.*)$" -serverVariable "RESPONSE_LOCATION" -preCondition ""
     AddRewriteRule -siteName $site -ruleName "Blaise mgmt location header" -serverName "https://$env:ENV_BLAISE_CATI_URL{R:2}" -rule "^https?://blaise-gusty-mgmt(:\d+)?(.*)$" -serverVariable "RESPONSE_LOCATION" -preCondition ""

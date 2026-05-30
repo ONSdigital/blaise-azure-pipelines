@@ -178,6 +178,11 @@ describe "AddRewriteRule" {
             $name -eq "filterByTags"
         }
 
+        Assert-MockCalled Get-WebConfigurationProperty -Times 0 -Exactly -ParameterFilter {
+            $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']/match" -and
+            $name -eq "filterByTags"
+        }
+
         Assert-MockCalled Set-WebConfigurationProperty -Times 1 -Exactly -ParameterFilter {
             $filter -eq "system.webServer/rewrite/outboundRules/rule[@name='Blaise mgmt location header']" -and
             $name -eq "preCondition" -and

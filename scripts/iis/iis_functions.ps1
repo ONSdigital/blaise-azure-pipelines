@@ -152,9 +152,18 @@ function AddRewriteRule {
         & $applyRuleDefinition
 
         $appliedPattern = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "pattern")
-        $appliedServerVariable = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable")
-        $appliedFilterByTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "filterByTags")
-        $appliedCustomTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "customTags")
+        $appliedServerVariable = ""
+        $appliedFilterByTags = ""
+        $appliedCustomTags = ""
+
+        if ($hasExpectedServerVariable) {
+            $appliedServerVariable = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "serverVariable")
+        }
+
+        if ($hasExpectedBodyScanConfig) {
+            $appliedFilterByTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "filterByTags")
+            $appliedCustomTags = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $matchFilter -name "customTags")
+        }
         $appliedActionType = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "type")
         $appliedActionValue = GetConfigString (Get-WebConfigurationProperty -pspath $sitePath -filter $actionFilter -name "value")
 
