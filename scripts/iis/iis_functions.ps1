@@ -93,13 +93,46 @@ function AddRewriteRule {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName', ensuring it has expected settings")
     }
 
-    try {
+    $applyRuleSettings = {
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern" -value "$rule"
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "ignoreCase" -value "true"
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable" -value "$serverVariable"
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "type" -value "Rewrite"
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value" -value "$serverName"
+    }
+
+    $verifyRuleSettings = {
+        $appliedPattern = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern")
+        $appliedServerVariable = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable")
+        $appliedActionType = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "type")
+        $appliedActionValue = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value")
+
+        ($appliedPattern -eq $rule) -and
+        ($appliedServerVariable -eq $serverVariable) -and
+        ($appliedActionType -eq "Rewrite") -and
+        ($appliedActionValue -eq $serverName)
+    }
+
+    try {
+        & $applyRuleSettings
         LogInfo("Rewrite URL rule '$ruleName' applied to site '$siteName'")
+
+        if (-not (& $verifyRuleSettings)) {
+            LogInfo("Rule '$ruleName' did not persist expected values, recreating it in '$siteName'...")
+            Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -AtElement @{name = $ruleName}
+            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
+
+            & $applyRuleSettings
+
+            if (-not (& $verifyRuleSettings)) {
+                LogError("Rewrite URL rule '$ruleName' could not be reconciled in '$siteName'")
+                LogError("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
+                LogError("Verify IIS URL Rewrite supports this action value on the target VM")
+                exit 1
+            }
+
+            LogInfo("Rewrite URL rule '$ruleName' recreated successfully in '$siteName'")
+        }
     }
     catch {
         LogError("Failed to configure rewrite URL rule '$ruleName' for site '$siteName'")
