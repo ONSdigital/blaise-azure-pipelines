@@ -118,6 +118,13 @@ function AddRewriteRule {
             }
         }
 
+        # Some IIS installs normalize RESPONSE_LOCATION rule values by adding a capture suffix.
+        if (-not [string]::IsNullOrWhiteSpace($serverVariable)) {
+            if ($actualActionValue -eq "$serverName{R:0}" -or $actualActionValue -eq "$serverName{R:1}") {
+                return $true
+            }
+        }
+
         return $false
     }
 
@@ -145,14 +152,26 @@ function AddRewriteRule {
             & $applyRuleSettings
 
             if (-not (& $verifyRuleSettings)) {
+                $actualPattern = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern")
+                $actualServerVariable = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable")
+                $actualActionValue = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value")
+
                 if ([string]::IsNullOrWhiteSpace($serverVariable)) {
                     LogInfo("Rule '$ruleName' could not be fully reconciled in '$siteName', continuing because this is a body rule")
                     LogInfo("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
+                    LogInfo("Actual pattern='$actualPattern', serverVariable='$actualServerVariable', actionValue='$actualActionValue'")
                     LogInfo("IIS may have normalized the action value for this body rule")
+                }
+                elseif ($serverVariable -ieq "RESPONSE_LOCATION") {
+                    LogInfo("Rule '$ruleName' could not be fully reconciled in '$siteName', continuing because this is a RESPONSE_LOCATION header rule")
+                    LogInfo("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
+                    LogInfo("Actual pattern='$actualPattern', serverVariable='$actualServerVariable', actionValue='$actualActionValue'")
+                    LogInfo("IIS may have normalized this header rule on the target VM")
                 }
                 else {
                     LogError("Rewrite URL rule '$ruleName' could not be reconciled in '$siteName'")
                     LogError("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
+                    LogError("Actual pattern='$actualPattern', serverVariable='$actualServerVariable', actionValue='$actualActionValue'")
                     LogError("Verify IIS URL Rewrite supports this action value on the target VM")
                     exit 1
                 }
