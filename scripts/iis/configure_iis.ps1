@@ -18,9 +18,6 @@ $externalServerName = "https://$env:ENV_BLAISE_CATI_URL"
 $encodedExternalServerName = [System.Uri]::EscapeDataString($externalServerName)
 $doubleEncodedExternalServerName = [System.Uri]::EscapeDataString($encodedExternalServerName)
 $escapedExternalServerName = $externalServerName.Replace("/", "\\/")
-$urlCaptureReplacement = ("{R:1}" + $externalServerName + "{R:2}{R:3}")
-$urlCaptureReplacementEncoded = ("{R:1}" + $encodedExternalServerName + "{R:2}{R:3}")
-$urlCaptureReplacementDoubleEncoded = ("{R:1}" + $doubleEncodedExternalServerName + "{R:2}{R:3}")
 
 $sites = @("Blaise", "BlaiseDashboard")
 $existingSites = $sites | Where-Object { Test-Path "iis:\sites\Default Web Site\$_" }
@@ -57,9 +54,9 @@ foreach ($site in $existingSites) {
     AddRewriteRule -siteName $site -ruleName "Blaise localhost escaped" -serverName "$escapedExternalServerName{R:1}" -rule 'https?:\\/\\/localhost(\\/[^\s"<>]*)?'
 
     # Rewrite redirect Location headers that still point to internal hosts.
-    AddRewriteRule -siteName $site -ruleName "Blaise data entry location header" -serverName "$externalServerName{R:1}" -rule '^https?://blaise-[^/\s"<>]*-data[^/\s"<>]*(/.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt location header" -serverName "$externalServerName{R:1}" -rule '^https?://blaise-[^/\s"<>]*-mgmt[^/\s"<>]*(/.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise localhost location header" -serverName "$externalServerName{R:1}" -rule '^https?://localhost(/.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry location header" -serverName "$externalServerName" -rule 'https?://blaise-[^/\s"<>]*-data[^/\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise mgmt location header" -serverName "$externalServerName" -rule 'https?://blaise-[^/\s"<>]*-mgmt[^/\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise localhost location header" -serverName "$externalServerName" -rule 'https?://localhost' -serverVariable "RESPONSE_LOCATION" -preCondition ""
 
     # Rewrite internal host tokens appearing anywhere in Location headers (e.g. inside encoded ReturnUrl query values).
     AddRewriteRule -siteName $site -ruleName "Blaise location header inline host" -serverName "$externalServerName" -rule 'https?://blaise-[^/\s"<>]*-(?:mgmt|data)[^/\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
@@ -70,12 +67,12 @@ foreach ($site in $existingSites) {
     AddRewriteRule -siteName $site -ruleName "Blaise location header inline localhost double encoded" -serverName "$doubleEncodedExternalServerName" -rule 'https?%253a%252f%252flocalhost' -serverVariable "RESPONSE_LOCATION" -preCondition ""
 
     # Rewrite internal hosts embedded within Location query params (url=...) for new dashboard flows.
-    AddRewriteRule -siteName $site -ruleName "Blaise location header url plain" -serverName $urlCaptureReplacement -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?://blaise-[^/\s"<>]*-(?:mgmt|data)[^/\s"<>]*(/[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise location header url encoded" -serverName $urlCaptureReplacementEncoded -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?%3a%2f%2fblaise-[^%\s"<>]*-(?:mgmt|data)[^%\s"<>]*(%2f[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise location header url double encoded" -serverName $urlCaptureReplacementDoubleEncoded -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?%253a%252f%252fblaise-[^%\s"<>]*-(?:mgmt|data)[^%\s"<>]*(%252f[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost plain" -serverName $urlCaptureReplacement -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?://localhost(/[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost encoded" -serverName $urlCaptureReplacementEncoded -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?%3a%2f%2flocalhost(%2f[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
-    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost double encoded" -serverName $urlCaptureReplacementDoubleEncoded -rule '^(.+url(?:=|%3[dD]|%253[dD]))https?%253a%252f%252flocalhost(%252f[^&\s"<>]*)?(&.*)?$' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header url plain" -serverName "$externalServerName" -rule 'https?://blaise-[^/\s"<>]*-(?:mgmt|data)[^/\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header url encoded" -serverName "$encodedExternalServerName" -rule 'https?%3a%2f%2fblaise-[^%\s"<>]*-(?:mgmt|data)[^%\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header url double encoded" -serverName "$doubleEncodedExternalServerName" -rule 'https?%253a%252f%252fblaise-[^%\s"<>]*-(?:mgmt|data)[^%\s"<>]*' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost plain" -serverName "$externalServerName" -rule 'https?://localhost' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost encoded" -serverName "$encodedExternalServerName" -rule 'https?%3a%2f%2flocalhost' -serverVariable "RESPONSE_LOCATION" -preCondition ""
+    AddRewriteRule -siteName $site -ruleName "Blaise location header localhost double encoded" -serverName "$doubleEncodedExternalServerName" -rule 'https?%253a%252f%252flocalhost' -serverVariable "RESPONSE_LOCATION" -preCondition ""
 
     RemoveWebDav -siteName $site
 
