@@ -36,7 +36,7 @@ function AddNoCompressionPreCondition {
     $expectedContentTypeInput = "{RESPONSE_CONTENT_TYPE}"
     $expectedContentTypePattern = "^(text/html|application/xhtml\\+xml|application/json|application/.+\\+json)(;.*)?$"
     $expectedRequestUriInput = "{REQUEST_URI}"
-    $expectedRequestUriPattern = "^/_blazor(?:$|/)"
+    $expectedRequestUriPattern = "(?:^|/)_blazor(?:$|[/?])"
 
     $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
         -filter $preConditionFilter -Name "."
