@@ -34,7 +34,9 @@ function AddNoCompressionPreCondition {
     $expectedInput = "{RESPONSE_CONTENT_ENCODING}"
     $expectedPattern = "^(|identity)$"
     $expectedContentTypeInput = "{RESPONSE_CONTENT_TYPE}"
-    $expectedContentTypePattern = "^(text/html|application/xhtml\\+xml)(;.*)?$"
+    $expectedContentTypePattern = "^(text/html|application/xhtml\\+xml|application/json|application/.+\\+json)(;.*)?$"
+    $expectedRequestUriInput = "{REQUEST_URI}"
+    $expectedRequestUriPattern = "^/_blazor(?:$|/)"
 
     $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
         -filter $preConditionFilter -Name "."
@@ -44,6 +46,7 @@ function AddNoCompressionPreCondition {
         Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions" -name "." -value @{name = "NoCompression"}
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedInput; pattern = $expectedPattern}
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedContentTypeInput; pattern = $expectedContentTypePattern}
+        Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedRequestUriInput; pattern = $expectedRequestUriPattern; negate = "true"}
         LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
@@ -51,6 +54,7 @@ function AddNoCompressionPreCondition {
         Remove-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -ErrorAction SilentlyContinue
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedInput; pattern = $expectedPattern}
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedContentTypeInput; pattern = $expectedContentTypePattern}
+        Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedRequestUriInput; pattern = $expectedRequestUriPattern; negate = "true"}
         LogInfo("NoCompression preCondition refreshed for $siteName")
     }
 }
