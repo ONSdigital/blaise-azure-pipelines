@@ -33,6 +33,8 @@ foreach ($site in $existingSites) {
     if ($site -eq "BlaiseDashboard") {
         AddRewriteRule -siteName $site -ruleName "Blaise StartSurvey url encoded" -serverName "url=$encodedExternalServerName{R:1}" -rule 'url=http%3a%2f%2fblaise-gusty-mgmt(%2f[^\s"&<>]*)?'
         AddRewriteRule -siteName $site -ruleName "Blaise StartSurvey url encoded localhost" -serverName "url=$encodedExternalServerName{R:1}" -rule 'url=http%3a%2f%2flocalhost(%3a[0-9]+)?(%2f[^\s"&<>]*)?'
+        AddResponseLocationRewriteRule -siteName $site -ruleName "Blaise StartSurvey url encoded header" -serverName "url=$encodedExternalServerName{R:1}" -rule 'url=http%3a%2f%2fblaise-gusty-mgmt(%2f[^\s"&<>]*)?'
+        AddResponseLocationRewriteRule -siteName $site -ruleName "Blaise StartSurvey url encoded header localhost" -serverName "url=$encodedExternalServerName{R:1}" -rule 'url=http%3a%2f%2flocalhost(%3a[0-9]+)?(%2f[^\s"&<>]*)?'
     }
 
     RemoveWebDav -siteName $site
