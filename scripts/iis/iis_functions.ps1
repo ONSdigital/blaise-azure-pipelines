@@ -113,6 +113,47 @@ function AddRewriteRule {
     }
 }
 
+function AddResponseLocationRewriteRule {
+    param (
+        [string] $siteName,
+        [string] $ruleName,
+        [string] $serverName,
+        [string] $rule
+    )
+
+    $sitePath = "iis:\sites\Default Web Site\$siteName"
+
+    if (-not (Test-Path $sitePath)) {
+        LogInfo("Skipping $ruleName - site '$siteName' does not exist")
+        return
+    }
+
+    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
+
+    if (-not $ruleExists) {
+        try {
+            LogInfo("Adding RESPONSE_LOCATION rewrite rule '$ruleName' to site '$siteName'...")
+
+            Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules" -name "." -value @{name = $ruleName}
+        }
+        catch {
+            LogError("Failed to create RESPONSE_LOCATION rewrite rule '$ruleName' for site '$siteName'")
+            LogError("$($_.Exception.Message)")
+            LogError("$($_.ScriptStackTrace)")
+            exit 1
+        }
+    }
+    else {
+        LogInfo("RESPONSE_LOCATION rewrite rule '$ruleName' already exists in site '$siteName'")
+    }
+
+    LogInfo("Updating RESPONSE_LOCATION rewrite rule '$ruleName' in site '$siteName'...")
+    Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "serverVariable" -value "RESPONSE_LOCATION"
+    Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+    Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+    Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+}
+
 function RemoveWebDav {
     param ([string] $siteName)
     $sitePath = "IIS:\Sites\Default Web Site\$siteName"
