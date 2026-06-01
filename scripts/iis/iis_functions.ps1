@@ -154,6 +154,49 @@ function AddResponseLocationRewriteRule {
     Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
 }
 
+function AddInboundRewriteRule {
+    param (
+        [string] $siteName,
+        [string] $ruleName,
+        [string] $matchUrl,
+        [string] $queryPattern,
+        [string] $rewriteUrl
+    )
+
+    $sitePath = "iis:\sites\Default Web Site\$siteName"
+
+    if (-not (Test-Path $sitePath)) {
+        LogInfo("Skipping $ruleName - site '$siteName' does not exist")
+        return
+    }
+
+    $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']" -name "."
+
+    if ($existingRule) {
+        LogInfo("Removing existing inbound rule '$ruleName' from site '$siteName'...")
+        Remove-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules" -name "." -AtElement @{name=$ruleName}
+    }
+
+    try {
+        LogInfo("Adding inbound rule '$ruleName' to site '$siteName'...")
+
+        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules" -name "." -value @{name = $ruleName; stopProcessing = "true"}
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']/match" -name "url" -value "$matchUrl"
+        Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']/conditions" -name "." -value @{input = "{QUERY_STRING}"; pattern = "$queryPattern"}
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']/action" -name "url" -value "$rewriteUrl"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/rules/rule[@name='$ruleName']/action" -name "appendQueryString" -value "false"
+
+        LogInfo("Inbound rule '$ruleName' applied to site '$siteName'")
+    }
+    catch {
+        LogError("Failed to create inbound rule '$ruleName' for site '$siteName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
+    }
+}
+
 function RemoveWebDav {
     param ([string] $siteName)
     $sitePath = "IIS:\Sites\Default Web Site\$siteName"

@@ -28,7 +28,14 @@ if (-not $existingSites) {
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
     AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName $externalServerName -rule "http://blaise-gusty-data[^/]*"
-    AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName $externalServerName -rule "http://blaise-gusty-mgmt*"
+
+    if ($site -eq "BlaiseDashboard") {
+        AddInboundRewriteRule -siteName $site -ruleName "Blaise StartSurvey query redirect encoded" -matchUrl '^(?:BlaiseDashboard/)?CaseInfo/StartSurvey$' -queryPattern '^url=http%3a%2f%2fblaise-gusty-mgmt(%2f[^&]*)(?:&(.*))?$' -rewriteUrl "/BlaiseDashboard/CaseInfo/StartSurvey?url=$encodedExternalServerName{C:1}&{C:2}"
+        AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "$externalServerName{R:1}" -rule 'http://blaise-gusty-mgmt([^\s"&<>]*)?'
+    }
+    else {
+        AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName $externalServerName -rule "http://blaise-gusty-mgmt*"
+    }
 
     if ($site -eq "BlaiseDashboard") {
         AddRewriteRule -siteName $site -ruleName "Blaise StartSurvey url encoded" -serverName "url=$encodedExternalServerName{R:1}" -rule 'url=http%3a%2f%2fblaise-gusty-mgmt(%2f[^\s"&<>]*)?'
