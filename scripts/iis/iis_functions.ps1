@@ -227,7 +227,7 @@ function AddInboundStartSurveyRedirectRule {
             -filter "$ruleFilter/action" -name "type" -value "Redirect"
         Set-WebConfigurationProperty -pspath $sitePath `
             -filter "$ruleFilter/action" -name "url" `
-            -value "https://$env:ENV_BLAISE_CATI_URL/BlaiseDashboard/CaseInfo/StartSurvey?url=https%3a%2f%2f$env:ENV_BLAISE_CATI_URL%2f{C:6}&{C:7}"
+            -value "https://$env:ENV_BLAISE_CATI_URL/BlaiseDashboard/CaseInfo/StartSurvey?url=https%3a%2f%2f$env:ENV_BLAISE_CATI_URL%2f{C:6}{C:7}"
         Set-WebConfigurationProperty -pspath $sitePath `
             -filter "$ruleFilter/action" -name "appendQueryString" -value "false"
         Set-WebConfigurationProperty -pspath $sitePath `
