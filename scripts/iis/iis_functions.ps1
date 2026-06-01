@@ -101,6 +101,29 @@ function AddRewriteRule {
         Set-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value" -value "$serverName"
     }
 
+    $readConfigValue = {
+        param(
+            [string] $filter,
+            [string] $name
+        )
+
+        $rawValue = Get-WebConfigurationProperty -pspath $sitePath -filter $filter -name $name
+
+        if ($null -eq $rawValue) {
+            return ""
+        }
+
+        if ($rawValue -is [string]) {
+            return $rawValue
+        }
+
+        if ($rawValue.PSObject.Properties.Name -contains "Value") {
+            return [string] $rawValue.Value
+        }
+
+        return [string] $rawValue
+    }
+
     $actionValueMatchesExpected = {
         param(
             [string] $actualActionValue
@@ -129,10 +152,10 @@ function AddRewriteRule {
     }
 
     $verifyRuleSettings = {
-        $appliedPattern = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern")
-        $appliedServerVariable = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable")
-        $appliedActionType = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "type")
-        $appliedActionValue = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value")
+        $appliedPattern = & $readConfigValue "$ruleFilter/match" "pattern"
+        $appliedServerVariable = & $readConfigValue "$ruleFilter/match" "serverVariable"
+        $appliedActionType = & $readConfigValue "$ruleFilter/action" "type"
+        $appliedActionValue = & $readConfigValue "$ruleFilter/action" "value"
 
         ($appliedPattern -eq $rule) -and
         ($appliedServerVariable -eq $serverVariable) -and
@@ -152,9 +175,9 @@ function AddRewriteRule {
             & $applyRuleSettings
 
             if (-not (& $verifyRuleSettings)) {
-                $actualPattern = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "pattern")
-                $actualServerVariable = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/match" -name "serverVariable")
-                $actualActionValue = [string](Get-WebConfigurationProperty -pspath $sitePath -filter "$ruleFilter/action" -name "value")
+                $actualPattern = & $readConfigValue "$ruleFilter/match" "pattern"
+                $actualServerVariable = & $readConfigValue "$ruleFilter/match" "serverVariable"
+                $actualActionValue = & $readConfigValue "$ruleFilter/action" "value"
 
                 if ([string]::IsNullOrWhiteSpace($serverVariable)) {
                     LogInfo("Rule '$ruleName' could not be fully reconciled in '$siteName', continuing because this is a body rule")
@@ -187,8 +210,7 @@ function AddRewriteRule {
         exit 1
     }
 
-    $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter $ruleFilter -name "preCondition"
+    $existingPreCondition = & $readConfigValue $ruleFilter "preCondition"
 
     if ([string]::IsNullOrWhiteSpace($preCondition)) {
         if (-not [string]::IsNullOrWhiteSpace($existingPreCondition)) {
