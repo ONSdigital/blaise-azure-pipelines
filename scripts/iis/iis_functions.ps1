@@ -10,6 +10,24 @@ function CheckIfUrlRewriteMsiExists {
     }
 }
 
+function GetWebConfigurationPropertySafe {
+    param (
+        [string] $psPath,
+        [string] $filter,
+        [string] $name = ".",
+        [string] $context = ""
+    )
+
+    try {
+        return Get-WebConfigurationProperty -pspath $psPath -filter $filter -name $name -ErrorAction Stop
+    }
+    catch {
+        $contextSuffix = if ($context) { " ($context)" } else { "" }
+        LogInfo("Could not read IIS configuration$contextSuffix for filter '$filter'. Treating as missing. Error: $($_.Exception.Message)")
+        return $null
+    }
+}
+
 function DisableCompression {
     $compressionPath = "system.webServer/urlCompression"
     $existingConfig = Get-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "."
@@ -31,8 +49,9 @@ function AddNoCompressionPreCondition {
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
 
-    $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+    $preCondition = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "." `
+        -context "$siteName NoCompression preCondition"
 
     if ($null -eq $preCondition) {
         LogInfo("Creating NoCompression preCondition for $siteName...")
@@ -41,7 +60,9 @@ function AddNoCompressionPreCondition {
         LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
-        $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "."
+        $existingRule = GetWebConfigurationPropertySafe -psPath $sitePath `
+            -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "." `
+            -context "$siteName NoCompression preCondition add"
         if (-not $existingRule) {
             LogInfo("Adding input and pattern to existing NoCompression preCondition for $siteName...")
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
@@ -67,7 +88,9 @@ function AddRewriteRule {
         return
     }
 
-    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
+    $ruleExists = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "." `
+        -context "$siteName outbound rule $ruleName"
 
     if (-not $ruleExists) {
         try {
@@ -91,8 +114,9 @@ function AddRewriteRule {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
     }
 
-    $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
+    $existingPreCondition = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "preCondition" `
+        -context "$siteName outbound rule $ruleName preCondition"
 
     if ($existingPreCondition -ne "NoCompression") {
         LogInfo("Setting NoCompression preCondition on rule '$ruleName' in $siteName...")
@@ -183,7 +207,8 @@ function AddInboundStartSurveyRedirectRule {
     }
 
     $ruleFilter = "system.webServer/rewrite/rules/rule[@name='$ruleName']"
-    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter $ruleFilter -name "." -ErrorAction SilentlyContinue
+    $ruleExists = GetWebConfigurationPropertySafe -psPath $sitePath -filter $ruleFilter -Name "." `
+        -context "$siteName inbound rule $ruleName"
 
     if (-not $ruleExists) {
         try {
