@@ -184,13 +184,13 @@ function AddRewriteRule {
                     LogInfo("Rule '$ruleName' could not be fully reconciled in '$siteName', continuing because this is a body rule")
                     LogInfo("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
                     LogInfo("Actual pattern='$actualPattern', serverVariable='$actualServerVariable', actionValue='$actualActionValue'")
-                    LogInfo("IIS may have normalized the action value for this body rule")
+                    LogInfo("IIS may have normalised the action value for this body rule")
                 }
                 elseif ($serverVariable -ieq "RESPONSE_LOCATION") {
                     LogInfo("Rule '$ruleName' could not be fully reconciled in '$siteName', continuing because this is a RESPONSE_LOCATION header rule")
                     LogInfo("Expected pattern='$rule', serverVariable='$serverVariable', actionValue='$serverName'")
                     LogInfo("Actual pattern='$actualPattern', serverVariable='$actualServerVariable', actionValue='$actualActionValue'")
-                    LogInfo("IIS may have normalized this header rule on the target VM")
+                    LogInfo("IIS may have normalised this header rule on the target VM")
                 }
                 else {
                     LogError("Rewrite URL rule '$ruleName' could not be reconciled in '$siteName'")
