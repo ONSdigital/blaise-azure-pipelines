@@ -50,7 +50,6 @@ function AddNoCompressionPreCondition {
         LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
-        # Reconcile existing NoCompression entries so this script remains idempotent across old deployments.
         Remove-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -ErrorAction SilentlyContinue
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedInput; pattern = $expectedPattern}
         Add-WebConfigurationProperty -pspath $sitePath -filter $preConditionFilter -name "." -value @{input = $expectedContentTypeInput; pattern = $expectedContentTypePattern}
@@ -137,7 +136,6 @@ function AddRewriteRule {
             return $true
         }
 
-        # Some IIS installs normalize outbound body rule values by dropping trailing {R:1}.
         if ([string]::IsNullOrWhiteSpace($serverVariable) -and ($serverName -match "\{R:1\}$")) {
             $withoutTrailingCapture = $serverName -replace "\{R:1\}$", ""
             if ($actualActionValue -eq $withoutTrailingCapture) {
@@ -145,7 +143,6 @@ function AddRewriteRule {
             }
         }
 
-        # Some IIS installs normalize RESPONSE_LOCATION rule values by adding a capture suffix.
         if (-not [string]::IsNullOrWhiteSpace($serverVariable)) {
             if ($actualActionValue -eq "$serverName{R:0}" -or $actualActionValue -eq "$serverName{R:1}") {
                 return $true
