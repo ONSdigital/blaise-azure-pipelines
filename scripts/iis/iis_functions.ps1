@@ -91,6 +91,13 @@ function AddRewriteRule {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
     }
 
+    if ($ruleExists) {
+        LogInfo("Updating rewrite URL rule '$ruleName' in site '$siteName'...")
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+    }
+
     $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
         -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
 
