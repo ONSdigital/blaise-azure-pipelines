@@ -22,6 +22,10 @@ if (-not $existingSites) {
     exit 1
 }
 
+if ("BlaiseDashboard" -in $existingSites) {
+    AddInboundStartSurveyRedirectRule -siteName "BlaiseDashboard"
+}
+
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
     AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data[^/]*"
