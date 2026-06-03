@@ -10,6 +10,24 @@ function CheckIfUrlRewriteMsiExists {
     }
 }
 
+function GetWebConfigurationPropertySafe {
+    param (
+        [string] $psPath,
+        [string] $filter,
+        [string] $name = ".",
+        [string] $context = ""
+    )
+
+    try {
+        return Get-WebConfigurationProperty -pspath $psPath -filter $filter -name $name -ErrorAction Stop
+    }
+    catch {
+        $contextSuffix = if ($context) { " ($context)" } else { "" }
+        LogInfo("Could not read IIS configuration$contextSuffix for filter '$filter'. Treating as missing. Error: $($_.Exception.Message)")
+        return $null
+    }
+}
+
 function DisableCompression {
     $compressionPath = "system.webServer/urlCompression"
     $existingConfig = Get-WebConfigurationProperty -pspath "IIS:\Sites\Default Web Site" -filter $compressionPath -name "."
@@ -31,8 +49,9 @@ function AddNoCompressionPreCondition {
 
     $sitePath = "iis:\sites\Default Web Site\$siteName"
 
-    $preCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "."
+    $preCondition = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -Name "." `
+        -context "$siteName NoCompression preCondition"
 
     if ($null -eq $preCondition) {
         LogInfo("Creating NoCompression preCondition for $siteName...")
@@ -41,7 +60,9 @@ function AddNoCompressionPreCondition {
         LogInfo("NoCompression preCondition added successfully for $siteName")
     }
     else {
-        $existingRule = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "."
+        $existingRule = GetWebConfigurationPropertySafe -psPath $sitePath `
+            -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']/add" -Name "." `
+            -context "$siteName NoCompression preCondition add"
         if (-not $existingRule) {
             LogInfo("Adding input and pattern to existing NoCompression preCondition for $siteName...")
             Add-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/preConditions/preCondition[@name='NoCompression']" -name "." -value @{input = "{RESPONSE_CONTENT_ENCODING}"; pattern = "^(?!gzip|deflate)$"}
@@ -67,7 +88,9 @@ function AddRewriteRule {
         return
     }
 
-    $ruleExists = Get-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "."
+    $ruleExists = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "." `
+        -context "$siteName outbound rule $ruleName"
 
     if (-not $ruleExists) {
         try {
@@ -91,8 +114,9 @@ function AddRewriteRule {
         LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
     }
 
-    $existingPreCondition = Get-WebConfigurationProperty -pspath $sitePath `
-        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -name "preCondition"
+    $existingPreCondition = GetWebConfigurationPropertySafe -psPath $sitePath `
+        -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']" -Name "preCondition" `
+        -context "$siteName outbound rule $ruleName preCondition"
 
     if ($existingPreCondition -ne "NoCompression") {
         LogInfo("Setting NoCompression preCondition on rule '$ruleName' in $siteName...")
@@ -168,5 +192,77 @@ function setTimeout {
     }
     else {
         LogInfo("IIS timeout changes already applied for $siteName / $appPool")
+    }
+}
+
+function AddInboundStartSurveyRedirectRule {
+    param ([string] $siteName)
+
+    $sitePath = "IIS:\Sites\Default Web Site\$siteName"
+    $ruleName = "Blaise StartSurvey inbound redirect"
+
+    if (-not (Test-Path $sitePath)) {
+        LogInfo("Skipping '$ruleName' - site '$siteName' does not exist")
+        return
+    }
+
+    $ruleFilter = "system.webServer/rewrite/rules/rule[@name='$ruleName']"
+    $ruleExists = GetWebConfigurationPropertySafe -psPath $sitePath -filter $ruleFilter -Name "." `
+        -context "$siteName inbound rule $ruleName"
+
+    if (-not $ruleExists) {
+        try {
+            LogInfo("Adding inbound StartSurvey redirect rule to '$siteName'...")
+            Add-WebConfigurationProperty -pspath $sitePath `
+                -filter "system.webServer/rewrite/rules" `
+                -name "." `
+                -value @{name = $ruleName; stopProcessing = "true"}
+            LogInfo("Rule '$ruleName' created in '$siteName'")
+        }
+        catch {
+            LogError("Failed to create '$ruleName' for '$siteName'")
+            LogError("$($_.Exception.Message)")
+            exit 1
+        }
+    }
+    else {
+        LogInfo("Rule '$ruleName' already exists in '$siteName', updating settings...")
+    }
+
+    try {
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/match" -name "url" `
+            -value "^(?:BlaiseDashboard/)?CaseInfo/StartSurvey$"
+
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter $ruleFilter -name "stopProcessing" -value "true"
+
+        Remove-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/conditions" -name "." -ErrorAction SilentlyContinue
+
+        Add-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/conditions" -name "." `
+            -value @{
+                input       = "{QUERY_STRING}"
+                pattern     = "^url=https?(%3a|:)(%2f|/)(%2f|/)(?:blaise-[^%/&]*-(?:mgmt|data)|localhost(?:(%3a|:)\d+)?)(%2f|/)([^&]*)(.*)"
+                ignoreCase  = "true"
+            }
+
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/action" -name "type" -value "Redirect"
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/action" -name "url" `
+            -value "https://$env:ENV_BLAISE_CATI_URL/BlaiseDashboard/CaseInfo/StartSurvey?url=https%3a%2f%2f$env:ENV_BLAISE_CATI_URL%2f{C:6}{C:7}"
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/action" -name "appendQueryString" -value "false"
+        Set-WebConfigurationProperty -pspath $sitePath `
+            -filter "$ruleFilter/action" -name "redirectType" -value "Found"
+
+        LogInfo("Rule '$ruleName' applied to '$siteName'")
+    }
+    catch {
+        LogError("Failed to configure '$ruleName' for '$siteName'")
+        LogError("$($_.Exception.Message)")
+        exit 1
     }
 }
