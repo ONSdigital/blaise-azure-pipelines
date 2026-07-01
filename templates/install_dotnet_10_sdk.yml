@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Install .NET 10 SDK
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/install_dotnet_10_sdk.ps1
