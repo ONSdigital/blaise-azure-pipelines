@@ -1,0 +1,112 @@
+---
+parameters:
+  - name: VarGroup
+    displayName: Variable group
+  - name: Environment
+    displayName: Environment to use
+  - name: DeployBranch
+    displayName: Branch to use
+    default: main
+
+trigger: none
+pr: none
+
+variables:
+  - group: ${{parameters.VarGroup}}
+  - template: /templates/variables.yml
+  - name: solution
+    value: '**/*.sln'
+  - name: buildPlatform
+    value: 'Any CPU'
+  - name: buildConfiguration
+    value: 'Release'
+
+
+stages:
+
+  - stage: BuildBlaiseFileUploadAlien_${{parameters.Environment}}
+    displayName: Build Blaise File Upload Alien (${{parameters.Environment}})
+    jobs:
+      - job: BuildApp
+        displayName: Build and Publish
+        pool: 
+          vmImage: 'windows-latest'
+        steps:
+          - checkout: self
+
+          - task: NuGetToolInstaller@1
+            displayName: 'Install NuGet Tools'
+
+          - task: NuGetCommand@2
+            displayName: 'Restore NuGet Packages'
+            inputs:
+              restoreSolution: '$(solution)'
+
+          - task: VSBuild@1
+            displayName: 'Build Solution'
+            inputs:
+              solution: '$(solution)'
+              platform: '$(buildPlatform)'
+              confuguration: '$(buildConfiguration)'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: BlaiseFileUploadAlien'
+            inputs:
+              PathtoPublish: '$(Build.SourcesDirectory)/BlaiseFileUploadAlien/bin/Release/net10.0/win-x64'
+              ArtifactName: 'BlaiseFileUploadAlien'
+              publichLocation: 'Container'
+
+
+  - stage: DeployBlaiseFileUploadAlien_${{parameters.Environment}}
+    displayName: Deploy Blaise File Upload Alien (${{parameters.Environment}})
+    dependsOn: Build
+    jobs:
+      - deployment: DeployBlaiseFileUploadAlien
+        displayName: Deploy Blaise File Upload Alien
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-file-upload-alien
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # 1. Download the artifact created in the Build stage
+                - download: current
+                  artifact: BlaiseFileUploadAlien
+                  displayName: 'Download Build Artifact'
+
+                # 2. Stop the service to release file locks BEFORE copying
+                - powershell: |
+                    $ServiceName = "BlaiseFileUploadAlien"
+                    if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
+                        Write-Host "Service $ServiceName exists. Stopping to release file locks..."
+                        Stop-Service -Name $ServiceName -Force
+                        Start-Sleep -Seconds 5 # Give it time to fully spin down
+                    } else {
+                        Write-Host "Service $ServiceName does not exist yet. Proceeding..."
+                    }
+                  displayName: 'Pre-Deployment: Stop Windows Service'
+
+                # 3. Copy the new files to the VM
+                - template: /templates/copy_files.yml
+                  parameters:
+                    TargetFolder: c:\BlaiseServices\BlaiseFileUploadAlien
+                    SourceFolder: $(Pipeline.Workspace)/BlaiseFileUploadAlien
+
+                # 4. Create and start the service (Fulfilling the BENTODO)
+                - powershell: |
+                    $ServiceName = "BlaiseFileUploadAlien"
+                    $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
+
+                    # Create service if it doesn't exist
+                    if (-not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue)) {
+                        Write-Host "Creating service $ServiceName..."
+                        New-Service -Name $ServiceName -BinaryPathName $ServicePath -DisplayName "Blaise File Upload Alien" -StartupType Automatic
+                    }
+
+                    Write-Host "Starting service $ServiceName..."
+                    Start-Service -Name $ServiceName
+                  displayName: 'Post-Deployment: Create and Start Windows Service'
