@@ -3,4 +3,4 @@ steps:
   - task: PowerShell@2
     displayName: Install .NET 10 Windows Hosting Bundle
     inputs:
-      filePath: $(Agent.BuildDirectory)/s/scripts/blaise/install_dotnet_10_windows_hosting_bundle.ps1
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_dotnet_10_windows_hosting_bundle.ps1
