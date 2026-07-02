@@ -148,3 +148,33 @@ stages:
               steps:
                 - checkout: self
                 - template: /templates/configure_data_interfaces.yml
+      - deployment: InstallFileUploadServiceOnMultiNode
+        displayName: Install File Upload Service on multi node environment
+        dependsOn: RegisterDataEntryNodes
+        condition: and(succeeded(), eq(variables.ENV_MULTI_NODE, true))
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_dotnet_10_sdk.yml
+                - template: /templates/install_dotnet_10_windows_hosting_bundle.yml
+      - deployment: InstallFileUploadServiceOnSingleNode
+        displayName: Install File Upload Service on single node environment
+        dependsOn: ConfigureManagementNode
+        condition: and(succeeded(), eq(variables.ENV_MULTI_NODE, false))
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: mgmt
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: /templates/install_dotnet_10_sdk.yml
+                - template: /templates/install_dotnet_10_windows_hosting_bundle.yml

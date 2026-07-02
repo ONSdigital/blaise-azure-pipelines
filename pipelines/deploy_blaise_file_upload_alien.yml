@@ -1,0 +1,63 @@
+---
+parameters:
+  - name: VarGroup
+    displayName: Variable group
+  - name: Environment
+    displayName: Environment to use
+  - name: DeployBranch
+    displayName: Branch to use
+    default: main
+trigger: none
+pr: none
+variables:
+  - group: ${{parameters.VarGroup}}
+  - template: /templates/variables.yml
+stages:
+  - stage: DeployBlaiseFileUploadAlien_${{parameters.Environment}}
+    displayName: Deploy Blaise File Upload Alien (${{parameters.Environment}})
+    jobs:
+      - deployment: DeployBlaiseFileUploadAlien
+        displayName: Deploy Blaise File Upload Alien
+        variables:
+          ENV_BLAISE_SERVER_BINDING: $(ENV_BLAISE_INTERNAL_SERVER_BINDING)
+        environment:
+          name: ${{parameters.Environment}}
+          resourceType: virtualMachine
+          tags: blaise-file-upload-alien
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - powershell: |
+                    $ServiceName = "BlaiseFileUploadAlien"
+                    if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
+                        Write-Host "Service $ServiceName exists. Stopping to release file locks..."
+                        Stop-Service -Name $ServiceName -Force
+                        Start-Sleep -Seconds 5 # Give it time to fully spin down
+                    } else {
+                        Write-Host "Service $ServiceName does not exist yet. Proceeding..."
+                    }
+                  displayName: 'Pre-Deployment: Stop Windows Service'
+                - template: /templates/download_build_artifact.yml
+                  parameters:
+                    Branch: ${{parameters.DeployBranch}}
+                    ArtifactName: BlaiseFileUploadAlien
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
+                    PipelineNumber: 76
+                - template: /templates/copy_files.yml
+                  parameters:
+                    TargetFolder: c:\BlaiseServices\BlaiseFileUploadAlien
+                    SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien
+                - powershell: |
+                    $ServiceName = "BlaiseFileUploadAlien"
+                    $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
+                    # Create service if it doesn't exist
+                    if (-not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue)) {
+                        Write-Host "Creating service $ServiceName..."
+                        New-Service -Name $ServiceName -BinaryPathName $ServicePath -DisplayName "Blaise File Upload Alien" -StartupType Automatic
+                    }
+                    Write-Host "Starting service $ServiceName..."
+                    Start-Service -Name $ServiceName
+                  displayName: 'Post-Deployment: Create and Start Windows Service'
