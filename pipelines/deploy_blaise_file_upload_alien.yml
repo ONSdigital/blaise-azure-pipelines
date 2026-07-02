@@ -28,9 +28,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - download: current
-                  artifact: BlaiseFileUploadAlien
-                  displayName: 'Download Build Artifact'
+                - checkout: self
                 - powershell: |
                     $ServiceName = "BlaiseFileUploadAlien"
                     if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
@@ -41,10 +39,17 @@ stages:
                         Write-Host "Service $ServiceName does not exist yet. Proceeding..."
                     }
                   displayName: 'Pre-Deployment: Stop Windows Service'
+                - template: /templates/download_build_artifact.yml
+                  parameters:
+                    Branch: ${{parameters.DeployBranch}}
+                    ArtifactName: BlaiseFileUploadAlien
+                    DownloadPath: $(System.ArtifactsDirectory)
+                    TargetFiles: '**/*.config'
+                    PipelineNumber: 76
                 - template: /templates/copy_files.yml
                   parameters:
                     TargetFolder: c:\BlaiseServices\BlaiseFileUploadAlien
-                    SourceFolder: $(Pipeline.Workspace)/BlaiseFileUploadAlien
+                    SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien/bin/Release/net10.0/win-x64
                 - powershell: |
                     $ServiceName = "BlaiseFileUploadAlien"
                     $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
