@@ -19,7 +19,7 @@ if (Is-DotNetHostingBundleInstalled) {
     return
 }
 
-$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x86.exe"
+$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x64.exe"
 
 if (-not (Test-Path $exePath)) {
     LogInfo("Downloading .NET 10 SDK...")
