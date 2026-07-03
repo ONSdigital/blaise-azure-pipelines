@@ -157,7 +157,8 @@ stages:
           resourceType: virtualMachine
           tags: blaise-file-upload-alien
         strategy:
-          runOnce:
+          rolling:
+            maxParallel: 3
             deploy:
               steps:
                 - checkout: self
@@ -170,7 +171,7 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise-file-upload-alien
+          tags: mgmt
         strategy:
           runOnce:
             deploy:
