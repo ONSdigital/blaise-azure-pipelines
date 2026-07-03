@@ -49,7 +49,7 @@ stages:
                 - template: /templates/copy_files.yml
                   parameters:
                     TargetFolder: c:\BlaiseServices\BlaiseFileUploadAlien
-                    SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien
+                    SourceFolder: $(System.ArtifactsDirectory)
                 - powershell: |
                     $ServiceName = "BlaiseFileUploadAlien"
                     $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
