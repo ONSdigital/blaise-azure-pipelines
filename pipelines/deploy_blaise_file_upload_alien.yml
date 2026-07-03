@@ -23,9 +23,9 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: blaise-file-upload-alien
+          tags: blaise
         strategy:
-          runOnce:
+          runOnce:  
             deploy:
               steps:
                 - checkout: self
