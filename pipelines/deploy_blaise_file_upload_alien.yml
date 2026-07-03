@@ -48,8 +48,8 @@ stages:
                     PipelineNumber: 76
                 - template: /templates/copy_files.yml
                   parameters:
-                    TargetFolder: c:\BlaiseServices\BlaiseFileUploadAlien
-                    SourceFolder: $(System.ArtifactsDirectory)
+                    TargetFolder: c:\BlaiseServices\
+                    SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien
                 - powershell: |
                     $ServiceName = "BlaiseFileUploadAlien"
                     $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
