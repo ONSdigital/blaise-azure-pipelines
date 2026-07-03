@@ -8,7 +8,7 @@ function Is-DotNetHostingBundleInstalled {
 
     foreach ($path in $registryPaths) {
         $installed = Get-ItemProperty $path -ErrorAction SilentlyContinue |
-            Where-Object { $_.DisplayName -like "*Microsoft ASP.NET Core 10*" }
+            Where-Object { $_.DisplayName -like "*Microsoft .NET AppHost*" }
         if ($installed) { return $true }
     }
     return $false
@@ -19,7 +19,7 @@ if (Is-DotNetHostingBundleInstalled) {
     return
 }
 
-$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x64.exe"
+$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x86.exe"
 
 if (-not (Test-Path $exePath)) {
     LogInfo("Downloading .NET 10 SDK...")
