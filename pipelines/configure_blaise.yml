@@ -155,7 +155,7 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: mgmt
+          tags: mgmt, data-entry
         strategy:
           runOnce:
             deploy:
@@ -170,7 +170,7 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: mgmt
+          tags: mgmt, data-entry
         strategy:
           runOnce:
             deploy:
