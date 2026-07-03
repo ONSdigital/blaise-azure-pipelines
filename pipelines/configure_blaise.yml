@@ -155,7 +155,7 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: mgmt, data-entry
+          tags: blaise-file-upload-alien
         strategy:
           runOnce:
             deploy:
@@ -170,7 +170,7 @@ stages:
         environment:
           name: ${{parameters.Environment}}
           resourceType: virtualMachine
-          tags: mgmt, data-entry
+          tags: blaise-file-upload-alien
         strategy:
           runOnce:
             deploy:
