@@ -19,11 +19,11 @@ if (Is-DotNetHostingBundleInstalled) {
     return
 }
 
-$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x86.exe"
+$exePath = "C:\dev\data\dotnet-sdk-10.0.301-win-x64.exe"
 
 if (-not (Test-Path $exePath)) {
     LogInfo("Downloading .NET 10 SDK...")
-    gsutil cp "gs://$env:ENV_BLAISE_GCP_BUCKET/dotnet-sdk-10.0.301-win-x86.exe" $exePath
+    gsutil cp "gs://$env:ENV_BLAISE_GCP_BUCKET/dotnet-sdk-10.0.301-win-x64.exe" $exePath
 } else {
     LogInfo(".NET 10 SDK installer already downloaded")
 }
