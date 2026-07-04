@@ -8,7 +8,7 @@ function Is-DotNetHostingBundleInstalled {
 
     foreach ($path in $registryPaths) {
         $installed = Get-ItemProperty $path -ErrorAction SilentlyContinue |
-            Where-Object { $_.DisplayName -like "*Microsoft .NET AppHost*" }
+            Where-Object { $_.DisplayName -like "*Microsoft ASP.NET Core 10*" }
         if ($installed) { return $true }
     }
     return $false
