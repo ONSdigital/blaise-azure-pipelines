@@ -1,20 +1,17 @@
 . "$PSScriptRoot\logging_functions.ps1"
 
-function Is-DotNetHostingBundleInstalled {
-    $registryPaths = @(
-        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
-    )
+function Is-DotNetSDKInstalled {
+    $dotnet = Get-Command dotnet -ErrorAction SilentlyContinue
+    if (-not $dotnet) { return $false }
 
-    foreach ($path in $registryPaths) {
-        $installed = Get-ItemProperty $path -ErrorAction SilentlyContinue |
-            Where-Object { $_.DisplayName -like "*Microsoft .NET AppHost*" }
-        if ($installed) { return $true }
+    if ((& dotnet --list-sdks 2>$null) -match '^10\.') {
+        return $true
     }
+
     return $false
 }
 
-if (Is-DotNetHostingBundleInstalled) {
+if (Is-DotNetSDKInstalled) {
     LogInfo(".NET 10 SDK already installed")
     return
 }
