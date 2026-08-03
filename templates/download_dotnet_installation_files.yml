@@ -13,5 +13,5 @@ steps:
         -SystemAccessToken "$(System.AccessToken)"
         -SharedServiceAccount "$(ENV_SHARED_SERVICE_ACCOUNT)"
         -SharedBucket "$(ENV_SHARED_BUCKET)"
-        -FileName "$(ENV_DOT_NET_SDK)" "$(ENV_DOT_NET_HOSTING_BUNDLE)"
-        -DestinationPath "C:\dev\data\$(ENV_DOT_NET_SDK)" "C:\dev\data\$(ENV_DOT_NET_HOSTING_BUNDLE)"
+        -FileName "$(ENV_DOT_NET_SDK)","$(ENV_DOT_NET_HOSTING_BUNDLE)"
+        -DestinationPath "C:\dev\data\$(ENV_DOT_NET_SDK)","C:\dev\data\$(ENV_DOT_NET_HOSTING_BUNDLE)"
