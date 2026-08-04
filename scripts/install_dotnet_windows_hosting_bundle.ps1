@@ -45,12 +45,19 @@ $exePath = "C:\dev\data\$env:ENV_DOT_NET_HOSTING_BUNDLE"
 
 LogInfo("Installing .NET Hosting Bundle $requiredVersion...")
 
-Start-Process `
+$process = Start-Process `
     -FilePath $exePath `
     -ArgumentList "/quiet /norestart" `
     -NoNewWindow `
-    -Wait
+    -Wait `
+    -PassThru
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Installation failed with exit code $LASTEXITCODE"
+# Code 0 = Success
+# Code 3010 = Success (Reboot required)
+if ($process.ExitCode -ne 0 -and $process.ExitCode -ne 3010) {
+    throw "Installation failed with exit code $($process.ExitCode)"
+}
+
+if ($process.ExitCode -eq 3010) {
+    LogInfo(".NET Hosting Bundle installed successfully, but a system reboot is required.")
 }
