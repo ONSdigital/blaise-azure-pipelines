@@ -43,6 +43,10 @@ if (Is-DotNetHostingBundleInstalled -Version $requiredVersion) {
 
 $exePath = "C:\dev\data\$env:ENV_DOT_NET_HOSTING_BUNDLE"
 
+if (-not (Test-Path -Path $exePath -PathType Leaf)) {
+    throw "Installer not found at '$exePath'. Check ENV_DOT_NET_HOSTING_BUNDLE and ensure the file exists."
+}
+
 LogInfo("Installing .NET Hosting Bundle $requiredVersion...")
 
 $process = Start-Process `

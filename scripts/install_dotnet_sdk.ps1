@@ -33,9 +33,25 @@ if (Test-DotNetSDKInstalled -Version $requiredVersion) {
 
 $exePath = "C:\dev\data\$env:ENV_DOT_NET_SDK"
 
-LogInfo("Installing .NET SDK $requiredVersion...")
-Start-Process -FilePath $exePath -ArgumentList "/quiet /norestart" -NoNewWindow -Wait
+if (-not (Test-Path -Path $exePath -PathType Leaf)) {
+    throw "Installer not found at '$exePath'. Check ENV_DOT_NET_SDK and ensure the file exists."
+}
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Installation failed with exit code $LASTEXITCODE"
+LogInfo("Installing .NET SDK $requiredVersion...")
+
+$process = Start-Process `
+    -FilePath $exePath `
+    -ArgumentList "/quiet /norestart" `
+    -NoNewWindow `
+    -Wait `
+    -PassThru
+
+# Code 0 = Success
+# Code 3010 = Success (Reboot required)
+if ($process.ExitCode -ne 0 -and $process.ExitCode -ne 3010) {
+    throw "Installation failed with exit code $($process.ExitCode)"
+}
+
+if ($process.ExitCode -eq 3010) {
+    LogInfo(".NET SDK installed successfully, but a system reboot is required.")
 }

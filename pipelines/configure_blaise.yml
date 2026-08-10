@@ -160,7 +160,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
                 - template: /templates/download_dotnet_installation_files.yml
                 - template: /templates/install_dotnet_sdk.yml
                 - template: /templates/install_dotnet_windows_hosting_bundle.yml
@@ -176,7 +175,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
                 - template: /templates/download_dotnet_installation_files.yml
                 - template: /templates/install_dotnet_sdk.yml
                 - template: /templates/install_dotnet_windows_hosting_bundle.yml
