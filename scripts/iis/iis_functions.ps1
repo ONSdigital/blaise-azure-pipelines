@@ -258,7 +258,7 @@ function AddInboundStartSurveyRedirectRule {
             -value @{
                 input       = "{QUERY_STRING}"
                 pattern     = "^url=https?(%3a|:)(%2f|/)(%2f|/)(?:blaise-gusty-mgmt|blaise-gusty-data-entry-[1-8]|localhost(?:(%3a|:)\d+)?)(%2f|/)([^&?#]*)(.*)$"
-                ignoreCase  = "false"
+                ignoreCase  = "true"
             }
 
         Set-WebConfigurationProperty -pspath $sitePath `
