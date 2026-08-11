@@ -1,0 +1,17 @@
+---
+steps:
+  - checkout: self
+    persistCredentials: true
+  - task: PowerShell@2
+    displayName: Download .NET SDK and Hosting Bundle
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      targetType: filePath
+      filePath: $(Agent.BuildDirectory)/s/scripts/download_files_from_shared_bucket.ps1
+      arguments: >
+        -SystemAccessToken "$(System.AccessToken)"
+        -SharedServiceAccount "$(ENV_SHARED_SERVICE_ACCOUNT)"
+        -SharedBucket "$(ENV_SHARED_BUCKET)"
+        -FileName "$(ENV_DOT_NET_SDK)","$(ENV_DOT_NET_HOSTING_BUNDLE)"
+        -DestinationPath "C:\dev\data\$(ENV_DOT_NET_SDK)","C:\dev\data\$(ENV_DOT_NET_HOSTING_BUNDLE)"
