@@ -111,7 +111,20 @@ function AddRewriteRule {
         }
     }
     else {
-        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName'")
+        LogInfo("Rewrite URL rule '$ruleName' already exists in site '$siteName', updating settings...")
+    }
+
+    try {
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/match" -name "pattern" -value "$rule"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "type" -value "Rewrite"
+        Set-WebConfigurationProperty -pspath $sitePath -filter "system.webServer/rewrite/outboundRules/rule[@name='$ruleName']/action" -name "value" -value "$serverName"
+        LogInfo("Rewrite URL rule '$ruleName' settings applied to site '$siteName'")
+    }
+    catch {
+        LogError("Failed to configure rewrite URL rule '$ruleName' for site '$siteName'")
+        LogError("$($_.Exception.Message)")
+        LogError("$($_.ScriptStackTrace)")
+        exit 1
     }
 
     $existingPreCondition = GetWebConfigurationPropertySafe -psPath $sitePath `
@@ -244,8 +257,8 @@ function AddInboundStartSurveyRedirectRule {
             -filter "$ruleFilter/conditions" -name "." `
             -value @{
                 input       = "{QUERY_STRING}"
-                pattern     = "^url=https?(%3a|:)(%2f|/)(%2f|/)(?:blaise-[^%/&]*-(?:mgmt|data)|localhost(?:(%3a|:)\d+)?)(%2f|/)([^&]*)(.*)"
-                ignoreCase  = "true"
+                pattern     = "^url=https?(%3a|:)(%2f|/)(%2f|/)(?:blaise-gusty-mgmt|blaise-gusty-data-entry-[1-8]|localhost(?:(%3a|:)\d+)?)(%2f|/)([^&?#]*)(.*)$"
+                ignoreCase  = "false"
             }
 
         Set-WebConfigurationProperty -pspath $sitePath `
