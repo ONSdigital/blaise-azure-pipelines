@@ -1,0 +1,6 @@
+---
+steps:
+  - task: PowerShell@2
+    displayName: Install .NET SDK
+    inputs:
+      filePath: $(Agent.BuildDirectory)/s/scripts/install_dotnet_sdk.ps1

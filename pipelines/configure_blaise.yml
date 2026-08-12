@@ -160,9 +160,12 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                - template: /templates/install_dotnet_10_sdk.yml
-                - template: /templates/install_dotnet_10_windows_hosting_bundle.yml
+                - template: /templates/download_gcloud_sdk.yml
+                  parameters:
+                    TAG: mgmt
+                - template: /templates/download_dotnet_installation_files.yml
+                - template: /templates/install_dotnet_sdk.yml
+                - template: /templates/install_dotnet_windows_hosting_bundle.yml
       - deployment: InstallFileUploadServiceOnSingleNode
         displayName: Install File Upload Service on single node environment
         dependsOn: ConfigureManagementNode
@@ -175,6 +178,9 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-                - template: /templates/install_dotnet_10_sdk.yml
-                - template: /templates/install_dotnet_10_windows_hosting_bundle.yml
+                - template: /templates/download_gcloud_sdk.yml
+                  parameters:
+                    TAG: mgmt
+                - template: /templates/download_dotnet_installation_files.yml
+                - template: /templates/install_dotnet_sdk.yml
+                - template: /templates/install_dotnet_windows_hosting_bundle.yml
