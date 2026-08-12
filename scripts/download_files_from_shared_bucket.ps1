@@ -69,14 +69,8 @@ try {
 
     $wifConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $wifJson -Encoding UTF8
 
-    $existingConfigs = gcloud config configurations list --format="value(name)" 2>&1
-    if ($existingConfigs -notmatch "default") {
-        LogInfo("default gcloud configuration missing. Recreating it...")
-        gcloud config configurations create default --quiet
-    }
-    else {
-        LogInfo("default gcloud configuration already exists.")
-    }
+    LogInfo("Information: Enforcing default gcloud configuration profile...")
+    gcloud config configurations create default --quiet 2>$null
 
     LogInfo("Logging in with WIF credential file...")
     & gcloud auth login --cred-file=$wifJson --quiet
