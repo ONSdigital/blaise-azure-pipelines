@@ -69,9 +69,3 @@ if (($null -eq $currentSDKVersion) -or ($currentSDKVersion -lt $minSDKVersion)) 
 else {
     Write-Host "Skipping gcloud sdk installation, required version already exists... "
 }
-
-$existingConfigs = gcloud config configurations list --format="value(name)"
-if ($existingConfigs -notmatch "default") {
-    Write-Host "Information: 'default' gcloud configuration missing. Recreating it..."
-    gcloud config configurations create default --quiet
-}
