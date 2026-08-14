@@ -28,7 +28,7 @@ if ("BlaiseDashboard" -in $existingSites) {
 
 foreach ($site in $existingSites) {
     AddNoCompressionPreCondition -siteName $site
-    AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data-entry-[1-8][^/]*"
+    AddRewriteRule -siteName $site -ruleName "Blaise data entry" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-data-entry-[0-9]+[^/]*"
     AddRewriteRule -siteName $site -ruleName "Blaise mgmt" -serverName "https://$env:ENV_BLAISE_CATI_URL" -rule "http://blaise-gusty-mgmt*"
     RemoveWebDav -siteName $site
 
