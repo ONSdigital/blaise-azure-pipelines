@@ -24,10 +24,9 @@ $newDataInterfaceCreated += CreateDataInterfaceFile -filePath $config_db_file_pa
 $newDataInterfaceRegistered += RegisterDatainterfaceViaXML -filePath $config_db_file_path -configFile "C:\Blaise5\Bin\StatNeth.Blaise.Runtime.ServicesHost.exe.config" -interfaceFileName "ConfigurationDataInterfaceFile"
 
 # credentials
-# blaise upgrade required
-# $credentials_db_file_path = "D:\Blaise5\Settings\credentials.budi"
-# $newDataInterfaceCreated += CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
-# $newDataInterfaceRegistered += RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
+$credentials_db_file_path = "D:\Blaise5\Settings\credentials.budi"
+$newDataInterfaceCreated += CreateDataInterfaceFile -filePath $credentials_db_file_path -applicationType credentials
+$newDataInterfaceRegistered += RegisterDataInterfaceFile -filePath $credentials_db_file_path -registerCommand credentialsdatainterface
 
 if ($NewDataInterfaceCreated.Contains($true) -or $NewDataInterfaceRegistered.Contains($true)) {
     LogInfo("Changes have been made to data interfaces, restarting Blaise...")
