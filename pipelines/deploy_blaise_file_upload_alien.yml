@@ -46,24 +46,9 @@ stages:
                     DownloadPath: $(System.ArtifactsDirectory)
                     TargetFiles: '**/*.config'
                     PipelineNumber: 76
-                # - template: /templates/copy_files.yml
-                #   parameters:
-                #     TargetFolder: c:\BlaiseServices\
-                #     SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien
                 - template: /templates/deploy_windows_service.yml
                   parameters:
                     ServiceName: BlaiseFileUploadAlien
                     ExeName: BlaiseFileUploadAlien
                     TargetFolder: c:\BlaiseServices\
                     SourceFolder: $(System.ArtifactsDirectory)/BlaiseFileUploadAlien
-                  # displayName: 'Post-Deployment: Create and Start Windows Service'
-                # - powershell: |
-                #     $ServiceName = "BlaiseFileUploadAlien"
-                #     $ServicePath = "c:\BlaiseServices\BlaiseFileUploadAlien\BlaiseFileUploadAlien.exe"
-                #     # Create service if it doesn't exist
-                #     if (-not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue)) {
-                #         Write-Host "Creating service $ServiceName..."
-                #         New-Service -Name $ServiceName -BinaryPathName $ServicePath -DisplayName "Blaise File Upload Alien" -StartupType Automatic
-                #     }
-                #     Write-Host "Starting service $ServiceName..."
-                #     Start-Service -Name $ServiceName
