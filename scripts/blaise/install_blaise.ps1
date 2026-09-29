@@ -4,7 +4,7 @@
 LogInfo("Installing Blaise $env:ENV_BLAISE_CURRENT_VERSION")
 
 LogInfo("Downloading Blaise installer $env:ENV_BLAISE_INSTALL_PACKAGE from $BLAISE_GCP_BUCKET bucket...")
-gsutil cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
+gcloud storage cp gs://$BLAISE_GCP_BUCKET/$env:ENV_BLAISE_INSTALL_PACKAGE "C:\dev\data"
 
 $folderPath = "c:\dev\data\Blaise"
 LogInfo("Unzipping $env:ENV_BLAISE_INSTALL_PACKAGE to $folderPath folder...")
