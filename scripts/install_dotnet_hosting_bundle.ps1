@@ -28,7 +28,7 @@ $exePath = "C:\dev\data\dotnet-hosting-8.0.14-win.exe"
 
 if (-not (Test-Path $exePath)) {
     LogInfo("Downloading dotnet hosting bundle...")
-    gsutil cp "gs://$env:ENV_BLAISE_GCP_BUCKET/dotnet-hosting-8.0.14-win.exe" $exePath
+    gcloud storage cp "gs://$env:ENV_BLAISE_GCP_BUCKET/dotnet-hosting-8.0.14-win.exe" $exePath
 } else {
     LogInfo("dotnet hosting bundle installer already downloaded")
 }

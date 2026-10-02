@@ -28,7 +28,7 @@ else {
 
     if (-not (Test-Path $localInstallerPath)) {
         LogInfo("Downloading MySQL Connector installer...")
-        gsutil cp "gs://$GCP_BUCKET/$installerFileName" "$localInstallerPath"
+        gcloud storage cp "gs://$GCP_BUCKET/$installerFileName" "$localInstallerPath"
     } else {
         LogInfo("MySQL Connector installer already downloaded")
     }
