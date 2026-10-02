@@ -13,7 +13,7 @@ $dashboardFolders = @(
 
 function Download-BlaiseInstaller {
     LogInfo("Downloading Blaise installer")
-    gsutil cp "gs://$blaiseGcpBucket/$blaiseInstallPackage" "C:\dev\data"
+    gcloud storage cp "gs://$blaiseGcpBucket/$blaiseInstallPackage" "C:\dev\data"
 }
 
 function Unzip-BlaiseInstaller {
